@@ -28,11 +28,11 @@ Important reserved address blocks on an Internet network:
 | 192.168.0.0/16 | 192.168.0.0 - 192.168.255.255 | 65.536           | Local addresses      |
 | 224.0.0.0/4    | 224.0.0.0 - 239.255.255.255   | 268435456        | Multicast addresses  |
 
-The ['ip'](https://linux.die.net/man/8/ip) command allows us to display and manage network devices, network adapters, tunnels, and routing.
+The [`ip`](https://linux.die.net/man/8/ip) command allows us to display and manage network devices, network adapters, tunnels, and routing.
 
-The ['ping'](https://linux.die.net/man/8/ping) command allows us to send ICMP ECHO_REQUEST packets to the selected network device based on its IP address.
+The [`ping`](https://linux.die.net/man/8/ping) command allows us to send ICMP ECHO_REQUEST packets to the selected network device based on its IP address.
 
-The ['apt-get'](https://linux.die.net/man/8/apt-get) command is a package manager that allows us to install, modify, and delete programs, and search software through accessible repositories.
+The [`apt-get`](https://linux.die.net/man/8/apt-get) command is a package manager that allows us to install, modify, and delete programs, and search software through accessible repositories.
 
 The [`su`](https://man7.org/linux/man-pages/man1/su.1.html) command allows us to change the user by running commands in the shell.
 
