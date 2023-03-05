@@ -62,7 +62,7 @@ After a successful installation, open VirtualBox and select `New ...` from the m
 
 ![The first window of the wizard allows us to set basic properties.](images/lab1-vbox1.png)
 
-In the second window, we determine the amount of memory (RAM) to be allocated to our virtual computer. For example, we specify `2042 MB` of memory and press the `Next` button.
+In the second window, we determine the amount of memory (RAM) to be allocated to our virtual computer. For example, we specify `4096 MB` of memory and press the `Next` button.
 
 ![The second window of the wizard allows us to set the amount of memory.](images/lab1-vbox2.png)
 
@@ -78,7 +78,7 @@ In the fifth window, we define the method of allocating space for the virtual ha
 
 ![The fifth window of the wizard allows us to choose between the dynamic and static allocation of space to the virtual hard disk.](images/lab1-vbox5.png)
 
-In the sixth window, we specify where in the file system our new virtual hard disk will be created and what its maximum size will be. For example, we choose `/home/USER/VirtualBox VMs/Debian/Debian.vdi` for the location of our virtual disk and set its maximum size to `30.00 GB`. Then click the `Create` button.
+In the sixth window, we specify where in the file system our new virtual hard disk will be created and what its maximum size will be. For example, we choose `/home/USER/VirtualBox VMs/Debian/Debian.vdi` for the location of our virtual disk and set its maximum size to `200.00 GB`. Then click the `Create` button.
 
 ![The sixth window of the wizard allows us to choose the format of the virtual hard disk.](images/lab1-vbox6.png)
 

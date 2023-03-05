@@ -62,7 +62,7 @@ Po uspešni namestitvi odpremo VirtualBox in v meniju zgoraj izberemo možnost `
 
 ![Prvo okno čarovnika nam omogoča nastavljanje osnovnih lastnosti.](slike/vaja1-vbox1.png)
 
-V drugem oknu določimo količino pomnilnika (RAM-a), ki ga bomo namenili našemu navideznemu računalniku. Na primer, določimo `2042 MB` pomnilnika ter pritisnemo gumb `Naprej`.
+V drugem oknu določimo količino pomnilnika (RAM-a), ki ga bomo namenili našemu navideznemu računalniku. Na primer, določimo `4096 MB` pomnilnika ter pritisnemo gumb `Naprej`.
 
 ![Drugo okno čarovnika nam omogoča nastavljanje količine pomnilnika.](slike/vaja1-vbox2.png)
 
@@ -78,7 +78,7 @@ V petem oknu določimo način dodeljevanja prostora navideznemu trdemu disku, ki
 
 ![Peto okno čarovnika nam omogoča izbiro dinamičnim in statičnim dodeljevanjem prostora navideznemu trdemu disku.](slike/vaja1-vbox5.png)
 
-V šestem oknu določimo kje v datotečnem sistemu se bo ustvaril naš novi navidezni trdi disk in kolikšna bo njegova maksimalna velikost. Na primer, izberemo `/home/USER/VirtualBox VMs/Debian/Debian.vdi` za lokacijo našega navideznega diska ter nastavimo njegovo maksimalno velikost na `30,00 GB`. Pritisnemo gumb `Ustvari`.
+V šestem oknu določimo kje v datotečnem sistemu se bo ustvaril naš novi navidezni trdi disk in kolikšna bo njegova maksimalna velikost. Na primer, izberemo `/home/USER/VirtualBox VMs/Debian/Debian.vdi` za lokacijo našega navideznega diska ter nastavimo njegovo maksimalno velikost na `200,00 GB`. Pritisnemo gumb `Ustvari`.
 
 ![Šesto okno čarovnika nam omogoča izbiro formata navideznega trdega diska.](slike/vaja1-vbox6.png)
 
