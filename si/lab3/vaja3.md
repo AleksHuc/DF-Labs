@@ -13,7 +13,31 @@
 
 ### Pregled Master Boot Record-a
 
-Radare2 pregled MBR
+Za pregled Master Boot Record-a (MBR) oz. prvega sektorja na disku, ki vsebuje sistemski nalagalnik ter tabelo razdelkov bomo uporabili orodje [`radare2`](https://github.com/radareorg/radare2), ki ga namestimo z njihovega repozitorija.
+
+    apt update
+    apt install git
+    git clone https://github.com/radareorg/radare2
+    radare2/sys/install.sh
+
+Sedaj poženemo `radare2` nad želenim diskom ter z črko `v` izberemo grafični vmesnik, ki nam prikaže vsebino diska
+
+    r2 /dev/sda
+    VV
+    View\Hexdump
+
+    gdisk
+    p
+    c
+    1
+    DF Linux
+    w
+    y
+
+    r2 /dev/sda
+    VV
+    View\Hexdump
+
 
 ### Priključitev navideznih diskov
 
@@ -593,11 +617,11 @@ Vse logične diske lahko priklopimo na enkrat z ukazom `vgchange` in preverimo p
     │ └─md0             9:0    0  598M  0 raid0 
     │   ├─md0p1       259:0    0  100M  0 part  /mnt/md0p1
     │   └─md0p2       259:1    0  497M  0 part  
-    │     └─happy-bmo 254:5    0  1.7G  0 lvm   
+    │     └─happy-bmo 254:5    0  1.7G  0 lvm   /mnt/bmo
     ├─loop1p2         254:1    0    1K  0 part  
     └─loop1p5         254:2    0  1.7G  0 part  
-    ├─happy-stimpy  254:4    0  500M  0 lvm   
-    └─happy-bmo     254:5    0  1.7G  0 lvm   
+      ├─happy-stimpy  254:4    0  500M  0 lvm   /mnt/stimpy
+      └─happy-bmo     254:5    0  1.7G  0 lvm   /mnt/bmo
     sda                 8:0    0  100G  0 disk  
     ├─sda1              8:1    0   99G  0 part  /
     ├─sda2              8:2    0    1K  0 part  
@@ -608,9 +632,9 @@ Vse logične diske lahko priklopimo na enkrat z ukazom `vgchange` in preverimo p
     │ └─md0             9:0    0  598M  0 raid0 
     │   ├─md0p1       259:0    0  100M  0 part  /mnt/md0p1
     │   └─md0p2       259:1    0  497M  0 part  
-    │     └─happy-bmo 254:5    0  1.7G  0 lvm   
+    │     └─happy-bmo 254:5    0  1.7G  0 lvm   /mnt/bmo
     ├─nbd0p2           43:2    0  299M  0 part  
-    │ └─joyjoy-ren    254:3    0  296M  0 lvm   
+    │ └─joyjoy-ren    254:3    0  296M  0 lvm   /mnt/ren
     ├─nbd0p3           43:3    0    1K  0 part  
     └─nbd0p5           43:5    0  1.4G  0 part  /mnt/nbd0p5
 
@@ -652,8 +676,8 @@ Vse trenutno priključene diske, razdelke, datotčne sisteme, RAID polja ter LVM
     │     └─happy-bmo ext4              1.0                            2169f641-3fc0-4b11-adda-2ef58ff9cc23      1.5G     5% /mnt/bmo
     ├─loop1p2                                                                                                                
     └─loop1p5         LVM2_member       LVM2 001                       LOyxVs-UtKI-0jIU-Clcm-Hb1L-ruGl-ZGns8c                
-    ├─happy-stimpy  btrfs                                            0e4f1042-3865-4285-8e94-d532cbb3a6ab      426M    14% /mnt/stimpy
-    └─happy-bmo     ext4              1.0                            2169f641-3fc0-4b11-adda-2ef58ff9cc23      1.5G     5% /mnt/bmo
+      ├─happy-stimpy  btrfs                                            0e4f1042-3865-4285-8e94-d532cbb3a6ab      426M    14% /mnt/stimpy
+      └─happy-bmo     ext4              1.0                            2169f641-3fc0-4b11-adda-2ef58ff9cc23      1.5G     5% /mnt/bmo
     sda                                                                                                                      
     ├─sda1            ext4              1.0                            6a286179-47aa-4c52-b942-5198b263c2f3     83.2G     9% /
     ├─sda2                                                                                                                   
