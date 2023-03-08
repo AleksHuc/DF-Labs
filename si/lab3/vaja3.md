@@ -693,3 +693,8 @@ Vse trenutno priključene diske, razdelke, datotčne sisteme, RAID polja ter LVM
     │ └─joyjoy-ren    ext3              1.0                            4aeb7302-7cca-4f85-bb68-701d8cb59288    238.4M     8% /mnt/ren
     ├─nbd0p3                                                                                                                 
     └─nbd0p5          vfat              FAT32                          F1E7-2C1C                                 1.4G     3% /mnt/nbd0p5
+
+
+Dodaj razlago PV, VG in LV
+Dodaj opis ogleda MBR
+Dodaj ukaze za odklop
