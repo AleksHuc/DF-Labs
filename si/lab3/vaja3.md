@@ -92,7 +92,7 @@ Priklopljene diske (`sdX`) in razdelke (`sdXN`) lahko izpišemo tudi z ukazom `l
 
 V operacijskih sistemih GNU/linux za delo z diski uporabljamo orodja kot so: `mount`, `fdisk`, `gdisk`, `libguestfs`, `qemu-img`, `qemu-nbd`...  Razdelki se predstavijo operacijskemu sistemu kot datoteke. Podatke znotraj razdelkov so urejene v drevesno strukturo, ki predstavlja datotečni sistem, ki ustvari svojo glavo na začetku razdelka in nato sledijo datoteke. 
 
-Sedaj naredimo kopije obeh navideznih diskov in zgoščenke z ukazom [`cat`]() ter izračunamo integritetno vrednost diska z ukazom [`sha512sum`]().
+Sedaj naredimo kopije obeh navideznih diskov in zgoščenke z ukazom [`cat`](https://www.man7.org/linux/man-pages/man1/cat.1.html) ter izračunamo integritetno vrednost diska z ukazom [`sha512sum`](https://man7.org/linux/man-pages/man1/sha512sum.1.html).
 
     sha512sum /dev/sdb >> sdb_hash.txt
     cat /dev/sdb > sdb_copy.img
@@ -131,7 +131,7 @@ Nato ponovno poženemo naš navidezni računalnik. Začnemo s priklopom slike zg
 
     cute-cat-l.jpg	kitty1.jpeg  kitty2.jpeg  kitty3.jpeg  kitty4.jpg
 
-ISO9660 omejuje dolžino imen, ki jih imajo lahko datoteke, da zaobidemo to omejitev se privzeto uporablja [Joliet razširitev datotečnega sistema](https://en.wikipedia.org/wiki/ISO_9660#Joliet). Sedaj bomo najprej odklopili trenutno priklopljeno zgoščenko in jo nato ponovno priklopili brez Joliet razširitve ter preverili ali sedaj lahko dostopamo še do kakšnih datotek.
+ISO9660 omejuje dolžino imen, ki jih imajo lahko datoteke, da zaobidemo to omejitev se privzeto uporablja [Joliet razširitev datotečnega sistema](https://en.wikipedia.org/wiki/ISO_9660#Joliet). Sedaj bomo najprej odklopili trenutno priklopljeno zgoščenko z ukazom [`umount`](https://man7.org/linux/man-pages/man8/umount.8.html) in jo nato ponovno priklopili brez Joliet razširitve ter preverili ali sedaj lahko dostopamo še do kakšnih datotek.
 
     mount
 
@@ -235,7 +235,7 @@ Omogočimo `qemu-nbd` v našem operacijskem sistemu s programom za dodajanje in 
     kmsg		    nbd6	       stderr	tty29	 tty52	vcs1
     log		        nbd7	       stdin	tty3	 tty53	vcs2
 
-Sedaj priklopimo disk z ukazom `qemu-nbd` in izpišemo trenutno priklopljene diske z ukazom `lsblk`.
+Sedaj priklopimo disk z ukazom `qemu-nbd` z zastavico `-c` in izpišemo trenutno priklopljene diske z ukazom `lsblk`. Po potrebi lahko odklopimo disk z ukazom `qemu-nbd` z zastavico `-d`.
 
     qemu-nbd -c /dev/nbd0 sdb_copy.img
 
@@ -298,7 +298,7 @@ Sedaj lahko preverimo integritetno vrednost navideznega diska `sdb_copy.img` in 
     d4b009680058854c20324d830f189a79c2318fc8474681a43d3a10559b1fbadeda855f9e9aab510c2bd98ed379a2800526f64c49add1eb21e68e0af5c3f76c3d  /dev/sdb
     d4b009680058854c20324d830f189a79c2318fc8474681a43d3a10559b1fbadeda855f9e9aab510c2bd98ed379a2800526f64c49add1eb21e68e0af5c3f76c3d  sdb_copy.img
 
-Za priključitev drugega diska pa uporabimo orodje `kpartx` in izpišemo trenutno priklopljene diske z ukazom `lsblk`.
+Za priključitev drugega diska pa uporabimo orodje `kpartx` z zastavico `-a` in izpišemo trenutno priklopljene diske z ukazom `lsblk`.  Po potrebi lahko odklopimo disk z ukazom `kpartx` z zastavico `-d`.
 
     kpartx -a sdc_copy.img
 
@@ -464,7 +464,7 @@ Za delo z LVM logičnimi diski potrebujemo orodje [`lvm2`](https://linux.die.net
 
     lsblk
 
-Podatke o `LVM` logičnih diskih pridobimo z ukazi: `pvdisplay` za fizične diske (`Physical Volume`), `vgdisplay` za skupine fizičnih diskov (`Volume Group`) in `lvdisplay` za logične diske (`Logical Volume`).
+Podatke o `LVM` logičnih diskih pridobimo z ukazom `pvdisplay` nam prikaže fizične diske in razdelke (`Physical Volume`), ki so razporejeni v skupine fizičnih diskov (`Volume Group`), ki jih nam prikaže ukaz `vgdisplay` in znotraj skupin lahko določimo logične diske (`Logical Volume`), ki jih nam prikaže ukaz `lvdisplay`.
 
     pvdisplay
 
@@ -503,6 +503,8 @@ Podatke o `LVM` logičnih diskih pridobimo z ukazi: `pvdisplay` za fizične disk
     Free PE               0
     Allocated PE          123
     PV UUID               pXyscH-UvqH-5lV6-Gn6U-TKGX-MTqH-hOrrPM
+
+Vidimo, da imamo 3 razdelke (`Physical Volume`) `/dev/nbd0p2`, `/dev/mapper/loop1p5` in `/dev/md0p2`, ki so vključeni v logične diske.
 
     vgdisplay
 
@@ -551,6 +553,8 @@ Podatke o `LVM` logičnih diskih pridobimo z ukazi: `pvdisplay` za fizične disk
     Free  PE / Size       0 / 0   
     VG UUID               U6IpQJ-JTs5-FoLT-Oi6S-Q2lf-dCTO-iwC91f
 
+Vidimo tudi, da so razdelki razdeljeni v dve skupini (`Volume Group`), in sicer razdelka `/dev/mapper/loop1p5` in `/dev/md0p2` sta člana skupine `happy` ter razdelek `/dev/nbd0p2` je član skupine `joyjoy`.
+
     lvdisplay
 
     WARNING: PV /dev/nbd0p2 in VG joyjoy is using an old PV header, modify the VG to update.
@@ -598,7 +602,7 @@ Podatke o `LVM` logičnih diskih pridobimo z ukazi: `pvdisplay` za fizične disk
     Allocation             inherit
     Read ahead sectors     auto
 
-Vse logične diske lahko priklopimo na enkrat z ukazom `vgchange` in preverimo priključene disk z ukazom `lsblk`.
+Prav tako vidimo znotraj skupine `joyjoy` ustvarjen en logični disk (`Logical Volume`) `ren` ter znotraj skupine `happy` imamo dva logična diska `stimpy` in `bmo`. Logični disk `bmo` zajema razdelek `md0p2` in del razdelka `loop1p5`, logični disk `stimpy` zajema del razdelka `loop1p5` in logični disk `ren` zajema razdelek `nbd0p2`. Vse logične diske lahko priklopimo na enkrat z ukazom `vgchange` in preverimo priključene disk z ukazom `lsblk`.
 
     vgchange -a y
 
@@ -694,7 +698,4 @@ Vse trenutno priključene diske, razdelke, datotčne sisteme, RAID polja ter LVM
     ├─nbd0p3                                                                                                                 
     └─nbd0p5          vfat              FAT32                          F1E7-2C1C                                 1.4G     3% /mnt/nbd0p5
 
-
-Dodaj razlago PV, VG in LV
 Dodaj opis ogleda MBR
-Dodaj ukaze za odklop

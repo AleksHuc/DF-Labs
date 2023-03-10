@@ -108,7 +108,7 @@ Since it turned out quite early on that 4 partitions are not always enough, the 
 
 Furthermore, 2^24^ sectors ($16777216*512B = 8589934592B = 8.58GB$) also turned out to be insufficient. A 32-bit start of the partitions in [Logical Block Addressing (LBA)](https://en.wikipedia.org/wiki/Logical_block_addressing) format and a 32-bit length in number were added to the space reserved in each partition section.
 
-MBR partition table can be managed with several tools: [`fdisk`](https://www.man7.org/linux/man-pages/man8/fdisk.8.html), [`gdisk`](https:// linux.die.net/man/8/gdisk), [`sfdisk`](https://man7.org/linux/man-pages/man8/sfdisk.8.html)...
+MBR partition table can be managed with several tools: [`fdisk`](https://www.man7.org/linux/man-pages/man8/fdisk.8.html), [`gdisk`](https://linux.die.net/man/8/gdisk), [`sfdisk`](https://man7.org/linux/man-pages/man8/sfdisk.8.html)...
 
 **GUID Partition Table (GPT)**
 
