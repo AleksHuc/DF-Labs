@@ -1,4 +1,4 @@
-# 2. Labs: Disks and disk systems
+# 2. Lab: Disks and disk systems
 
 ## Instructions
 
