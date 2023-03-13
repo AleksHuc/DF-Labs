@@ -1,14 +1,16 @@
-# 4. Vaja: Metapodatki v slikah
+# 4. Vaja: Metapodatki
 
 ## Navodila
 
-1. Za podane slike ugotovite s kakšnim fotoaparatom so bile zajete in na kateri lokaciji.
+1. Za podane slike ugotovite s kakšnim fotoaparatom so bile zajete, ali je bila uporabljena bliskavica in kdaj in kje je nastala.
+2. Za podano datoteko ugotovite kdo je originalni avtor dokumenta, ali je dokument spreminjal še kdo drug ter kdaj in na katerem operacijskem sistemu je nastal.
+3. Na podanih slikah in dokumentu spremenite in izbrišite posamezne metapodatke.
 
 ## Dodatne informacije
 
 ## Podrobna navodila
 
-### Metapodatki v slikah
+### 1. Metapodatki v slikah
 
 S [spletne strani](https://polz.si/dsrf/) prenesemo naslednji dve sliki:
 
@@ -53,7 +55,7 @@ Za branje metapodatkov lahko uporabimo namenska orodja, kot sta  [`exiv2`](https
     Copyright       : 
     Exif comment    : 
 
-    exif lovecnabiralec.jpg
+    exif lovecnabiralec.jpgAnalysis of disks with GNU/Linux
 
     EXIF tags in 'lovecnabiralec.jpg' ('Motorola' byte order):
     --------------------+----------------------------------------------------------
@@ -140,6 +142,14 @@ Za branje metapodatkov lahko uporabimo namenska orodja, kot sta  [`exiv2`](https
     Corrupt data
     The data provided does not follow the specification.
     ExifLoader: The data supplied does not seem to contain EXIF data.
+
+### 2. Metapodatki v dokumentih
+
+S [spletne učilnice]() prenesite datoteko:
+
+- [`blinkenlichten.odt`](https://ucilnica.fri.uni-lj.si/mod/resource/view.php?id=28647)
+
+
 
 
 

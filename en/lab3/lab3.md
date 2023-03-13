@@ -182,9 +182,13 @@ With [`gdisk`](https://linux.die.net/man/8/gdisk) we can change the name of the 
     5       207716352       209713151   975.0 MiB   8200  Linux swap
 
     c
+
     1
+
     DF Linux
+
     w
+
     Y
 
     gdisk /dev/sda
@@ -345,6 +349,54 @@ With [`gdisk`](https://linux.die.net/man/8/gdisk) we can change the name of the 
     0x000007d0  0000 0000 0000 0000 0000 0000 0000 0000  ................
     0x000007e0  0000 0000 0000 0000 0000 0000 0000 0000  ................
     0x000007f0  0000 0000 0000 0000 0000 0000 0000 0000  ................
+
+Now we need to add a new partition and fix the bootloader so that our operating system will be able to boot from the GPT partition table. We run the `gdisk` tool on the operating system disk, select the `n` option to create a new partition and select the value `2` for the partition number. For the first sector of the partition, select sector 34, for the last sector of the partition, select sector 2047, then select the code for the `BIOS boot` partition, which is `ef02`, or search for it by selecting the `l` option. Write the changes to the disk with `w` option and confirm with `Y`. Finally, reinstall the bootloader with the command [`grub-install`](https://linux.die.net/man/8/grub-install).
+
+    gdisk /dev/sda
+
+    GPT fdisk (gdisk) version 1.0.6
+
+    Partition table scan:
+    MBR: protective
+    BSD: not present
+    APM: not present
+    GPT: present
+
+    Found valid GPT with protective MBR; using GPT.
+
+    p
+
+    Disk /dev/sda: 209715200 sectors, 100.0 GiB
+    Model: VBOX HARDDISK   
+    Sector size (logical/physical): 512/512 bytes
+    Disk identifier (GUID): 7A51BD7B-5A21-4AA2-8908-0C3E3A246C2C
+    Partition table holds up to 128 entries
+    Main partition table begins at sector 2 and ends at sector 33
+    First usable sector is 34, last usable sector is 209715166
+    Partitions will be aligned on 2048-sector boundaries
+    Total free space is 6077 sectors (3.0 MiB)
+
+    Number  Start (sector)    End (sector)  Size       Code  Name
+    1            2048       207714303   99.0 GiB    8300  DF Linux
+    5       207716352       209713151   975.0 MiB   8200  Linux swap
+
+    n
+
+    Partition number (2-128, default 2): 2
+    First sector (34-209715166, default = 207714304) or {+-}size{KMGTP}: 34
+    Last sector (34-2047, default = 2047) or {+-}size{KMGTP}: 2047
+    Current type is 8300 (Linux filesystem)
+    Hex code or GUID (L to show codes, Enter = 8300): ef02
+    Changed type of partition to 'BIOS boot partition'
+
+    w
+
+    Y
+
+    grub-install /dev/sda
+
+    Installing for i386-pc platform.
+    Installation finished. No error reported.
 
 ### Attaching and mounting of virtual disks
 
