@@ -518,20 +518,22 @@ Za branje metapodatkov lahko uporabimo namenska orodja, kot sta  [`exiv2`](https
     Hyperfocal Distance             : 8.15 m
     Light Value                     : 10.3
 
-Slike lahko vsebujejo tudi različice slike z nižjo resolucijo, ki jih lahko uporabimo za ugotavljanje ali je bila prvotna slika spremenjena ali ne. Prav tako, nam pridejo prav, ko je originalna slika poškodovana. Sliko nižje resolucije lahko izluščimo z orodjem `exiftool` in nastavitvijo `-ThumbnailImage`. Orodje [`dcraw`](https://linux.die.net/man/1/dcraw) nam omogoča izluščanje slik z nižjo resolucijo ter popravljanje originalnih slik. Vse pridobljene slike si ogledamo s programom za prikazovanje slik (originalna slika - `.NEF`, slika z nižjo resolucijo `.thumb.jpg` in popravljena slika - `.ppm`).
+Slike lahko vsebujejo tudi različice slike z nižjo resolucijo, ki jih lahko uporabimo za ugotavljanje ali je bila prvotna slika spremenjena ali ne. Prav tako, nam pridejo prav, ko je originalna slika poškodovana. Sliko nižje resolucije lahko izluščimo z orodjem `exiftool` in nastavitvijo `-ThumbnailImage`.
 
     exiftool -b -ThumbnailImage lovecnabiralec.jpg > lovecnabiralec_t.jpg
+
+Orodje [`dcraw`](https://linux.die.net/man/1/dcraw) nam omogoča izluščanje slik z nižjo resolucijo ter popravljanje originalnih slik. Vse pridobljene slike si ogledamo s programom za prikazovanje slik (originalna slika - `.NEF`, slika z nižjo resolucijo `.thumb.jpg` in popravljena slika - `.ppm`).
 
     apt update
     apt instal dcraw
     dcraw JFP_5195.NEF
     dcraw -e JFP_5195.NEF
 
-V splošnem lahko na podlagi zajete slike ugotovimo s katerim fotoaparatom je bila zajeta z:
+V splošnem lahko na podlagi zajete slike ugotovimo s katerim fotoaparatom je bila zajeta, na osnovi:
 
-- EXIF metapodatki.
-- [Kromatično aberacijo](https://en.wikipedia.org/wiki/Chromatic_aberration).
-- Napakami na posameznih pikslih, ki so rahlo svetlejši in temnejši in z večjo količino slik lahko zgradimo model naprave.
+- EXIF metapodatkov.
+- [Kromatične aberacije](https://en.wikipedia.org/wiki/Chromatic_aberration).
+- Napak na posameznih pikslih, ki so rahlo svetlejši in temnejši in z večjo količino slik lahko zgradimo model naprave.
 
 ### 2. Metapodatki v dokumentih
 
@@ -802,7 +804,7 @@ Z orodjem `exiv2` lahko najprej izluščimo vse podatke z nastavitvijo `ex` v da
     Exif.Thumbnail.JPEGInterchangeFormat         Long        1  870
     Exif.Thumbnail.JPEGInterchangeFormatLength   Long        1  13456
 
-Z orodjem `exiftool` lahko najprej izluščimo vse podatke z nastavitvijo `-h` v datoteko tipa `.html`. Imena za naslavljanje posameznih polj metapodatkov izpišemo z nastavitvijo `-args`. Posamezne metapodatke lahko manipuliramo z nastavitvijo `-X`, kjer X predstavlja polje, ki ga želimo spremeniti z ukazom `=`, ga dodajamo z ukazom `+=` ali brišemo z ukazom `-=`. Prvotno različico slike lahko povrnemo z ukazom `-restore_original`, saj jo orodje hrani za vsak slučaj.
+Z orodjem `exiftool` lahko najprej izluščimo vse metapodatke z nastavitvijo `-h` v datoteko tipa `.html`. Imena za naslavljanje posameznih polj metapodatkov izpišemo z nastavitvijo `-args`. Posamezne metapodatke lahko manipuliramo z nastavitvijo `-X`, kjer X predstavlja polje, ki ga želimo spremeniti z ukazom `=`, ga dodajamo z ukazom `+=` ali brišemo z ukazom `-=`. Prvotno različico slike lahko povrnemo z ukazom `-restore_original`, saj jo orodje hrani za vsak slučaj.
 
     exiftool -h lovecnabiralec.jpg > lovecnabiralec.html
 
@@ -1070,7 +1072,7 @@ Metapodatke v dokumentu `blinkenlichten.odt` pa lahko popravimo kar direktno v d
     Document-statistic Non-whitespace-character-count: 305
     Preview PNG                     : (Binary data 2855 bytes, use -b option to extract)
 
-Preverimo ali imamo že odpakiran dokument `blinkenlichten.odt` v mapi `blinkenlichten`, če ne potem ponovimo korake iz 2 pod naloge. Odpremo datoteko `meta.xml` in v njej popravimo željen meta podatek in datoteko shranimo. Sedaj še zapakiramo vse datoteke dokumenta v `blinken.odt`
+Preverimo ali imamo že odpakiran dokument `blinkenlichten.odt` v mapi `blinkenlichten`, če ne potem ponovimo korake iz 2 pod naloge. Odpremo datoteko `meta.xml` in v njej popravimo željen metapodatek in datoteko shranimo. Sedaj še zapakiramo vse datoteke dokumenta v `blinken.odt`.
     
     ls blinkenlichten
 
@@ -1117,7 +1119,7 @@ Preverimo ali imamo že odpakiran dokument `blinkenlichten.odt` v mapi `blinkenl
 
 ### 4. Program za manipulacijo z EXIF metapodatki v slikah
 
-Napisali bomo kratek program v programskem jeziku `Python`, ki prebere sliko in njene EXIF podatke, spremeni enega in drugega izbriše.
+Napisali bomo kratek program v programskem jeziku [`Python`](https://docs.python.org/3/tutorial/index.html), ki prebere sliko in njene EXIF metapodatke, spremeni enega in drugega izbriše.
 
     lovecnabiralec.jpg
 

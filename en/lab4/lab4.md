@@ -518,3 +518,792 @@ apt update
     Hyperfocal Distance             : 8.15 m
     Light Value                     : 10.3
 
+Images may also contain lower resolution versions of the image that we can use to determine whether or not the original image has been altered. Also, they come in handy when the original image is damaged. A lower resolution image can be extracted using the `exiftool` tool and the `-ThumbnailImage` setting.
+
+    exiftool -b -ThumbnailImage lovecnabiralec.jpg > lovecnabiralec_t.jpg
+
+The tool [`dcraw`](https://linux.die.net/man/1/dcraw) allows us to extract images with a lower resolution and correct the original images. All obtained images are viewed with the program for displaying images (original image - `.NEF`, image with a lower resolution `.thumb.jpg` and corrected image - `.ppm`).
+
+    apt update
+    apt instal dcraw
+    dcraw JFP_5195.NEF
+    dcraw -e JFP_5195.NEF
+
+In general, based on the captured image, we can determine with which camera it was captured, based on:
+
+- EXIF metadata.
+- [Chromatic aberration](https://en.wikipedia.org/wiki/Chromatic_aberration).
+- With errors on individual pixels that are slightly lighter and darker and with a larger amount of images, we can build a model of the device.
+
+### 2. Metadata in documents
+
+Download the file from [online classroom](https://ucilnica.fri.uni-lj.si/course/view.php?id=178):
+
+- [`blinkenlichten.odt`](https://ucilnica.fri.uni-lj.si/mod/resource/view.php?id=28647)
+
+To access metadata, we can use tools for accessing metadata in images.
+
+    exiv2 blinkenlichten.odt
+
+    Exiv2 exception in print action for file blinkenlichten.odt:
+    blinkenlichten.odt: The file contains data of an unknown image type
+
+    exif blinkenlichten.odt
+
+    Corrupt data
+    The data provided does not follow the specification.
+    ExifLoader: The data supplied does not seem to contain EXIF data.
+
+    exiftool blinkenlichten.odt
+
+    ExifTool Version Number         : 12.16
+    File Name                       : blinkenlichten.odt
+    Directory                       : .
+    File Size                       : 11 KiB
+    File Modification Date/Time     : 2023:03:13 11:14:39+01:00
+    File Access Date/Time           : 2023:03:13 11:15:40+01:00
+    File Inode Change Date/Time     : 2023:03:13 11:14:39+01:00
+    File Permissions                : rw-r--r--
+    File Type                       : ODT
+    File Type Extension             : odt
+    MIME Type                       : application/vnd.oasis.opendocument.text
+    Initial-creator                 : Pišta Bači
+    Creation-date                   : 2019:04:16 21:06:40.274118679
+    Date                            : 2019:04:16 22:13:49.342982850
+    Creator                         : Franko Frkič
+    Editing-duration                : PT33S
+    Editing-cycles                  : 3
+    Generator                       : LibreOffice/6.1.3.2$Linux_X86_64 LibreOffice_project/10$Build-2
+    Document-statistic Table-count  : 0
+    Document-statistic Image-count  : 0
+    Document-statistic Object-count : 0
+    Document-statistic Page-count   : 1
+    Document-statistic Paragraph-count: 6
+    Document-statistic Word-count   : 44
+    Document-statistic Character-count: 344
+    Document-statistic Non-whitespace-character-count: 305
+    Preview PNG                     : (Binary data 2855 bytes, use -b option to extract)
+
+The file `blinkenlichten.odt` contains the document and the metadata in separate files as a ZIP file and can be accessed just by using the `unzip` command and then outputting the `XML` files that contain the metadata.
+
+    mkdir blinkenlichten
+    cd blinkenlichten
+    unzip ../blinkenlichten.odt 
+
+    Archive:  ../blinkenlichten.odt
+    extracting: mimetype                
+    extracting: Thumbnails/thumbnail.png  
+    creating: Configurations2/toolpanel/
+    creating: Configurations2/menubar/
+    creating: Configurations2/statusbar/
+    creating: Configurations2/accelerator/
+    creating: Configurations2/progressbar/
+    creating: Configurations2/popupmenu/
+    creating: Configurations2/toolbar/
+    creating: Configurations2/images/Bitmaps/
+    creating: Configurations2/floater/
+    inflating: content.xml             
+    inflating: meta.xml                
+    inflating: manifest.rdf            
+    inflating: settings.xml            
+    inflating: styles.xml              
+    inflating: META-INF/manifest.xml
+
+    ls
+    Configurations2  content.xml  manifest.rdf  META-INF  meta.xml	mimetype  settings.xml	styles.xml  Thumbnails
+
+    apt update
+    apt instal libxml2-utils
+
+    cat meta.xml | xmllint --format -
+
+    <?xml version="1.0" encoding="UTF-8"?>
+    <office:document-meta xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:meta="urn:oasis:names:tc:opendocument:xmlns:meta:1.0" xmlns:ooo="http://openoffice.org/2004/office" xmlns:grddl="http://www.w3.org/2003/g/data-view#" office:version="1.2">
+    <office:meta>
+        <meta:initial-creator>Pišta Bači</meta:initial-creator>
+        <meta:creation-date>2019-04-16T21:06:40.274118679</meta:creation-date>
+        <dc:date>2019-04-16T22:13:49.342982850</dc:date>
+        <dc:creator>Franko Frkič</dc:creator>
+        <meta:editing-duration>PT33S</meta:editing-duration>
+        <meta:editing-cycles>3</meta:editing-cycles>
+        <meta:generator>LibreOffice/6.1.3.2$Linux_X86_64 LibreOffice_project/10$Build-2</meta:generator>
+        <meta:document-statistic meta:table-count="0" meta:image-count="0" meta:object-count="0" meta:page-count="1" meta:paragraph-count="6" meta:word-count="44" meta:character-count="344" meta:non-whitespace-character-count="305"/>
+    </office:meta>
+    </office:document-meta>
+
+### 3. Modification and deletion of metadata
+
+With the `exiv2` tool, we can first extract all the data with the `ex` setting into a file of type `.exv`. The names for addressing individual metadata fields are printed with the `-pt` setting. Individual metadata can be manipulated with the `-M` setting and then we determine whether the metadata is changed with the `set` command, added with the `add` command, or deleted with the `del` command. All metadata can be deleted with the `rm` option and can be imported from a file with the `in` option.
+
+    exiv2 ex lovecnabiralec.jpg
+
+    ls
+    blinkenlichten	blinkenlichten.odt  JFP_5195.NEF  lovecnabiralec.exv  lovecnabiralec.jpg
+
+    exiv2 -pt lovecnabiralec.jpg
+
+    Exif.Image.Make                              Ascii       6  Apple
+    Exif.Image.Model                             Ascii       9  iPhone 4
+    Exif.Image.Orientation                       Short       1  right, top
+    Exif.Image.XResolution                       Rational    1  72
+    Exif.Image.YResolution                       Rational    1  72
+    Exif.Image.ResolutionUnit                    Short       1  inch
+    Exif.Image.Software                          Ascii       6  5.0.1
+    Exif.Image.DateTime                          Ascii      20  2012:01:25 14:50:25
+    Exif.Image.YCbCrPositioning                  Short       1  Centered
+    Exif.Image.ExifTag                           Long        1  204
+    Exif.Photo.ExposureTime                      Rational    1  1/15 s
+    Exif.Photo.FNumber                           Rational    1  F2.8
+    Exif.Photo.ExposureProgram                   Short       1  Auto
+    Exif.Photo.ISOSpeedRatings                   Short       1  125
+    Exif.Photo.ExifVersion                       Undefined   4  2.21
+    Exif.Photo.DateTimeOriginal                  Ascii      20  2012:01:25 14:50:25
+    Exif.Photo.DateTimeDigitized                 Ascii      20  2012:01:25 14:50:25
+    Exif.Photo.ComponentsConfiguration           Undefined   4  YCbCr
+    Exif.Photo.ShutterSpeedValue                 SRational   1  1/15 s
+    Exif.Photo.ApertureValue                     Rational    1  F2.8
+    Exif.Photo.BrightnessValue                   SRational   1  2.28107
+    Exif.Photo.MeteringMode                      Short       1  Multi-segment
+    Exif.Photo.Flash                             Short       1  No flash
+    Exif.Photo.FocalLength                       Rational    1  3.8 mm
+    Exif.Photo.FlashpixVersion                   Undefined   4  1.00
+    Exif.Photo.ColorSpace                        Short       1  sRGB
+    Exif.Photo.PixelXDimension                   Long        1  2592
+    Exif.Photo.PixelYDimension                   Long        1  1936
+    Exif.Photo.SensingMethod                     Short       1  One-chip color area
+    Exif.Photo.CustomRendered                    Short       1  (2)
+    Exif.Photo.ExposureMode                      Short       1  Auto
+    Exif.Photo.WhiteBalance                      Short       1  Auto
+    Exif.Photo.SceneCaptureType                  Short       1  Standard
+    Exif.Image.GPSTag                            Long        1  574
+    Exif.GPSInfo.GPSLatitudeRef                  Ascii       2  North
+    Exif.GPSInfo.GPSLatitude                     Rational    3  46deg 4' 0"
+    Exif.GPSInfo.GPSLongitudeRef                 Ascii       2  East
+    Exif.GPSInfo.GPSLongitude                    Rational    3  14deg 29' 0"
+    Exif.GPSInfo.GPSAltitudeRef                  Byte        1  Above sea level
+    Exif.GPSInfo.GPSAltitude                     Rational    1  310.4 m
+    Exif.GPSInfo.GPSTimeStamp                    Rational    3  14:16:01
+    Exif.GPSInfo.GPSImgDirectionRef              Ascii       2  True direction
+    Exif.GPSInfo.GPSImgDirection                 Rational    1  25331/140
+    Exif.Thumbnail.Compression                   Short       1  JPEG (old-style)
+    Exif.Thumbnail.XResolution                   Rational    1  72
+    Exif.Thumbnail.YResolution                   Rational    1  72
+    Exif.Thumbnail.ResolutionUnit                Short       1  inch
+    Exif.Thumbnail.JPEGInterchangeFormat         Long        1  870
+    Exif.Thumbnail.JPEGInterchangeFormatLength   Long        1  13456
+
+    exiv2 -M"set Exif.Image.Model iPhone 6" lovecnabiralec.jpg
+
+    exiv2 -pt lovecnabiralec.jpg
+
+    Exif.Image.Make                              Ascii       6  Apple
+    Exif.Image.Model                             Ascii       9  iPhone 6
+    Exif.Image.Orientation                       Short       1  right, top
+    Exif.Image.XResolution                       Rational    1  72
+    Exif.Image.YResolution                       Rational    1  72
+    Exif.Image.ResolutionUnit                    Short       1  inch
+    Exif.Image.Software                          Ascii       6  5.0.1
+    Exif.Image.DateTime                          Ascii      20  2012:01:25 14:50:25
+    Exif.Image.YCbCrPositioning                  Short       1  Centered
+    Exif.Image.ExifTag                           Long        1  204
+    Exif.Photo.ExposureTime                      Rational    1  1/15 s
+    Exif.Photo.FNumber                           Rational    1  F2.8
+    Exif.Photo.ExposureProgram                   Short       1  Auto
+    Exif.Photo.ISOSpeedRatings                   Short       1  125
+    Exif.Photo.ExifVersion                       Undefined   4  2.21
+    Exif.Photo.DateTimeOriginal                  Ascii      20  2012:01:25 14:50:25
+    Exif.Photo.DateTimeDigitized                 Ascii      20  2012:01:25 14:50:25
+    Exif.Photo.ComponentsConfiguration           Undefined   4  YCbCr
+    Exif.Photo.ShutterSpeedValue                 SRational   1  1/15 s
+    Exif.Photo.ApertureValue                     Rational    1  F2.8
+    Exif.Photo.BrightnessValue                   SRational   1  2.28107
+    Exif.Photo.MeteringMode                      Short       1  Multi-segment
+    Exif.Photo.Flash                             Short       1  No flash
+    Exif.Photo.FocalLength                       Rational    1  3.8 mm
+    Exif.Photo.FlashpixVersion                   Undefined   4  1.00
+    Exif.Photo.ColorSpace                        Short       1  sRGB
+    Exif.Photo.PixelXDimension                   Long        1  2592
+    Exif.Photo.PixelYDimension                   Long        1  1936
+    Exif.Photo.SensingMethod                     Short       1  One-chip color area
+    Exif.Photo.CustomRendered                    Short       1  (2)
+    Exif.Photo.ExposureMode                      Short       1  Auto
+    Exif.Photo.WhiteBalance                      Short       1  Auto
+    Exif.Photo.SceneCaptureType                  Short       1  Standard
+    Exif.Image.GPSTag                            Long        1  574
+    Exif.GPSInfo.GPSLatitudeRef                  Ascii       2  North
+    Exif.GPSInfo.GPSLatitude                     Rational    3  46deg 4' 0"
+    Exif.GPSInfo.GPSLongitudeRef                 Ascii       2  East
+    Exif.GPSInfo.GPSLongitude                    Rational    3  14deg 29' 0"
+    Exif.GPSInfo.GPSAltitudeRef                  Byte        1  Above sea level
+    Exif.GPSInfo.GPSAltitude                     Rational    1  310.4 m
+    Exif.GPSInfo.GPSTimeStamp                    Rational    3  14:16:01
+    Exif.GPSInfo.GPSImgDirectionRef              Ascii       2  True direction
+    Exif.GPSInfo.GPSImgDirection                 Rational    1  25331/140
+    Exif.Thumbnail.Compression                   Short       1  JPEG (old-style)
+    Exif.Thumbnail.XResolution                   Rational    1  72
+    Exif.Thumbnail.YResolution                   Rational    1  72
+    Exif.Thumbnail.ResolutionUnit                Short       1  inch
+    Exif.Thumbnail.JPEGInterchangeFormat         Long        1  870
+    Exif.Thumbnail.JPEGInterchangeFormatLength   Long        1  13456
+
+    exiv2 rm lovecnabiralec.jpg
+
+    exiv2 -pt lovecnabiralec.jpg
+
+    exiv2 in lovecnabiralec.exv lovecnabiralec.jpg
+
+    exiv2 -pt lovecnabiralec.jpg
+
+    Exif.Image.Make                              Ascii       6  Apple
+    Exif.Image.Model                             Ascii       9  iPhone 4
+    Exif.Image.Orientation                       Short       1  right, top
+    Exif.Image.XResolution                       Rational    1  72
+    Exif.Image.YResolution                       Rational    1  72
+    Exif.Image.ResolutionUnit                    Short       1  inch
+    Exif.Image.Software                          Ascii       6  5.0.1
+    Exif.Image.DateTime                          Ascii      20  2012:01:25 14:50:25
+    Exif.Image.YCbCrPositioning                  Short       1  Centered
+    Exif.Image.ExifTag                           Long        1  204
+    Exif.Photo.ExposureTime                      Rational    1  1/15 s
+    Exif.Photo.FNumber                           Rational    1  F2.8
+    Exif.Photo.ExposureProgram                   Short       1  Auto
+    Exif.Photo.ISOSpeedRatings                   Short       1  125
+    Exif.Photo.ExifVersion                       Undefined   4  2.21
+    Exif.Photo.DateTimeOriginal                  Ascii      20  2012:01:25 14:50:25
+    Exif.Photo.DateTimeDigitized                 Ascii      20  2012:01:25 14:50:25
+    Exif.Photo.ComponentsConfiguration           Undefined   4  YCbCr
+    Exif.Photo.ShutterSpeedValue                 SRational   1  1/15 s
+    Exif.Photo.ApertureValue                     Rational    1  F2.8
+    Exif.Photo.BrightnessValue                   SRational   1  2.28107
+    Exif.Photo.MeteringMode                      Short       1  Multi-segment
+    Exif.Photo.Flash                             Short       1  No flash
+    Exif.Photo.FocalLength                       Rational    1  3.8 mm
+    Exif.Photo.FlashpixVersion                   Undefined   4  1.00
+    Exif.Photo.ColorSpace                        Short       1  sRGB
+    Exif.Photo.PixelXDimension                   Long        1  2592
+    Exif.Photo.PixelYDimension                   Long        1  1936
+    Exif.Photo.SensingMethod                     Short       1  One-chip color area
+    Exif.Photo.CustomRendered                    Short       1  (2)
+    Exif.Photo.ExposureMode                      Short       1  Auto
+    Exif.Photo.WhiteBalance                      Short       1  Auto
+    Exif.Photo.SceneCaptureType                  Short       1  Standard
+    Exif.Image.GPSTag                            Long        1  574
+    Exif.GPSInfo.GPSLatitudeRef                  Ascii       2  North
+    Exif.GPSInfo.GPSLatitude                     Rational    3  46deg 4' 0"
+    Exif.GPSInfo.GPSLongitudeRef                 Ascii       2  East
+    Exif.GPSInfo.GPSLongitude                    Rational    3  14deg 29' 0"
+    Exif.GPSInfo.GPSAltitudeRef                  Byte        1  Above sea level
+    Exif.GPSInfo.GPSAltitude                     Rational    1  310.4 m
+    Exif.GPSInfo.GPSTimeStamp                    Rational    3  14:16:01
+    Exif.GPSInfo.GPSImgDirectionRef              Ascii       2  True direction
+    Exif.GPSInfo.GPSImgDirection                 Rational    1  25331/140
+    Exif.Thumbnail.Compression                   Short       1  JPEG (old-style)
+    Exif.Thumbnail.XResolution                   Rational    1  72
+    Exif.Thumbnail.YResolution                   Rational    1  72
+    Exif.Thumbnail.ResolutionUnit                Short       1  inch
+    Exif.Thumbnail.JPEGInterchangeFormat         Long        1  870
+    Exif.Thumbnail.JPEGInterchangeFormatLength   Long        1  13456
+
+With the `exiftool` tool, we can first extract all the metadata with the `-h` setting to a `.html` type file. The names for addressing individual metadata fields are printed with the `-args` setting. Individual metadata can be manipulated with the `-X` setting, where X represents the field we want to change with the `=` command, add it with the `+=` command, or delete it with the `-=` command. The original version of the image can be restored with the `-restore_original` command, as the tool keeps it just in case.
+
+    exiftool -h lovecnabiralec.jpg > lovecnabiralec.html
+
+    exiftool -args lovecnabiralec.jpg
+
+    -ExifToolVersion=12.16
+    -FileName=lovecnabiralec.jpg
+    -Directory=.
+    -FileSize=2.6 MiB
+    -FileModifyDate=2023:03:13 15:53:09+01:00
+    -FileAccessDate=2023:03:13 15:53:10+01:00
+    -FileInodeChangeDate=2023:03:13 15:53:09+01:00
+    -FilePermissions=rw-r--r--
+    -FileType=JPEG
+    -FileTypeExtension=jpg
+    -MIMEType=image/jpeg
+    -ExifByteOrder=Little-endian (Intel, II)
+    -Make=Apple
+    -Model=iPhone 4
+    -Orientation=Rotate 90 CW
+    -XResolution=72
+    -YResolution=72
+    -ResolutionUnit=inches
+    -Software=5.0.1
+    -ModifyDate=2012:01:25 14:50:25
+    -YCbCrPositioning=Centered
+    -ExposureTime=1/15
+    -FNumber=2.8
+    -ExposureProgram=Program AE
+    -ISO=125
+    -ExifVersion=0221
+    -DateTimeOriginal=2012:01:25 14:50:25
+    -CreateDate=2012:01:25 14:50:25
+    -ComponentsConfiguration=Y, Cb, Cr, -
+    -ShutterSpeedValue=1/15
+    -ApertureValue=2.8
+    -BrightnessValue=2.281069959
+    -MeteringMode=Multi-segment
+    -Flash=No Flash
+    -FocalLength=3.9 mm
+    -FlashpixVersion=0100
+    -ColorSpace=sRGB
+    -ExifImageWidth=2592
+    -ExifImageHeight=1936
+    -SensingMethod=One-chip color area
+    -CustomRendered=HDR (no original saved)
+    -ExposureMode=Auto
+    -WhiteBalance=Auto
+    -SceneCaptureType=Standard
+    -GPSLatitudeRef=North
+    -GPSLongitudeRef=East
+    -GPSAltitudeRef=Above Sea Level
+    -GPSTimeStamp=14:16:01
+    -GPSImgDirectionRef=True North
+    -GPSImgDirection=180.9357143
+    -Compression=JPEG (old-style)
+    -ThumbnailOffset=882
+    -ThumbnailLength=13456
+    -ImageWidth=2592
+    -ImageHeight=1936
+    -EncodingProcess=Baseline DCT, Huffman coding
+    -BitsPerSample=8
+    -ColorComponents=3
+    -YCbCrSubSampling=YCbCr4:2:0 (2 2)
+    -Aperture=2.8
+    -ImageSize=2592x1936
+    -Megapixels=5.0
+    -ShutterSpeed=1/15
+    -ThumbnailImage=(Binary data 13456 bytes, use -b option to extract)
+    -GPSAltitude=310.3 m Above Sea Level
+    -GPSLatitude=46 deg 4' 27.00" N
+    -GPSLongitude=14 deg 28' 40.80" E
+    -FocalLength35efl=3.9 mm
+    -GPSPosition=46 deg 4' 27.00" N, 14 deg 28' 40.80" E
+    -LightValue=6.6
+
+    exiftool -Make="Samsung" lovecnabiralec.jpg 
+    1 image files updated
+
+    exiftool -args lovecnabiralec.jpg
+
+    -ExifToolVersion=12.16
+    -FileName=lovecnabiralec.jpg
+    -Directory=.
+    -FileSize=2.6 MiB
+    -FileModifyDate=2023:03:13 16:16:50+01:00
+    -FileAccessDate=2023:03:13 16:16:50+01:00
+    -FileInodeChangeDate=2023:03:13 16:16:50+01:00
+    -FilePermissions=rw-r--r--
+    -FileType=JPEG
+    -FileTypeExtension=jpg
+    -MIMEType=image/jpeg
+    -ExifByteOrder=Little-endian (Intel, II)
+    -Make=Samsung
+    -Model=iPhone 4
+    -Orientation=Rotate 90 CW
+    -XResolution=72
+    -YResolution=72
+    -ResolutionUnit=inches
+    -Software=5.0.1
+    -ModifyDate=2012:01:25 14:50:25
+    -YCbCrPositioning=Centered
+    -ExposureTime=1/15
+    -FNumber=2.8
+    -ExposureProgram=Program AE
+    -ISO=125
+    -ExifVersion=0221
+    -DateTimeOriginal=2012:01:25 14:50:25
+    -CreateDate=2012:01:25 14:50:25
+    -ComponentsConfiguration=Y, Cb, Cr, -
+    -ShutterSpeedValue=1/15
+    -ApertureValue=2.8
+    -BrightnessValue=2.281069959
+    -MeteringMode=Multi-segment
+    -Flash=No Flash
+    -FocalLength=3.9 mm
+    -FlashpixVersion=0100
+    -ColorSpace=sRGB
+    -ExifImageWidth=2592
+    -ExifImageHeight=1936
+    -SensingMethod=One-chip color area
+    -CustomRendered=HDR (no original saved)
+    -ExposureMode=Auto
+    -WhiteBalance=Auto
+    -SceneCaptureType=Standard
+    -GPSLatitudeRef=North
+    -GPSLongitudeRef=East
+    -GPSAltitudeRef=Above Sea Level
+    -GPSTimeStamp=14:16:01
+    -GPSImgDirectionRef=True North
+    -GPSImgDirection=180.9357143
+    -Compression=JPEG (old-style)
+    -ThumbnailOffset=884
+    -ThumbnailLength=13456
+    -ImageWidth=2592
+    -ImageHeight=1936
+    -EncodingProcess=Baseline DCT, Huffman coding
+    -BitsPerSample=8
+    -ColorComponents=3
+    -YCbCrSubSampling=YCbCr4:2:0 (2 2)
+    -Aperture=2.8
+    -ImageSize=2592x1936
+    -Megapixels=5.0
+    -ShutterSpeed=1/15
+    -ThumbnailImage=(Binary data 13456 bytes, use -b option to extract)
+    -GPSAltitude=310.3 m Above Sea Level
+    -GPSLatitude=46 deg 4' 27.00" N
+    -GPSLongitude=14 deg 28' 40.80" E
+    -FocalLength35efl=3.9 mm
+    -GPSPosition=46 deg 4' 27.00" N, 14 deg 28' 40.80" E
+    -LightValue=6.6
+
+    ls
+
+    blinkenlichten	blinkenlichten.odt  JFP_5195.NEF  lovecnabiralec.exv  lovecnabiralec.html  lovecnabiralec.jpg  lovecnabiralec.jpg_original
+
+    exiftool -restore_original lovecnabiralec.jpg
+
+    ls
+
+    blinkenlichten	blinkenlichten.odt  JFP_5195.NEF  lovecnabiralec.exv  lovecnabiralec.html  lovecnabiralec.jpg
+
+    exiftool lovecnabiralec.jpg
+
+    ExifTool Version Number         : 12.16
+    File Name                       : lovecnabiralec.jpg
+    Directory                       : .
+    File Size                       : 2.6 MiB
+    File Modification Date/Time     : 2023:03:13 15:53:09+01:00
+    File Access Date/Time           : 2023:03:13 16:24:38+01:00
+    File Inode Change Date/Time     : 2023:03:13 16:24:37+01:00
+    File Permissions                : rw-r--r--
+    File Type                       : JPEG
+    File Type Extension             : jpg
+    MIME Type                       : image/jpeg
+    Exif Byte Order                 : Little-endian (Intel, II)
+    Make                            : Apple
+    Camera Model Name               : iPhone 4
+    Orientation                     : Rotate 90 CW
+    X Resolution                    : 72
+    Y Resolution                    : 72
+    Resolution Unit                 : inches
+    Software                        : 5.0.1
+    Modify Date                     : 2012:01:25 14:50:25
+    Y Cb Cr Positioning             : Centered
+    Exposure Time                   : 1/15
+    F Number                        : 2.8
+    Exposure Program                : Program AE
+    ISO                             : 125
+    Exif Version                    : 0221
+    Date/Time Original              : 2012:01:25 14:50:25
+    Create Date                     : 2012:01:25 14:50:25
+    Components Configuration        : Y, Cb, Cr, -
+    Shutter Speed Value             : 1/15
+    Aperture Value                  : 2.8
+    Brightness Value                : 2.281069959
+    Metering Mode                   : Multi-segment
+    Flash                           : No Flash
+    Focal Length                    : 3.9 mm
+    Flashpix Version                : 0100
+    Color Space                     : sRGB
+    Exif Image Width                : 2592
+    Exif Image Height               : 1936
+    Sensing Method                  : One-chip color area
+    Custom Rendered                 : HDR (no original saved)
+    Exposure Mode                   : Auto
+    White Balance                   : Auto
+    Scene Capture Type              : Standard
+    GPS Latitude Ref                : North
+    GPS Longitude Ref               : East
+    GPS Altitude Ref                : Above Sea Level
+    GPS Time Stamp                  : 14:16:01
+    GPS Img Direction Ref           : True North
+    GPS Img Direction               : 180.9357143
+    Compression                     : JPEG (old-style)
+    Thumbnail Offset                : 882
+    Thumbnail Length                : 13456
+    Image Width                     : 2592
+    Image Height                    : 1936
+    Encoding Process                : Baseline DCT, Huffman coding
+    Bits Per Sample                 : 8
+    Color Components                : 3
+    Y Cb Cr Sub Sampling            : YCbCr4:2:0 (2 2)
+    Aperture                        : 2.8
+    Image Size                      : 2592x1936
+    Megapixels                      : 5.0
+    Shutter Speed                   : 1/15
+    Thumbnail Image                 : (Binary data 13456 bytes, use -b option to extract)
+    GPS Altitude                    : 310.3 m Above Sea Level
+    GPS Latitude                    : 46 deg 4' 27.00" N
+    GPS Longitude                   : 14 deg 28' 40.80" E
+    Focal Length                    : 3.9 mm
+    GPS Position                    : 46 deg 4' 27.00" N, 14 deg 28' 40.80" E
+    Light Value                     : 6.6
+
+The metadata in the `blinkenlichten.odt` document can be modified directly in the `meta.xml` file and then pack all files into `blinkenlichten.zip` using the `zip` tool and rename the result to `blinkenlichten.odt`.
+
+    exiftool blinkenlichten.odt
+
+    ExifTool Version Number         : 12.16
+    File Name                       : blinkenlichten.odt
+    Directory                       : .
+    File Size                       : 11 KiB
+    File Modification Date/Time     : 2023:03:13 11:14:39+01:00
+    File Access Date/Time           : 2023:03:13 11:15:40+01:00
+    File Inode Change Date/Time     : 2023:03:13 11:14:39+01:00
+    File Permissions                : rw-r--r--
+    File Type                       : ODT
+    File Type Extension             : odt
+    MIME Type                       : application/vnd.oasis.opendocument.text
+    Initial-creator                 : Pišta Bači
+    Creation-date                   : 2019:04:16 21:06:40.274118679
+    Date                            : 2019:04:16 22:13:49.342982850
+    Creator                         : Franko Frkič
+    Editing-duration                : PT33S
+    Editing-cycles                  : 3
+    Generator                       : LibreOffice/6.1.3.2$Linux_X86_64 LibreOffice_project/10$Build-2
+    Document-statistic Table-count  : 0
+    Document-statistic Image-count  : 0
+    Document-statistic Object-count : 0
+    Document-statistic Page-count   : 1
+    Document-statistic Paragraph-count: 6
+    Document-statistic Word-count   : 44
+    Document-statistic Character-count: 344
+    Document-statistic Non-whitespace-character-count: 305
+    Preview PNG                     : (Binary data 2855 bytes, use -b option to extract)
+
+Let's check if we already have the `blinkenlichten.odt` document unpacked in the `blinkenlichten` folder, if not then repeat the steps from 2 subtasks. Open the `meta.xml` file and correct the desired metadata in it and save the file. Now we pack all the document files into `blinken.odt`.
+
+    ls blinkenlichten
+
+    Configurations2  manifest.rdf  meta.xml  settings.xml  Thumbnails
+    content.xml	 META-INF      mimetype  styles.xml
+
+    nano blinkenlichten/meta.xml
+
+    apt update
+    apt install zip
+
+    cd blinkenlichten
+    zip -r blinken.odt .
+
+    exiftool blinken.odt
+
+    ExifTool Version Number         : 12.16
+    File Name                       : blinken.odt
+    Directory                       : .
+    File Size                       : 12 KiB
+    File Modification Date/Time     : 2023:03:14 11:10:30+01:00
+    File Access Date/Time           : 2023:03:14 11:11:08+01:00
+    File Inode Change Date/Time     : 2023:03:14 11:10:30+01:00
+    File Permissions                : rw-r--r--
+    File Type                       : ODT
+    File Type Extension             : odt
+    MIME Type                       : application/vnd.oasis.opendocument.text
+    Initial-creator                 : Janez Novak
+    Creation-date                   : 2019:04:16 21:06:40.274118679
+    Date                            : 2019:04:16 22:13:49.342982850
+    Creator                         : Franko Frkič
+    Editing-duration                : PT33S
+    Editing-cycles                  : 3
+    Generator                       : LibreOffice/6.1.3.2$Linux_X86_64 LibreOffice_project/10$Build-2
+    Document-statistic Table-count  : 0
+    Document-statistic Image-count  : 0
+    Document-statistic Object-count : 0
+    Document-statistic Page-count   : 1
+    Document-statistic Paragraph-count: 6
+    Document-statistic Word-count   : 44
+    Document-statistic Character-count: 344
+    Document-statistic Non-whitespace-character-count: 305
+    Preview PNG                     : (Binary data 2855 bytes, use -b option to extract)
+
+### 4. Program for manipulating EXIF metadata in images
+
+We will write a short program in the [`Python`](https://docs.python.org/3/tutorial/index.html) programming language that reads an image and its EXIF metadata, changes one and deletes the other.
+
+    lovecnabiralec.jpg
+
+    ExifTool Version Number         : 12.16
+    File Name                       : lovecnabiralec.jpg
+    Directory                       : .
+    File Size                       : 2.6 MiB
+    File Modification Date/Time     : 2023:03:13 15:53:09+01:00
+    File Access Date/Time           : 2023:03:13 16:24:38+01:00
+    File Inode Change Date/Time     : 2023:03:13 16:24:37+01:00
+    File Permissions                : rw-r--r--
+    File Type                       : JPEG
+    File Type Extension             : jpg
+    MIME Type                       : image/jpeg
+    Exif Byte Order                 : Little-endian (Intel, II)
+    Make                            : Apple
+    Camera Model Name               : iPhone 4
+    Orientation                     : Rotate 90 CW
+    X Resolution                    : 72
+    Y Resolution                    : 72
+    Resolution Unit                 : inches
+    Software                        : 5.0.1
+    Modify Date                     : 2012:01:25 14:50:25
+    Y Cb Cr Positioning             : Centered
+    Exposure Time                   : 1/15
+    F Number                        : 2.8
+    Exposure Program                : Program AE
+    ISO                             : 125
+    Exif Version                    : 0221
+    Date/Time Original              : 2012:01:25 14:50:25
+    Create Date                     : 2012:01:25 14:50:25
+    Components Configuration        : Y, Cb, Cr, -
+    Shutter Speed Value             : 1/15
+    Aperture Value                  : 2.8
+    Brightness Value                : 2.281069959
+    Metering Mode                   : Multi-segment
+    Flash                           : No Flash
+    Focal Length                    : 3.9 mm
+    Flashpix Version                : 0100
+    Color Space                     : sRGB
+    Exif Image Width                : 2592
+    Exif Image Height               : 1936
+    Sensing Method                  : One-chip color area
+    Custom Rendered                 : HDR (no original saved)
+    Exposure Mode                   : Auto
+    White Balance                   : Auto
+    Scene Capture Type              : Standard
+    GPS Latitude Ref                : North
+    GPS Longitude Ref               : East
+    GPS Altitude Ref                : Above Sea Level
+    GPS Time Stamp                  : 14:16:01
+    GPS Img Direction Ref           : True North
+    GPS Img Direction               : 180.9357143
+    Compression                     : JPEG (old-style)
+    Thumbnail Offset                : 882
+    Thumbnail Length                : 13456
+    Image Width                     : 2592
+    Image Height                    : 1936
+    Encoding Process                : Baseline DCT, Huffman coding
+    Bits Per Sample                 : 8
+    Color Components                : 3
+    Y Cb Cr Sub Sampling            : YCbCr4:2:0 (2 2)
+    Aperture                        : 2.8
+    Image Size                      : 2592x1936
+    Megapixels                      : 5.0
+    Shutter Speed                   : 1/15
+    Thumbnail Image                 : (Binary data 13456 bytes, use -b option to extract)
+    GPS Altitude                    : 310.3 m Above Sea Level
+    GPS Latitude                    : 46 deg 4' 27.00" N
+    GPS Longitude                   : 14 deg 28' 40.80" E
+    Focal Length                    : 3.9 mm
+    GPS Position                    : 46 deg 4' 27.00" N, 14 deg 28' 40.80" E
+    Light Value                     : 6.6
+
+    apt install pip
+    pip install piexif
+    pip install Pillow
+
+    nano exifprogram.py
+
+    #!/usr/bin/python3
+
+    import piexif
+    from PIL import Image
+
+    # Open the image.
+    img = Image.open("lovecnabiralec.jpg")
+
+    # Extract EXIF metadata from the image.
+    exif_dict= piexif.load(img.info["exif"])
+
+    # Print out a single EXIF metadata datapoint.
+    altitude  = exif_dict["GPS"][piexif.GPSIFD.GPSAltitude]
+    print("Altitude: ", altitude[0]/altitude[1], altitude)
+
+    # Modify a single EXIF metadata datapoint.
+    print("Modifying the Altitude to (140,1)...")
+    exif_dict["GPS"][piexif.GPSIFD.GPSAltitude] = (140,1)
+
+    # Remove a single EXIF metadata datapoint.
+    print("Removing the Make EXIF metadata field...")
+    del exif_dict["0th"][271]
+
+    # Convert the EXIF metadata to byte array.
+    exif_bytes = piexif.dump(exif_dict)
+
+    # Create and save the image with new EXIF metadata.
+    img.save('%s' % "lovecnabiralec2.jpg", "jpeg", exif=exif_bytes)
+
+    chmod +x exifprogram.py
+    ./exifprogram.py 
+    Altitude:  310.385593220339 (73251, 236)
+    Modifying the Altitude to (140,1)...
+    Removing the Make EXIF metadata field...
+
+    exiftool lovecnabiralec2.jpg
+
+    ExifTool Version Number         : 12.16
+    File Name                       : lovecnabiralec2.jpg
+    Directory                       : .
+    File Size                       : 1050 KiB
+    File Modification Date/Time     : 2023:03:14 14:49:06+01:00
+    File Access Date/Time           : 2023:03:14 14:49:07+01:00
+    File Inode Change Date/Time     : 2023:03:14 14:49:06+01:00
+    File Permissions                : rw-r--r--
+    File Type                       : JPEG
+    File Type Extension             : jpg
+    MIME Type                       : image/jpeg
+    JFIF Version                    : 1.01
+    Exif Byte Order                 : Big-endian (Motorola, MM)
+    Camera Model Name               : iPhone 4
+    Orientation                     : Rotate 90 CW
+    X Resolution                    : 72
+    Y Resolution                    : 72
+    Resolution Unit                 : inches
+    Software                        : 5.0.1
+    Modify Date                     : 2012:01:25 14:50:25
+    Y Cb Cr Positioning             : Centered
+    Exposure Time                   : 1/15
+    F Number                        : 2.8
+    Exposure Program                : Program AE
+    ISO                             : 125
+    Exif Version                    : 0221
+    Date/Time Original              : 2012:01:25 14:50:25
+    Create Date                     : 2012:01:25 14:50:25
+    Components Configuration        : Y, Cb, Cr, -
+    Shutter Speed Value             : 1/15
+    Aperture Value                  : 2.8
+    Brightness Value                : 2.281069959
+    Metering Mode                   : Multi-segment
+    Flash                           : No Flash
+    Focal Length                    : 3.9 mm
+    Flashpix Version                : 0100
+    Color Space                     : sRGB
+    Exif Image Width                : 2592
+    Exif Image Height               : 1936
+    Sensing Method                  : One-chip color area
+    Custom Rendered                 : HDR (no original saved)
+    Exposure Mode                   : Auto
+    White Balance                   : Auto
+    Scene Capture Type              : Standard
+    GPS Latitude Ref                : North
+    GPS Longitude Ref               : East
+    GPS Altitude Ref                : Above Sea Level
+    GPS Time Stamp                  : 14:16:01
+    GPS Img Direction Ref           : True North
+    GPS Img Direction               : 180.9357143
+    Compression                     : JPEG (old-style)
+    Thumbnail Offset                : 873
+    Thumbnail Length                : 13456
+    Image Width                     : 2592
+    Image Height                    : 1936
+    Encoding Process                : Baseline DCT, Huffman coding
+    Bits Per Sample                 : 8
+    Color Components                : 3
+    Y Cb Cr Sub Sampling            : YCbCr4:2:0 (2 2)
+    Aperture                        : 2.8
+    Image Size                      : 2592x1936
+    Megapixels                      : 5.0
+    Shutter Speed                   : 1/15
+    Thumbnail Image                 : (Binary data 13456 bytes, use -b option to extract)
+    GPS Altitude                    : 140 m Above Sea Level
+    GPS Latitude                    : 46 deg 4' 27.00" N
+    GPS Longitude                   : 14 deg 28' 40.80" E
+    Focal Length                    : 3.9 mm
+    GPS Position                    : 46 deg 4' 27.00" N, 14 deg 28' 40.80" E
+    Light Value                     : 6.6
