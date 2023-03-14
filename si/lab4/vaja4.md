@@ -5,6 +5,7 @@
 1. Za podane slike ugotovite s kakšnim fotoaparatom so bile zajete, ali je bila uporabljena bliskavica in kdaj in kje je nastala.
 2. Za podano datoteko ugotovite kdo je originalni avtor dokumenta, ali je dokument spreminjal še kdo drug ter kdaj in na katerem operacijskem sistemu je nastal.
 3. Na podanih slikah in dokumentu spremenite in izbrišite posamezne metapodatke.
+4. Napišite kratek program za pridobivanje, spreminjanje in brisanje EXIF metapodatkov is slik.
 
 ## Dodatne informacije
 
@@ -12,7 +13,7 @@
 
 ### 1. Metapodatki v slikah
 
-Mnogi datotečni formati podpirajo zapis metapodatkov. Ti ponavadi vključujejo datum in čas nastanka datoteke, avtorja in program, s katerim je bila ustvarjena. Poleg tega lahko recimo slika vsebuje podatke o lokaciji in napravi, s katero je bila zajeta. Te podatke je enostavno spregledati, saj jih programi pogosto ne prikažejo, zato so pogosto vir uporabnih forenzičnih informacij.
+Mnogi datotečni formati podpirajo zapis metapodatkov. Ti ponavadi vključujejo datum in čas nastanka datoteke, avtorja in program, s katerim je bila ustvarjena. Poleg tega lahko recimo slika vsebuje podatke o lokaciji in napravi, s katero je bila zajeta. Te podatke je enostavno spregledati, saj jih programi pogosto ne prikažejo, zato so pogosto vir uporabnih forenzičnih informacij. Spletne aplikacije naj bi izbrisale metapodatke, vendar nam to noben ne zagotavlja in jih uporabljajo za analizo ali celi prodajajo drugim podjetjem predvsem oglaševalcem.
 
 Med najširše uporabljanimi standardi za zapis metapodatkov v slikah in videoposnetkih so Exif, IPTC in XMP, ki jih lahko obdelujemo z uporabo knjižnice in orodij [Exiv2](https://exiv2.org/). Dokumenti v sodobnih formatih, kot so Office Open XML, OpenDocument in EPUB, so shranjeni kot navadne datoteke ZIP, v kateri je med drugim tudi datoteka z metapodatki (ponavadi zapisana v formatu XML).
 
@@ -218,6 +219,7 @@ Za branje metapodatkov lahko uporabimo namenska orodja, kot sta  [`exiv2`](https
     ExifLoader: The data supplied does not seem to contain EXIF data.
 
     exiftool JFP_5195.NEF 
+
     ExifTool Version Number         : 12.16
     File Name                       : JFP_5195.NEF
     Directory                       : .
@@ -234,7 +236,7 @@ Za branje metapodatkov lahko uporabimo namenska orodja, kot sta  [`exiv2`](https
     Camera Model Name               : NIKON D4
     Orientation                     : Horizontal (normal)
     Software                        : Ver.1.02
-    Modify Date  `blinkenlichten.odt`                   : 2013:06:12 13:44:18
+    Modify Date                     : 2013:06:12 13:44:18
     Artist                          : 
     Jpg From Raw Start              : 786432
     Jpg From Raw Length             : 513834
@@ -294,7 +296,15 @@ Za branje metapodatkov lahko uporabimo namenska orodja, kot sta  [`exiv2`](https
     Color Space                     : sRGB
     VR Info Version                 : 0100
     Vibration Reduction             : Off
-    VR Mode      `blinkenlichten.odt`nt                  : None
+    VR Mode                         : Normal
+    Active D-Lighting               : Off
+    Picture Control Version         : 0100
+    Picture Control Name            : Neutral
+    Picture Control Base            : Neutral
+    Picture Control Adjust          : Default Settings
+    Picture Control Quick Adjust    : n/a
+    Brightness                      : Normal
+    Hue Adjustment                  : None
     Filter Effect                   : n/a
     Toning Effect                   : n/a
     Toning Saturation               : n/a
@@ -351,7 +361,7 @@ Za branje metapodatkov lahko uporabimo namenska orodja, kot sta  [`exiv2`](https
     Auto Bracket Mode M             : Flash/Speed
     Func Button                     : My Menu
     Func Button Plus Dials          : None
-    Preview Butt`blinkenlichten.odt`on                  : Preview
+    Preview Button                  : Preview
     Preview Button Plus Dials       : None
     Assign Bkt Button               : Auto Bracketing
     Command Dials Change Main Sub   : Autofocus Off, Exposure Off
@@ -507,6 +517,21 @@ Za branje metapodatkov lahko uporabimo namenska orodja, kot sta  [`exiv2`](https
     Focal Length                    : 35.0 mm (35 mm equivalent: 35.0 mm)
     Hyperfocal Distance             : 8.15 m
     Light Value                     : 10.3
+
+Slike lahko vsebujejo tudi različice slike z nižjo resolucijo, ki jih lahko uporabimo za ugotavljanje ali je bila prvotna slika spremenjena ali ne. Prav tako, nam pridejo prav, ko je originalna slika poškodovana. Sliko nižje resolucije lahko izluščimo z orodjem `exiftool` in nastavitvijo `-ThumbnailImage`. Orodje [`dcraw`](https://linux.die.net/man/1/dcraw) nam omogoča izluščanje slik z nižjo resolucijo ter popravljanje originalnih slik. Vse pridobljene slike si ogledamo s programom za prikazovanje slik (originalna slika - `.NEF`, slika z nižjo resolucijo `.thumb.jpg` in popravljena slika - `.ppm`).
+
+    exiftool -b -ThumbnailImage lovecnabiralec.jpg > lovecnabiralec_t.jpg
+
+    apt update
+    apt instal dcraw
+    dcraw JFP_5195.NEF
+    dcraw -e JFP_5195.NEF
+
+V splošnem lahko na podlagi zajete slike ugotovimo s katerim fotoaparatom je bila zajeta z:
+
+- EXIF metapodatki.
+- [Kromatično aberacijo](https://en.wikipedia.org/wiki/Chromatic_aberration).
+- Napakami na posameznih pikslih, ki so rahlo svetlejši in temnejši in z večjo količino slik lahko zgradimo model naprave.
 
 ### 2. Metapodatki v dokumentih
 
@@ -1014,3 +1039,242 @@ Z orodjem `exiftool` lahko najprej izluščimo vse podatke z nastavitvijo `-h` v
     Light Value                     : 6.6
 
 Metapodatke v dokumentu `blinkenlichten.odt` pa lahko popravimo kar direktno v datoteki `meta.xml` in nato vse datoteke zapakiramo v `blinkenlichten.zip` z orodjem `zip` ter rezultat preimenujemo v `blinkenlichten.odt`.
+
+    exiftool blinkenlichten.odt 
+    ExifTool Version Number         : 12.16
+    File Name                       : blinkenlichten.odt
+    Directory                       : .
+    File Size                       : 11 KiB
+    File Modification Date/Time     : 2023:03:13 11:14:39+01:00
+    File Access Date/Time           : 2023:03:13 11:15:40+01:00
+    File Inode Change Date/Time     : 2023:03:13 11:14:39+01:00
+    File Permissions                : rw-r--r--
+    File Type                       : ODT
+    File Type Extension             : odt
+    MIME Type                       : application/vnd.oasis.opendocument.text
+    Initial-creator                 : Pišta Bači
+    Creation-date                   : 2019:04:16 21:06:40.274118679
+    Date                            : 2019:04:16 22:13:49.342982850
+    Creator                         : Franko Frkič
+    Editing-duration                : PT33S
+    Editing-cycles                  : 3
+    Generator                       : LibreOffice/6.1.3.2$Linux_X86_64 LibreOffice_project/10$Build-2
+    Document-statistic Table-count  : 0
+    Document-statistic Image-count  : 0
+    Document-statistic Object-count : 0
+    Document-statistic Page-count   : 1
+    Document-statistic Paragraph-count: 6
+    Document-statistic Word-count   : 44
+    Document-statistic Character-count: 344
+    Document-statistic Non-whitespace-character-count: 305
+    Preview PNG                     : (Binary data 2855 bytes, use -b option to extract)
+
+Preverimo ali imamo že odpakiran dokument `blinkenlichten.odt` v mapi `blinkenlichten`, če ne potem ponovimo korake iz 2 pod naloge. Odpremo datoteko `meta.xml` in v njej popravimo željen meta podatek in datoteko shranimo. Sedaj še zapakiramo vse datoteke dokumenta v `blinken.odt`
+    
+    ls blinkenlichten
+
+    Configurations2  manifest.rdf  meta.xml  settings.xml  Thumbnails
+    content.xml	 META-INF      mimetype  styles.xml
+
+    nano blinkenlichten/meta.xml
+
+    apt update
+    apt install zip
+
+    cd blinkenlichten
+    zip -r blinken.odt .
+
+    exiftool blinken.odt
+
+    ExifTool Version Number         : 12.16
+    File Name                       : blinken.odt
+    Directory                       : .
+    File Size                       : 12 KiB
+    File Modification Date/Time     : 2023:03:14 11:10:30+01:00
+    File Access Date/Time           : 2023:03:14 11:11:08+01:00
+    File Inode Change Date/Time     : 2023:03:14 11:10:30+01:00
+    File Permissions                : rw-r--r--
+    File Type                       : ODT
+    File Type Extension             : odt
+    MIME Type                       : application/vnd.oasis.opendocument.text
+    Initial-creator                 : Janez Novak
+    Creation-date                   : 2019:04:16 21:06:40.274118679
+    Date                            : 2019:04:16 22:13:49.342982850
+    Creator                         : Franko Frkič
+    Editing-duration                : PT33S
+    Editing-cycles                  : 3
+    Generator                       : LibreOffice/6.1.3.2$Linux_X86_64 LibreOffice_project/10$Build-2
+    Document-statistic Table-count  : 0
+    Document-statistic Image-count  : 0
+    Document-statistic Object-count : 0
+    Document-statistic Page-count   : 1
+    Document-statistic Paragraph-count: 6
+    Document-statistic Word-count   : 44
+    Document-statistic Character-count: 344
+    Document-statistic Non-whitespace-character-count: 305
+    Preview PNG                     : (Binary data 2855 bytes, use -b option to extract)
+
+### 4. Program za manipulacijo z EXIF metapodatki v slikah
+
+Napisali bomo kratek program v programskem jeziku `Python`, ki prebere sliko in njene EXIF podatke, spremeni enega in drugega izbriše.
+
+    lovecnabiralec.jpg
+
+    ExifTool Version Number         : 12.16
+    File Name                       : lovecnabiralec.jpg
+    Directory                       : .
+    File Size                       : 2.6 MiB
+    File Modification Date/Time     : 2023:03:13 15:53:09+01:00
+    File Access Date/Time           : 2023:03:13 16:24:38+01:00
+    File Inode Change Date/Time     : 2023:03:13 16:24:37+01:00
+    File Permissions                : rw-r--r--
+    File Type                       : JPEG
+    File Type Extension             : jpg
+    MIME Type                       : image/jpeg
+    Exif Byte Order                 : Little-endian (Intel, II)
+    Make                            : Apple
+    Camera Model Name               : iPhone 4
+    Orientation                     : Rotate 90 CW
+    X Resolution                    : 72
+    Y Resolution                    : 72
+    Resolution Unit                 : inches
+    Software                        : 5.0.1
+    Modify Date                     : 2012:01:25 14:50:25
+    Y Cb Cr Positioning             : Centered
+    Exposure Time                   : 1/15
+    F Number                        : 2.8
+    Exposure Program                : Program AE
+    ISO                             : 125
+    Exif Version                    : 0221
+    Date/Time Original              : 2012:01:25 14:50:25
+    Create Date                     : 2012:01:25 14:50:25
+    Components Configuration        : Y, Cb, Cr, -
+    Shutter Speed Value             : 1/15
+    Aperture Value                  : 2.8
+    Brightness Value                : 2.281069959
+    Metering Mode                   : Multi-segment
+    Flash                           : No Flash
+    Focal Length                    : 3.9 mm
+    Flashpix Version                : 0100
+    Color Space                     : sRGB
+    Exif Image Width                : 2592
+    Exif Image Height               : 1936
+    Sensing Method                  : One-chip color area
+    Custom Rendered                 : HDR (no original saved)
+    Exposure Mode                   : Auto
+    White Balance                   : Auto
+    Scene Capture Type              : Standard
+    GPS Latitude Ref                : North
+    GPS Longitude Ref               : East
+    GPS Altitude Ref                : Above Sea Level
+    GPS Time Stamp                  : 14:16:01
+    GPS Img Direction Ref           : True North
+    GPS Img Direction               : 180.9357143
+    Compression                     : JPEG (old-style)
+    Thumbnail Offset                : 882
+    Thumbnail Length                : 13456
+    Image Width                     : 2592
+    Image Height                    : 1936
+    Encoding Process                : Baseline DCT, Huffman coding
+    Bits Per Sample                 : 8
+    Color Components                : 3
+    Y Cb Cr Sub Sampling            : YCbCr4:2:0 (2 2)
+    Aperture                        : 2.8
+    Image Size                      : 2592x1936
+    Megapixels                      : 5.0
+    Shutter Speed                   : 1/15
+    Thumbnail Image                 : (Binary data 13456 bytes, use -b option to extract)
+    GPS Altitude                    : 310.3 m Above Sea Level
+    GPS Latitude                    : 46 deg 4' 27.00" N
+    GPS Longitude                   : 14 deg 28' 40.80" E
+    Focal Length                    : 3.9 mm
+    GPS Position                    : 46 deg 4' 27.00" N, 14 deg 28' 40.80" E
+    Light Value                     : 6.6
+
+    apt install pip
+    pip install piexif
+    pip install Pillow
+
+    nano exifprogram.py
+
+    chmod +x exifprogram.py
+    ./exifprogram.py 
+    Altitude:  310.385593220339 (73251, 236)
+    Modifying the Altitude to (140,1)...
+    Removing the Make EXIF metadata field...
+
+    exiftool lovecnabiralec2.jpg
+
+    ExifTool Version Number         : 12.16
+    File Name                       : lovecnabiralec2.jpg
+    Directory                       : .
+    File Size                       : 1050 KiB
+    File Modification Date/Time     : 2023:03:14 14:49:06+01:00
+    File Access Date/Time           : 2023:03:14 14:49:07+01:00
+    File Inode Change Date/Time     : 2023:03:14 14:49:06+01:00
+    File Permissions                : rw-r--r--
+    File Type                       : JPEG
+    File Type Extension             : jpg
+    MIME Type                       : image/jpeg
+    JFIF Version                    : 1.01
+    Exif Byte Order                 : Big-endian (Motorola, MM)
+    Camera Model Name               : iPhone 4
+    Orientation                     : Rotate 90 CW
+    X Resolution                    : 72
+    Y Resolution                    : 72
+    Resolution Unit                 : inches
+    Software                        : 5.0.1
+    Modify Date                     : 2012:01:25 14:50:25
+    Y Cb Cr Positioning             : Centered
+    Exposure Time                   : 1/15
+    F Number                        : 2.8
+    Exposure Program                : Program AE
+    ISO                             : 125
+    Exif Version                    : 0221
+    Date/Time Original              : 2012:01:25 14:50:25
+    Create Date                     : 2012:01:25 14:50:25
+    Components Configuration        : Y, Cb, Cr, -
+    Shutter Speed Value             : 1/15
+    Aperture Value                  : 2.8
+    Brightness Value                : 2.281069959
+    Metering Mode                   : Multi-segment
+    Flash                           : No Flash
+    Focal Length                    : 3.9 mm
+    Flashpix Version                : 0100
+    Color Space                     : sRGB
+    Exif Image Width                : 2592
+    Exif Image Height               : 1936
+    Sensing Method                  : One-chip color area
+    Custom Rendered                 : HDR (no original saved)
+    Exposure Mode                   : Auto
+    White Balance                   : Auto
+    Scene Capture Type              : Standard
+    GPS Latitude Ref                : North
+    GPS Longitude Ref               : East
+    GPS Altitude Ref                : Above Sea Level
+    GPS Time Stamp                  : 14:16:01
+    GPS Img Direction Ref           : True North
+    GPS Img Direction               : 180.9357143
+    Compression                     : JPEG (old-style)
+    Thumbnail Offset                : 873
+    Thumbnail Length                : 13456
+    Image Width                     : 2592
+    Image Height                    : 1936
+    Encoding Process                : Baseline DCT, Huffman coding
+    Bits Per Sample                 : 8
+    Color Components                : 3
+    Y Cb Cr Sub Sampling            : YCbCr4:2:0 (2 2)
+    Aperture                        : 2.8
+    Image Size                      : 2592x1936
+    Megapixels                      : 5.0
+    Shutter Speed                   : 1/15
+    Thumbnail Image                 : (Binary data 13456 bytes, use -b option to extract)
+    GPS Altitude                    : 140 m Above Sea Level
+    GPS Latitude                    : 46 deg 4' 27.00" N
+    GPS Longitude                   : 14 deg 28' 40.80" E
+    Focal Length                    : 3.9 mm
+    GPS Position                    : 46 deg 4' 27.00" N, 14 deg 28' 40.80" E
+    Light Value                     : 6.6
+
+
+
