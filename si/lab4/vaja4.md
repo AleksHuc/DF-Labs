@@ -1040,7 +1040,8 @@ Z orodjem `exiftool` lahko najprej izluščimo vse podatke z nastavitvijo `-h` v
 
 Metapodatke v dokumentu `blinkenlichten.odt` pa lahko popravimo kar direktno v datoteki `meta.xml` in nato vse datoteke zapakiramo v `blinkenlichten.zip` z orodjem `zip` ter rezultat preimenujemo v `blinkenlichten.odt`.
 
-    exiftool blinkenlichten.odt 
+    exiftool blinkenlichten.odt
+
     ExifTool Version Number         : 12.16
     File Name                       : blinkenlichten.odt
     Directory                       : .
@@ -1197,6 +1198,35 @@ Napisali bomo kratek program v programskem jeziku `Python`, ki prebere sliko in 
 
     nano exifprogram.py
 
+    #!/usr/bin/python3
+
+    import piexif
+    from PIL import Image
+
+    # Open the image.
+    img = Image.open("lovecnabiralec.jpg")
+
+    # Extract EXIF metadata from the image.
+    exif_dict= piexif.load(img.info["exif"])
+
+    # Print out a single EXIF metadata datapoint.
+    altitude  = exif_dict["GPS"][piexif.GPSIFD.GPSAltitude]
+    print("Altitude: ", altitude[0]/altitude[1], altitude)
+
+    # Modify a single EXIF metadata datapoint.
+    print("Modifying the Altitude to (140,1)...")
+    exif_dict["GPS"][piexif.GPSIFD.GPSAltitude] = (140,1)
+
+    # Remove a single EXIF metadata datapoint.
+    print("Removing the Make EXIF metadata field...")
+    del exif_dict["0th"][271]
+
+    # Convert the EXIF metadata to byte array.
+    exif_bytes = piexif.dump(exif_dict)
+
+    # Create and save the image with new EXIF metadata.
+    img.save('%s' % "lovecnabiralec2.jpg", "jpeg", exif=exif_bytes)
+
     chmod +x exifprogram.py
     ./exifprogram.py 
     Altitude:  310.385593220339 (73251, 236)
@@ -1275,6 +1305,3 @@ Napisali bomo kratek program v programskem jeziku `Python`, ki prebere sliko in 
     Focal Length                    : 3.9 mm
     GPS Position                    : 46 deg 4' 27.00" N, 14 deg 28' 40.80" E
     Light Value                     : 6.6
-
-
-
