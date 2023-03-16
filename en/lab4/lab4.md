@@ -24,7 +24,7 @@ Download the following two images from [website](https://polz.si/dsrf/):
 
 First open the images by double-clicking and displaying their additional properties within the application, or by right-clicking and selecting the `Details` option. Additional information about the image, which is stored in a file next to the image, is called metadata or also [EXIF data (Exchangeable Image File Format)](https://en.wikipedia.org/wiki/Exif).
 
-To read metadata we can use dedicated tools such as [`exiv2`](https://linux.die.net/man/1/exiv2), [`exif`](https://manpages.debian.org/bullseye /exif/exif.1.en.html) and [`exiftool`](https://linux.die.net/man/1/exiftool). With them, we can access all the metadata stored in the image and not only those displayed by the image display program. We install them with the package manager on our operating system and use them to print out the metadata of our two images.
+To read metadata we can use dedicated tools such as [`exiv2`](https://linux.die.net/man/1/exiv2), [`exif`](https://manpages.debian.org/bullseye/exif/exif.1.en.html) and [`exiftool`](https://linux.die.net/man/1/exiftool). With them, we can access all the metadata stored in the image and not only those displayed by the image display program. We install them with the package manager on our operating system and use them to print out the metadata of our two images.
 
 apt update
     apt install exiv2 exif exiftool
