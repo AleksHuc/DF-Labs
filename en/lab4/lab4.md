@@ -19,7 +19,7 @@ Among the most widely used standards for recording metadata in images and videos
 
 Download the following two images from [website](https://polz.si/dsrf/):
 
-- `huntergatherer.jpg`
+- `lovecnabiralec.jpg`
 - `JFP_5195.NEF`
 
 First open the images by double-clicking and displaying their additional properties within the application, or by right-clicking and selecting the `Details` option. Additional information about the image, which is stored in a file next to the image, is called metadata or also [EXIF data (Exchangeable Image File Format)](https://en.wikipedia.org/wiki/Exif).
@@ -613,7 +613,7 @@ The file `blinkenlichten.odt` contains the document and the metadata in separate
     Configurations2  content.xml  manifest.rdf  META-INF  meta.xml	mimetype  settings.xml	styles.xml  Thumbnails
 
     apt update
-    apt instal libxml2-utils
+    apt install libxml2-utils
 
     cat meta.xml | xmllint --format -
 

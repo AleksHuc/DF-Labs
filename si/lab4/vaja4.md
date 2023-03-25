@@ -613,7 +613,7 @@ Datoteka `blinkenlichten.odt` vsebuje dokument in metapodatke v ločenih datotek
     Configurations2  content.xml  manifest.rdf  META-INF  meta.xml	mimetype  settings.xml	styles.xml  Thumbnails
 
     apt update
-    apt instal libxml2-utils
+    apt install libxml2-utils
 
     cat meta.xml | xmllint --format -
 
