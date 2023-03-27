@@ -200,7 +200,7 @@ Dodan navidezni disk `truplo1.vmdk` priklopimo v datotečni sistem ter se presta
     └─sdb1   8:17   0   10G  0 part 
     sr0     11:0    1 60.8M  0 rom  
 
-    mount /dev/sdb1 /mnt
+    mount /dev/sdb1 /mnt/truplo1
 
     cd /mnt/WINDOWS/system32/config
 

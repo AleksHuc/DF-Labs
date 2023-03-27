@@ -181,7 +181,7 @@ Logs in the operating system allow us to record events, warnings and errors that
 
 The log is in [EVT](https://forensics.wiki/windows_event_log_%28evt%29/) format, where under the `Security` tab we find successful login in the `Success Audit` system for the user `dobrota`, which is presented by the column `User`. By right-clicking on an individual record in the log, we can access additional `Properties` details. The log is located in the `C:\Windows\system32\config` folder. The library [`libevt`](https://github.com/libyal/libevt) allows us to read `EVT` files.
 
-![Details of successful lofin into the operating system.](images/lab5-vbox10.png)
+![Details of successful login into the operating system.](images/lab5-vbox10.png)
 
 Windows Vista and later Windows operating systems, however, use a log in [EVTX](https://forensics.wiki/windows_xml_event_log_%28evtx%29/) format, which stores data in the form of `XML` files. The library [`libevtx`](`https://github.com/libyal/libevtx) allows us to read `EVTX` files.
 
@@ -200,7 +200,7 @@ We connect the added virtual disk `truplo1.vmdk` to the file system and move to 
     └─sdb1   8:17   0   10G  0 part 
     sr0     11:0    1 60.8M  0 rom  
 
-    mount /dev/sdb1 /mnt
+    mount /dev/sdb1 /mnt/truplo1
 
     cd /mnt/WINDOWS/system32/config
 
