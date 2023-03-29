@@ -202,7 +202,7 @@ We connect the added virtual disk `truplo1.vmdk` to the file system and move to 
 
     mount /dev/sdb1 /mnt/truplo1
 
-    cd /mnt/WINDOWS/system32/config
+    cd /mnt/truplo1/WINDOWS/system32/config
 
     ls
 

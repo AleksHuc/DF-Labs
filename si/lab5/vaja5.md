@@ -202,7 +202,7 @@ Dodan navidezni disk `truplo1.vmdk` priklopimo v datotečni sistem ter se presta
 
     mount /dev/sdb1 /mnt/truplo1
 
-    cd /mnt/WINDOWS/system32/config
+    cd /mnt/truplo1/WINDOWS/system32/config
 
     ls
 
