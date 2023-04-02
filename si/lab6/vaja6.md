@@ -1,4 +1,4 @@
-# 6. Vaja: Iskanje Windows uporabniških imen in gesel
+# 6. Vaja: Iskanje uporabniških imen in gesel
 
 ## Navodila
 

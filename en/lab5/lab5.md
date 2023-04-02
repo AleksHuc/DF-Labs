@@ -1,4 +1,4 @@
-# 5. lab: Windows registry and logs
+# 5. Lab: Windows registry and logs
 
 ## Instructions
 

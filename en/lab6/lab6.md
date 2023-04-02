@@ -1,4 +1,4 @@
-# 6. Lab: Finding Windows usernames and passwords
+# 6. Lab: Finding usernames and passwords
 
 ## Instructions
 
