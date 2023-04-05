@@ -364,32 +364,32 @@ Sedaj izpišemo še ostale beležke v mapi `/var/log`, `/var/lib` in `.cache` te
 
     ls /var/log
 
-    alternatives.log    btmp.1	        gdm3	            syslog
-    alternatives.log.1  cups	        installer	        syslog.1
-    apache2		        daemon.log	    journal	            unattended-upgrades
-    apt		            daemon.log.1    kern.log	        user.log
-    auth.log	        debug	        kern.log.1	        user.log.1
-    auth.log.1	        debug.1	        lastlog	            vboxadd-install.log
-    boot.log	        dpkg.log	    messages	        vboxadd-setup.log
-    boot.log.1	        dpkg.log.1	    messages.1	        wtmp
-    boot.log.2	        faillog	        private
-    btmp		        fontconfig.log  speech-dispatcher
+    alternatives.log    btmp	  fontconfig.log  speech-dispatcher
+    alternatives.log.1  btmp.1	  gdm3		  syslog
+    apache2		    cups	  installer	  syslog.1
+    apt		    daemon.log	  journal	  unattended-upgrades
+    auth.log	    daemon.log.1  kern.log	  user.log
+    auth.log.1	    debug	  kern.log.1	  user.log.1
+    boot.log	    debug.1	  lastlog	  vboxadd-install.log
+    boot.log.1	    dpkg.log	  messages	  vboxadd-setup.log
+    boot.log.2	    dpkg.log.1	  messages.1	  wtmp
+    boot.log.3	    faillog	  private
 
     ls /var/lib
 
-    AccountsService     emacsen-common  PackageKit  ucf
-    alsa		        fwupd	        pam	        udisks2
-    apache2		        gdm3	        plymouth	unattended-upgrades
-    app-info	        geoclue	        polkit-1	upower
-    apt		            ghostscript     private	    usb_modeswitch
-    aspell		        grub	        python	    usbutils
-    boltd		        ispell	        realmd	    VBoxGuestAdditions
-    colord		        libreoffice     sgml-base	vim
-    dbus		        logrotate	    snmp	    xfonts
-    dhcp		        man-db	        sudo	    xkb
-    dictionaries-common misc	        synaptic	xml-core
-    dkms		        NetworkManager  systemd
-    dpkg		        os-prober	    tpm
+    AccountsService      emacsen-common  PackageKit  ucf
+    alsa		     fwupd	     pam	 udisks2
+    apache2		     gdm3	     plymouth	 unattended-upgrades
+    app-info	     geoclue	     polkit-1	 upower
+    apt		     ghostscript     private	 usb_modeswitch
+    aspell		     grub	     python	 usbutils
+    boltd		     ispell	     realmd	 VBoxGuestAdditions
+    colord		     libreoffice     sgml-base	 vim
+    dbus		     logrotate	     snmp	 xfonts
+    dhcp		     man-db	     sudo	 xkb
+    dictionaries-common  misc	     synaptic	 xml-core
+    dkms		     NetworkManager  systemd
+    dpkg		     os-prober	     tpm
 
     ls .cache
 
@@ -641,29 +641,29 @@ Najprej moramo ugotoviti, kako sploh pridemo do dogodkov, ki jih proži tipkovni
 
     ls /dev
 
-    autofs		    input	       sdb	    tty18	tty39  tty6	      vcs6
-    block		    kmsg	       sdb1	    tty19	tty4   tty60	  vcsa
-    bsg		        log	           sg0	    tty2	tty40  tty61	  vcsa1
-    btrfs-control	loop-control   sg1	    tty20	tty41  tty62	  vcsa2
-    bus		        mapper         sg2	    tty21	tty42  tty63	  vcsa3
-    cdrom		    mem	           shm	    tty22	tty43  tty7	      vcsa4
-    char		    mqueue         snapshot tty23	tty44  tty8	      vcsa5
-    console		    net	           snd	    tty24	tty45  tty9	      vcsa6
-    core		    null	       sr0	    tty25	tty46  ttyS0	  vcsu
-    cpu		        nvram	       stderr	tty26	tty47  ttyS1	  vcsu1
-    cpu_dma_latency port	       stdin	tty27	tty48  ttyS2	  vcsu2
-    cuse		    ppp	           stdout	tty28	tty49  ttyS3	  vcsu3
-    disk		    psaux	       tty	    tty29	tty5   uhid	      vcsu4
-    dri		        ptmx	       tty0	    tty3	tty50  uinput	  vcsu5
-    dvd		        pts	           tty1	    tty30	tty51  urandom	  vcsu6
-    fb0		        random         tty10	tty31	tty52  vboxguest  vfio
-    fd		        rfkill         tty11	tty32	tty53  vboxuser   vga_arbiter
-    full		    rtc	           tty12	tty33	tty54  vcs	      vhci
-    fuse		    rtc0	       tty13	tty34	tty55  vcs1	      vhost-net
-    hidraw0		    sda	           tty14	tty35	tty56  vcs2	      vhost-vsock
-    hpet		    sda1	       tty15	tty36	tty57  vcs3	      zero
-    hugepages	    sda2	       tty16	tty37	tty58  vcs4
-    initctl		    sda5	       tty17	tty38	tty59  vcs5
+    autofs		 input	       sg0	 tty20	tty41  tty62	  vcsa2
+    block		 kmsg	       sg1	 tty21	tty42  tty63	  vcsa3
+    bsg		 log	       shm	 tty22	tty43  tty7	  vcsa4
+    btrfs-control	 loop-control  snapshot  tty23	tty44  tty8	  vcsa5
+    bus		 mapper        snd	 tty24	tty45  tty9	  vcsa6
+    cdrom		 mem	       sr0	 tty25	tty46  ttyS0	  vcsu
+    char		 mqueue        stderr	 tty26	tty47  ttyS1	  vcsu1
+    console		 net	       stdin	 tty27	tty48  ttyS2	  vcsu2
+    core		 null	       stdout	 tty28	tty49  ttyS3	  vcsu3
+    cpu		 nvram	       tty	 tty29	tty5   uhid	  vcsu4
+    cpu_dma_latency  port	       tty0	 tty3	tty50  uinput	  vcsu5
+    cuse		 ppp	       tty1	 tty30	tty51  urandom	  vcsu6
+    disk		 psaux	       tty10	 tty31	tty52  vboxguest  vfio
+    dri		 ptmx	       tty11	 tty32	tty53  vboxuser   vga_arbiter
+    dvd		 pts	       tty12	 tty33	tty54  vcs	  vhci
+    fb0		 random        tty13	 tty34	tty55  vcs1	  vhost-net
+    fd		 rfkill        tty14	 tty35	tty56  vcs2	  vhost-vsock
+    full		 rtc	       tty15	 tty36	tty57  vcs3	  zero
+    fuse		 rtc0	       tty16	 tty37	tty58  vcs4
+    hidraw0		 sda	       tty17	 tty38	tty59  vcs5
+    hpet		 sda1	       tty18	 tty39	tty6   vcs6
+    hugepages	 sda2	       tty19	 tty4	tty60  vcsa
+    initctl		 sda5	       tty2	 tty40	tty61  vcsa1
 
     ls /dev/input
 
