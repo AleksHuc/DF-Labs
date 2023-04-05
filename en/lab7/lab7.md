@@ -1,48 +1,48 @@
-# 7. Vaja: Beleženje pod operacijskim sistemom Linux
+# 7. Lab: Logging under the Linux operating system
 
-## Navodila
+## Instructions
 
-1. Poišči datoteke, ki beležijo dogodke pod operacijskim sistemom Linux.
-2. Pošlji beležke v realnem času preko mreže med dvema navideznima računalnikoma.
-3. Implementiraj program, ki bere pritiske tipkovnice in jih pošilja v sistemski dnevnik.
+1. Find the files that log events under the Linux operating system.
+2. Send logs in real time over the network between two virtual computers.
+3. Implement a program that reads keystrokes and sends them to the system log.
 
-## Dodatne informacije
+## More information
 
-## Podrobna navodila
+## Detailed instructions
 
-### 1. Beleženje pod operacijskim sistemom Linux
+### 1. Logging under the Linux operating system
 
-Beleženje dogodkov lokalno in preko mreže poteka preko protokola `Syslog`. Protokol `Syslog` in format omrežnih sporočil sta določena v [`RFC5424`](https://www.rfc-editor.org/rfc/rfc5424).
+Logging of events locally and over the network takes place via the `syslog` protocol. The `syslog` protocol and network message format are specified in [`RFC5424`](https://www.rfc-editor.org/rfc/rfc5424).
 
-Sporočilo za posamezen dogodek vsebuje:
-1. prioriteto,
-2. lokacijo,
-3. povzročitelja,
-4. čas,
-5. opis.
+The message for an individual event contains:
+1. priority,
+2. location,
+3. perpetrator of the event,
+4. time,
+5. description.
 
-Vrednost `PRI` nam opisuje nivo oz. resnost dogodka z vrednostmi med 0 in 23, kjer 0 opisuje najvišji nivo oz. najvišjo resnost. Več programov implementira `RFC5424`, saj ne definira kako hranimo podatke lokalno:
+The `PRI` value describes the level or event severity with values between 0 and 23, where 0 describes the highest level or highest severity. Several programs implement `RFC5424`, as it does not define how we store data locally:
 - [`rsyslogd`](https://linux.die.net/man/8/rsyslogd)
 - [`syslog-ng`](https://linux.die.net/man/8/syslog-ng)
 - [`syslogd`](https://linux.die.net/man/8/syslogd)
 - ...
 
-Ker programi implementirajo enak standard, si lahko med seboj izmenjujejo sporočila v formatu `syslog` (`rsyslogd` --(`syslog_message`)--> `syslog-ng`).
+Since the programs implement the same standard, they can exchange messages in `syslog` format with each other (`rsyslogd` --(`syslog_message`)--> `syslog-ng`).
 
-Program [init](https://en.wikipedia.org/wiki/Init) je prvi program, ki ga požene operacijski sistem Linux in skrbi za uporabniške procese in se zaključi, ko operacijski sistem zaustavimo. Eden izmed najbolj popularnih `init` programov je [`systemd`](https://en.wikipedia.org/wiki/Systemd), ki ima tudi svoj način beleženja dogodkov z [`journalctl`](https://www.man7.org/linux/man-pages/man1/journalctl.1.html). Beleženje z `journalctl` v primerjavi z `syslog` zavzame manj prostora saj shranjuje v binarni obliki in ne tekstovni. Dogodke začne beležiti bolj zgodaj med postopkom zagonom operacijskega sistema in tako lahko ujame več dogodkov. Prav tako, lahko pretvori svoje beležke v pravilni format in jih nato pošlje preko omrežja po protokolu `syslog`.
+The program [init](https://en.wikipedia.org/wiki/Init) is the first program launched by the Linux operating system and takes care of user processes and terminates when the operating system is shut down. One of the most popular `init` programs is [`systemd`](https://en.wikipedia.org/wiki/Systemd), which also has its own way of logging events with [`journalctl`](https://www.man7.org/linux/man-pages/man1/journalctl.1.html). Logging with `journalctl` takes up less space compared to `syslog` as it saves in binary rather than text format. It starts logging events earlier during the boot process of the operating system, so it can catch more events. Also, it can convert its logs into the correct format and then send them over the network using the `syslog` protocol.
 
-Nekateri programi ne uporabljajo `syslog` beležk, vendar imajo svoj format in lokacijo beležk, na primer [`apache2`](https://manpages.ubuntu.com/manpages/bionic/man8/apache2.8.html).
+Some programs do not use `syslog` logs, but have their own log format and location, for example [`apache2`](https://manpages.ubuntu.com/manpages/bionic/man8/apache2.8.html).
 
-Lokacije beležk:
-- `/var/log/` - sistemske beležke, na primer `/var/log/syslog`.
-- `/var/lib/` - začasne datoteke, ki se ohranijo med ponovnim zagonom, na primer `/var/lib/dpkg`.
-- `/var/spool/` - začasne datoteke, ki so trenutno v uporabi, na primer `/var/spool/cups`.
-- `.bash_history` - zgodovina ukazov v terminalu.
-- `.cache` - začasne datoteke.
+Notepad Locations:
+- `/var/log/` - system logs, for example `/var/log/syslog`.
+- `/var/lib/` - temporary files that persist across reboots, for example `/var/lib/dpkg`.
+- `/var/spool/` - temporary files currently in use, for example `/var/spool/cups`.
+- `.bash_history` - command history in the terminal.
+- `.cache` - temporary files.
 
-Sedaj kloniramo naš Linux navidezni računalnik, nastavimo omrežje na obeh na `Bridged Adapter` ali pa na `NAT network`, da sta v skupnem omrežju ter ju poženemo. Originalni navidezni računalnik nam bo služil kot strežnik, medtem ko bo klon klient.
+Now we clone our Linux virtual computer, set the network on both to `Bridged Adapter` or `NAT network` so that they are on the same network, and run them. The original virtual computer will serve us as a server, while the clone will be a client.
 
-Z ukazom [`apt`](https://manpages.ubuntu.com/manpages/xenial/man8/apt.8.html) preverimo ali imamo nameščeno kakšno implementacijo `syslog` protokola, če ne ga namestimo z upravljalcem paketom našega operacijskega sistema. Sedaj izpišemo sistemske beležke z ukazi [`cat`](https://man7.org/linux/man-pages/man1/cat.1.html), [`less`](https://man7.org/linux/man-pages/man1/less.1.html), [`tail`](https://man7.org/linux/man-pages/man1/tail.1.html) ter podobnimi.
+With the command [`apt`](https://manpages.ubuntu.com/manpages/xenial/man8/apt.8.html) we check whether we have any implementation of the `syslog` protocol installed, if we do not install it with the package manager of our operating system. Now we print the system logs with the commands [`cat`](https://man7.org/linux/man-pages/man1/cat.1.html), [`less`](https://man7.org/linux/man-pages/man1/less.1.html), [`tail`](https://man7.org/linux/man-pages/man1/tail.1.html) and the like.
 
     apt list --installed | grep syslog
 
@@ -56,11 +56,11 @@ Z ukazom [`apt`](https://manpages.ubuntu.com/manpages/xenial/man8/apt.8.html) pr
 
     tail -f /var/log/syslog
 
-Sistemske beležke `systemd` izpišemo z ukazom `journalctl`.
+The `systemd` system logs are printed out with the `journalctl` command.
 
     journalctl
 
-Sedaj namestimo program `apache2` ter preverimo njegovo delovanje z ukazom [`service`](https://www.commandlinux.com/man-page/man8/service.8.html).
+Now install the `apache2` program and check its operation with the command [`service`](https://www.commandlinux.com/man-page/man8/service.8.html).
 
     apt update
     apt install apache2
@@ -84,7 +84,7 @@ Sedaj namestimo program `apache2` ter preverimo njegovo delovanje z ukazom [`ser
     Apr 04 14:13:52 debian apachectl[3880]: AH00558: apache2: Could not reliably de>
     Apr 04 14:13:52 debian systemd[1]: Started The Apache HTTP Server.
 
-Z ukazom [`dpkg-query`](https://man7.org/linux/man-pages/man1/dpkg-query.1.html) poiščemo vse datoteke, ki so se namestili ob namestitvi paketa `apache2`.
+With the command [`dpkg-query`](https://man7.org/linux/man-pages/man1/dpkg-query.1.html) we find all the files that were installed when the `apache2` package was installed.
 
     dpkg-query -L apache2
 
@@ -334,7 +334,7 @@ Z ukazom [`dpkg-query`](https://man7.org/linux/man-pages/man1/dpkg-query.1.html)
     /usr/share/man/man8/a2dissite.8.gz
     /usr/share/man/man8/apachectl.8.gz
 
-Ugotovimo, da program `apache2` beleži dogodke v mapi `/var/log/apache2` ter hrani trenutno odprte datoteke v mapi `/var/lib/apache2`. Izpišemo, na primer dnevnik dostopov do spletne strani `/var/log/apache2/access.log`, nato odpremo spletno stran z ukazom [`curl`](https://linux.die.net/man/1/curl) in brskalnikom ter ponovno pogledamo v dnevnik dostopov.
+We find that the `apache2` program records logs in the `/var/log/apache2` folder and stores the currently open files in the `/var/lib/apache2` folder. We print out, for example, the web page access log `/var/log/apache2/access.log`, then open the web page with the command [`curl`](https://linux.die.net/man/1/curl) and a web browser and look again at the access log.
 
     ls /var/log/apache2
 
@@ -360,7 +360,7 @@ Ugotovimo, da program `apache2` beleži dogodke v mapi `/var/log/apache2` ter hr
     127.0.0.1 - - [04/Apr/2023:14:32:48 +0200] "GET /icons/openlogo-75.png HTTP/1.1" 200 6040 "http://localhost/" "Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0"
     127.0.0.1 - - [04/Apr/2023:14:32:48 +0200] "GET /favicon.ico HTTP/1.1" 404 487 "http://localhost/" "Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0"
 
-Sedaj izpišemo še ostale beležke v mapi `/var/log`, `/var/lib` in `.cache` ter datoteko `.bash_history`.
+Now let's print the rest of the notes in the `/var/log`, `/var/lib` and `.cache` folders as well as the `.bash_history` file.
 
     ls /var/log
 
@@ -396,10 +396,10 @@ Sedaj izpišemo še ostale beležke v mapi `/var/log`, `/var/lib` in `.cache` te
     appstream
 
     cat .bash_history
+    
+### 2. Sending logs over the network
 
- ### 2. Pošiljanje belež preko mreže
-
-Potrebujemo dva navidezna računalnika, prvi bo sprejemal in izpisoval dogodke, drugi mu jih bo pošiljal preko mreže. Na prvem navideznem računalniku preverimo njegov omrežni IP naslov z ukazom [`ip`](https://linux.die.net/man/8/ip), nato odpremo nastavitveno datoteko `rsyslog` programa `/etc/rsyslog.conf` in v njej odkomentiramo vrstici, ki omogočita sprejemanje dogodkov preko `UDP` omrežnega protokola. Sedaj še ponovno poženemo program `rsyslog` z ukazom `service` ter poženemo izpisovanje sistemskih dogodkov v realnem času.
+We need two virtual computers, the first one will receive and print log events, the second one will send them over the network. On the first virtual machine, check its network IP address with the command [`ip`](https://linux.die.net/man/8/ip), then open the configuration file of the `rsyslog` program `/etc/rsyslog.conf` and uncomment the lines in it that enable receiving events via `UDP` network protocol. Now we start the `rsyslog` program again with the `service` command and start printing system events in real time.
 
     ip a
 
@@ -519,7 +519,7 @@ Potrebujemo dva navidezna računalnika, prvi bo sprejemal in izpisoval dogodke, 
 
     tail -f /var/log/syslog
 
-Na drugem navideznem računalniku dodamo v nastavitveno datoteko `/etc/rsyslog.conf` nastavitev, ki preusmeri vse sistemske dogodke preko mreže našemu prvemu navideznemu račnunalniki. Sedaj še ponovno poženemo program `rsyslog` z ukazom `service` ter ustvarimo poljubne tekstovne dogodke z ukazom [`logger`](https://linux.die.net/man/1/logger).
+On the second virtual machine, we add to the configuration file `/etc/rsyslog.conf` a setting that forwards all system events over the network to our first virtual machine. Now we restart the `rsyslog` program with the `service` command and create arbitrary text events with the [`logger`](https://linux.die.net/man/1/logger) command.
 
     nano /etc/rsyslog.conf
 
@@ -621,7 +621,7 @@ Na drugem navideznem računalniku dodamo v nastavitveno datoteko `/etc/rsyslog.c
 
     logger "This is a test event!"
 
-Na prvem navideznem računalniku se nam sedaj pojavi nov dogodek v datoteki `/var/log/syslog`.
+On the first virtual computer, a new event now appears in the `/var/log/syslog` file.
 
     tail -f /var/log/syslog
     Apr  4 14:57:06 debian systemd[1]: Started System Logging Service.
@@ -635,9 +635,9 @@ Na prvem navideznem računalniku se nam sedaj pojavi nov dogodek v datoteki `/va
     Apr  4 14:59:58 debian systemd[1]: Started System Logging Service.
     Apr  4 15:10:28 debian aleks: This is a test event!
 
-### 3. Program za beleženje pritiskov na tipkovnici
+### 3. Program for recording keystrokes
 
-Najprej moramo ugotoviti, kako sploh pridemo do dogodkov, ki jih proži tipkovnica. Na operacijskem sistemu Linux imamo mapo `/dev`, ki vsebuje vse naprave, medtem ko mapa `/dev/input` vsebuje vse vhodne naprave. Vse naprave, ki prožije dogodke pa so navedene v datoteki `/proc/bus/input/devices`.
+First, we need to figure out how to get to the keyboard-triggered events in the first place. On Linux operating system we have `/dev` folder which contains all devices while `/dev/input` folder contains all input devices. All devices that trigger events are listed in the `/proc/bus/input/devices` file.
 
     ls /dev
 
@@ -759,7 +759,7 @@ Najprej moramo ugotoviti, kako sploh pridemo do dogodkov, ki jih proži tipkovni
     B: EV=40001
     B: SND=6
 
-V naše primeru tipkovnica pošilja dogodke na vhod `event0`. Da ugotovimo kakšne dogodke proži tipkovnica namestimo program [`evtest`](https://manpages.org/evtest) z upravljalcem paketov našega operacijskega sistema.
+In our example, the keyboard sends events to the `event0` input. To find out what events are triggered by the keyboard, install the program [`evtest`](https://manpages.org/evtest) with the package manager of our operating system.
 
     apt update
     apt install evtest
@@ -963,14 +963,14 @@ V naše primeru tipkovnica pošilja dogodke na vhod `event0`. Da ugotovimo kakš
     Event: time 1680637992.175462, type 1 (EV_KEY), code 36 (KEY_J), value 0
     Event: time 1680637992.175462, -------------- SYN_REPORT ------------
 
-Iz `eventX` preberemo po [16 B na enkrat ki hranijo](https://www.kernel.org/doc/Documentation/input/input.txt):
-- Unsigned integer (4 B) - Čas v sekundah.
-- Unsigned integer (4 B) - Čas v mikro sekundah.
-- Short (2 B) - Tip dogodka.
-- Short (2 B) - Koda dogodka.
-- Integer (4 B) - Vrednost, ki opisuje dogodek.
+We read from `eventX` [16 B at a time](https://www.kernel.org/doc/Documentation/input/input.txt):
+- Unsigned integer (4 B) - Time in seconds.
+- Unsigned integer (4 B) - Time in microseconds.
+- Short (2 B) - Event type.
+- Short (2 B) - Event code.
+- Integer (4 B) - A value that describes the event.
 
-Sedaj napišemo naš program v programskem jeziku Python, ki bere dogodke z vhodne naprave `/dev/input/event0`. Na enkrat prebere 16 B, ki predstavljajo sekunde, mikro sekunde, tip, kodo in vrednost. Ker želimo izpisovati samo po en dogodek ob pritisku na tipkovnico potem tvorimo dogodek le v primeru, ko ima tip vrednost 1 in vrednost in prav tako vrednost 1. Sedaj pretvorimo kodo tipke v tekstovni opis, za katerega rabimo knjižnico [`evdev`](https://pypi.org/project/evdev/) in izpišemo dogodek na standardni izhod. Nato še omogočimo, da se program zažene z ukazom [`chmod`](https://www.man7.org/linux/man-pages/man1/chmod.1.html).
+Now let's write our Python program that reads events from the input device `/dev/input/event0`. It reads 16 B at a time representing seconds, microseconds, type, code and value. Since we want to print only one event when the keyboard is pressed, we create an event only in the case when the type has the value 1 and the value and also the value 1. Now we convert the key code into a text description, for which we need the [`evdev`](https://pypi.org/project/evdev/) library and write the event to the standard output. Then we enable the execution of the program with the command [`chmod`](https://www.man7.org/linux/man-pages/man1/chmod.1.html).
 
     apt update
     apt install python3-evdev
@@ -993,7 +993,7 @@ Sedaj napišemo naš program v programskem jeziku Python, ki bere dogodke z vhod
     
     chmod +x keylogger.py
 
-Sedaj še preizkusimo delovanje, tako da v enem oknu ukazne vrstice poženemo naš program in preusmerimo njegov izhod v program `logger`. V drugem oknu ukazne vrstice pa poženemo izpisovanje sistemskih belež `/var/log/syslog` v realnem času ter začnemo pritiskati na poljubne tipke na tipkovnic.
+Now let's test the operation by running our program in one command line window and redirecting its output to the `logger` program. In the second window of the command line, we start printing system logs `/var/log/syslog` in real time and start pressing any keys on the keyboard.
 
     ./keylogger.py | logger
 
