@@ -1,0 +1,78 @@
+# 8. Lab: Browser history
+
+## Instructions
+
+1. Find out which web pages the user visited and when. The browsers used were Firefox, Chrome and Edge.
+
+## More information
+
+## Detailed instructions
+
+### 1. History of browsers
+
+Download the [archive](https://ucilnica.fri.uni-lj.si/mod/resource/view.php?id=28964) of user files from the Windows 10 system. Open the package with the [tar](https://linux.die.net/man/1/tar) command.
+
+    ls /home/aleks/Downloads/
+    
+    users.tar.xz
+
+    cd /home/aleks/Downloads/
+
+    tar -xf users.tar.xz
+
+    ls
+
+    Users users.tar.xz
+
+    chmod -R ugoa+rwx Users/
+
+Mozilla Firefox stores most of the interesting data in [SQLite](https://sqlite.org/index.html) databases. [Browsing history](https://www.foxtonforensics.com/browser-history-examiner/firefox-history-location) is stored in the `places.sqlite` file found in:
+
+- Windows XP: `C:\Documents and Settings\<USERNAME>\Application Data\Mozilla\Firefox\Profiles\<PROFILE>\places.sqlite`
+- Windows Vista (and from Windows 7 onwards): `C:\Users\<USERNAME>\AppData\Roaming\Mozilla\Firefox\Profiles\<PROFILE>\places.sqlite`
+- Linux: `~/.mozilla/firefox/<PROFILE>/places.sqlite`
+- OS X: `/Users/<USERNAME>/Library/Application Support/Firefox/Profiles/<PROFILE>/places.sqlite`
+
+To browse SQLite databases, use the command line tool [`sqlite3`](https://linux.die.net/man/1/sqlite3) or the graphical interface tool [`sqlitebrowser`](https://manpages.debian.org/stretch/sqlitebrowser/sqlitebrowser.1).
+
+    apt update
+    apt install sqlite3 sqlitebrowser
+
+Open the program by pressing the `Activities` button in the upper left corner and then the `DB Browser for SQLite` program. Inside the program, now press the `Open Database` button and open the desired file, for example `Users\<USERNAME>\AppData\Roaming\Mozilla\Firefox\Profiles\<PROFILE>\places.sqlite`.
+
+![Open SQLite database.](images/lab8-dbbrowser1.png)
+
+To view individual tables, go to the `Browse Data` tab and select the desired table in the `Table:` pull-down menu.
+
+![Output of an individual SQLite table.](images/lab8-dbbrowser2.png)
+
+Google Chrome also stores [browsing history](https://www.foxtonforensics.com/browser-history-examiner/chrome-history-location) in SQLite databases. User files are located in:
+
+- Linux: `~/.config/chromium/`
+- Windows Vista (and from Windows 7 onwards): `C:\Users\<USERNAME>\AppData\Local\Google\Chrome\User Data\Default\History`
+- Windows XP: `C:\Documents and Settings\<USERNAME>\Local Settings\Application Data\Google\Chrome\User Data\Default\History`
+
+Browsing history can also be accessed using the tools such as `sqlite3` and `DB Browser for SQLite`.
+
+Older versions of the Edge browser stored [browsing data](https://www.foxtonforensics.com/browser-history-examiner/microsoft-edge-history-location) in the [ESE](https://en.wikipedia.org/wiki/Extensible_Storage_Engine). The files are located in various places, including:
+
+- Windows 10: `C:\Users\<USERNAME>\AppData\Local\Microsoft\Windows\WebCache\WebCacheV01.dat` and `C:\Users\<USERNAME>\AppData\Local\Packages\Microsoft.MicrosoftEdge_<ID >\AC\MicrosoftEdge\User\Default\`
+
+ESE databases can be accessed with the [libesedb](https://github.com/libyal/libesedb) library and the attached programs.
+
+Newer versions of the Edge browser are based on the Google Chrome browser and store data in the same way, namely at:
+
+- Windows 10: `C:\Users\<USERNAME>\AppData\Local\Microsoft\Edge\User Data\Default\`
+
+Let's look at the older web browser Internet Explorer 5, which stores data in:
+
+- Windows XP: `C:\Documents and Settings\<USERNAME>\Local Settings\History\History.IE5\`
+- Windows 7, 8, 10: `C:\Users\<USERNAME>\AppData\Local\Microsoft\Internet Explorer\Recovery`, `C:\Users\<USERNAME>\AppData\Local\Microsoft\Windows\WebCache` and `C:\Users\<USERNAME>\Favorites`
+
+The history can be read using the [`pasco`](https://www.unix.com/man-page/debian/1/pasco) tool.
+
+    apt update
+    apt install pasco
+
+    cd /mnt/Documents\ and\ Settings/user/Local\ Settings/History/History.IE5/
+    pasco index.dat

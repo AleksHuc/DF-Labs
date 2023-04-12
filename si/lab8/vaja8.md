@@ -2,7 +2,7 @@
 
 ## Navodila
 
-1. Ugotovite, katere spletne strani je obiskal uporabnik in kdaj. Uporabljeni brskalniki so bili Firefox, Chrome in Edge. Začnite s prostima programoma.
+1. Ugotovite, katere spletne strani je obiskal uporabnik in kdaj. Uporabljeni brskalniki so bili Firefox, Chrome in Edge.
 
 ## Dodatne informacije
 
@@ -33,10 +33,10 @@ Mozilla Firefox hrani večino zanimivih podatkov v bazah [SQLite](https://sqlite
 - Linux: `~/.mozilla/firefox/<PROFILE>/places.sqlite`
 - OS X: `/Users/<USERNAME>/Library/Application Support/Firefox/Profiles/<PROFILE>/places.sqlite`
 
-Za pregledovanje SQLite podatkovnih baz uporabite program [sqlitebrowser](https://manpages.debian.org/stretch/sqlitebrowser/sqlitebrowser.1).
+Za pregledovanje SQLite podatkovnih baz uporabite orodje za ukazno vrstico [`sqlite3`](https://linux.die.net/man/1/sqlite3) ali orodje z grafičnim vmesnikom [`sqlitebrowser`](https://manpages.debian.org/stretch/sqlitebrowser/sqlitebrowser.1).
 
     apt update
-    apt install sqlitebrowser
+    apt install sqlite3 sqlitebrowser
 
 Program odpremo tako, da pritisnemo na gumb `Activities` v zgornjem levem kotu in nato na program `DB Browser for SQLite`. Znotraj programa sedaj pritisnemo na gumb `Open Database` in odpremo želeno datoteko, na primer `Users\<USERNAME>\AppData\Roaming\Mozilla\Firefox\Profiles\<PROFILE>\places.sqlite`.
 
@@ -52,9 +52,9 @@ Tudi Google Chrome hrani [zgodovino brskanja](https://www.foxtonforensics.com/br
 - Windows Vista (in od Windows 7 naprej): `C:\Users\<USERNAME>\AppData\Local\Google\Chrome\User Data\Default\History`
 - Windows XP: `C:\Documents and Settings\<USERNAME>\Local Settings\Application Data\Google\Chrome\User Data\Default\History`
 
-Do zgodovine brskanja lahko prav tako dostopamo z programom `DB Browser for SQLite`.
+Do zgodovine brskanja lahko prav tako dostopamo z orodji, kot sta `sqlite3` in `DB Browser for SQLite`.
 
-Starejše različice Edge brskalnika so hranile podatke o brskanju v bazi [ESE](https://en.wikipedia.org/wiki/Extensible_Storage_Engine). Datoteke se nahajajo na različnih mestih, med drugim v:
+Starejše različice Edge brskalnika so hranile [podatke o brskanju](https://www.foxtonforensics.com/browser-history-examiner/microsoft-edge-history-location) v bazi [ESE](https://en.wikipedia.org/wiki/Extensible_Storage_Engine). Datoteke se nahajajo na različnih mestih, med drugim v:
 
 - Windows 10: `C:\Users\<USERNAME>\AppData\Local\Microsoft\Windows\WebCache\WebCacheV01.dat` in `C:\Users\<USERNAME>\AppData\Local\Packages\Microsoft.MicrosoftEdge_<ID>\AC\MicrosoftEdge\User\Default\`
 
@@ -70,3 +70,9 @@ Poglejmo si še starejši spletni brskalnik Internet Explorer 5, ki hrani podatk
 - Windows 7, 8, 10: `C:\Users\<USERNAME>\AppData\Local\Microsoft\Internet Explorer\Recovery`, `C:\Users\<USERNAME>\AppData\Local\Microsoft\Windows\WebCache` in `C:\Users\<USERNAME>\Favorites`
 
 Zgodovino lahko preberemo z orodjem [`pasco`](https://www.unix.com/man-page/debian/1/pasco).
+
+    apt update
+    apt install pasco
+
+    cd /mnt/Documents\ and\ Settings/user/Local\ Settings/History/History.IE5/
+    pasco index.dat
