@@ -10,28 +10,63 @@
 
 ### 1. Zgodovina brskalnikov
 
-Prenesite [arhiv](https://ucilnica.fri.uni-lj.si/mod/resource/view.php?id=28964) uporabniških datotek s sistema z Windows 10. 
+Prenesite [arhiv](https://ucilnica.fri.uni-lj.si/mod/resource/view.php?id=28964) uporabniških datotek s sistema z Windows 10. Odpremo paket z ukazom [tar](https://linux.die.net/man/1/tar).
 
-Mozilla Firefox hrani večino zanimivih podatkov v bazah SQLite. Zgodovino brskanja hrani v datoteki places.sqlite, ki jo najdemo v:
+    ls /home/aleks/Downloads/
+    
+    users.tar.xz
+
+    cd /home/aleks/Downloads/
+
+    tar -xf users.tar.xz
+
+    ls
+
+    Users users.tar.xz
+
+    chmod -R ugoa+rwx Users/
+
+Mozilla Firefox hrani večino zanimivih podatkov v bazah [SQLite](https://sqlite.org/index.html). [Zgodovino brskanja](https://www.foxtonforensics.com/browser-history-examiner/firefox-history-location) hrani v datoteki `places.sqlite`, ki jo najdemo v:
 
 - Windows XP: `C:\Documents and Settings\<USERNAME>\Application Data\Mozilla\Firefox\Profiles\<PROFILE>\places.sqlite`
-- Windows Vista: `C:\Users\<USERNAME>\AppData\Roaming\Mozilla\Firefox\Profiles\<PROFILE>\places.sqlite`
+- Windows Vista (in od Windows 7 naprej): `C:\Users\<USERNAME>\AppData\Roaming\Mozilla\Firefox\Profiles\<PROFILE>\places.sqlite`
 - Linux: `~/.mozilla/firefox/<PROFILE>/places.sqlite`
 - OS X: `/Users/<USERNAME>/Library/Application Support/Firefox/Profiles/<PROFILE>/places.sqlite`
 
-Za lažje delo z bazami SQLite lahko uporabite program sqlitebrowser.
+Za pregledovanje SQLite podatkovnih baz uporabite program [sqlitebrowser](https://manpages.debian.org/stretch/sqlitebrowser/sqlitebrowser.1).
 
+    apt update
+    apt install sqlitebrowser
 
-Tudi Google Chrome hrani podatke v bazah SQLite. Uporabniške datoteke se nahajajo v:
+Program odpremo tako, da pritisnemo na gumb `Activities` v zgornjem levem kotu in nato na program `DB Browser for SQLite`. Znotraj programa sedaj pritisnemo na gumb `Open Database` in odpremo želeno datoteko, na primer `Users\<USERNAME>\AppData\Roaming\Mozilla\Firefox\Profiles\<PROFILE>\places.sqlite`.
+
+![Odprta SQLite podatkovna baza.](slike/vaja8-dbbrowser1.png)
+
+Za pregledovanje posameznih tabel se prestavimo v zavihek `Browse Data` in v izvlečno spustnem meniju `Table:` izberemo želeno tabelo.
+
+![Izpis posamezne SQLite tabele.](slike/vaja8-dbbrowser2.png)
+
+Tudi Google Chrome hrani [zgodovino brskanja](https://www.foxtonforensics.com/browser-history-examiner/chrome-history-location) v bazah SQLite. Uporabniške datoteke se nahajajo v:
 
 - Linux: `~/.config/chromium/`
-- Windows Vista (in Windows 7): `C:\Users\<USERNAME>\AppData\Local\Google\Chrome\`
-- Windows XP: `C:\Documents and Settings\<USERNAME>\Local Settings\Application Data\Google\Chrome\`
+- Windows Vista (in od Windows 7 naprej): `C:\Users\<USERNAME>\AppData\Local\Google\Chrome\User Data\Default\History`
+- Windows XP: `C:\Documents and Settings\<USERNAME>\Local Settings\Application Data\Google\Chrome\User Data\Default\History`
 
-Microsoft Edge
+Do zgodovine brskanja lahko prav tako dostopamo z programom `DB Browser for SQLite`.
 
-Edge hrani podatke o brskanju v bazi ESE. Datoteke se nahajajo na različnih mestih, med drugim v:
+Starejše različice Edge brskalnika so hranile podatke o brskanju v bazi [ESE](https://en.wikipedia.org/wiki/Extensible_Storage_Engine). Datoteke se nahajajo na različnih mestih, med drugim v:
 
 - Windows 10: `C:\Users\<USERNAME>\AppData\Local\Microsoft\Windows\WebCache\WebCacheV01.dat` in `C:\Users\<USERNAME>\AppData\Local\Packages\Microsoft.MicrosoftEdge_<ID>\AC\MicrosoftEdge\User\Default\`
 
-Za delo z bazami ESE lahko uporabite knjižnico libesedb in priložene programe.
+Do podatkovnih baz ESE lahko dostopamo s knjižnico [libesedb](https://github.com/libyal/libesedb) in priloženimi programi.
+
+Novejše različice Edge brskalnika so osnovane na Google Chrome brskalniku in hranijo podatke na enak način in sicer na mestu:
+
+- Windows 10: `C:\Users\<USERNAME>\AppData\Local\Microsoft\Edge\User Data\Default\`
+
+Poglejmo si še starejši spletni brskalnik Internet Explorer 5, ki hrani podatke v:
+
+- Windows XP: `C:\Documents and Settings\<USERNAME>\Local Settings\History\History.IE5\`
+- Windows 7, 8, 10: `C:\Users\<USERNAME>\AppData\Local\Microsoft\Internet Explorer\Recovery`, `C:\Users\<USERNAME>\AppData\Local\Microsoft\Windows\WebCache` in `C:\Users\<USERNAME>\Favorites`
+
+Zgodovino lahko preberemo z orodjem [`pasco`](https://www.unix.com/man-page/debian/1/pasco).
