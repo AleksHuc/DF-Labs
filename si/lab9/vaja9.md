@@ -357,7 +357,7 @@ rt_ons_2=
     copy_kernel_file :: create kernel log file '/tmp/kernel.log' 
     copy_kernel_file :: create kernel log file '/cache/recovery/recovery_kernel_log'
 
-Razdelek `stl11` vsebuje uporabniške in sistemske podatke.
+Razdelek `stl11` vsebuje uporabniške in sistemske podatke. Vsaka aplikacija ima svojo mapo kamor lahko shranjuje podatke, prav tako se vsak program zažene s svojim uporabnikom. Tako je aplikacija omejena in nima dostopa do podatkov, ki jih shranjujejo drugi programo. Mapa `data` vsebuje mape posameznih programov, ki vsebujejo [SQLite](https://en.wikipedia.org/wiki/SQLite) podatkovne baze.
 
     ls stl11/
 
@@ -367,3 +367,29 @@ Razdelek `stl11` vsebuje uporabniške in sistemske podatke.
     app-private  dalvik-cache  lcs.socket  property       tombstones
     backup	     data	   local       rilgps.socket  vt
 
+    cd stl11/data
+
+    find . | grep \\.db 
+
+    apt update
+    apt install sqlite3 sqlitebrowser
+
+    sqlite3 com.android.providers.telephony/databases/mmssms.db
+
+    .schema
+
+    .tables
+
+    select * from sms;
+
+    quit
+
+    sqlite3 com.android.providers.telephony/databases/telephony.db
+
+    .schema
+
+    .tables
+
+    select * from 
+
+    sqlite3 com.android.providers.telephony/databases/mwk_info.db
