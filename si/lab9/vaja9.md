@@ -14,6 +14,8 @@ V večini primerov mobilne naprave poganjajo prilagojene različice operacijskih
 
 Drugi najbolj pogosti mobilni operacijski sistem je [iOS](https://en.wikipedia.org/wiki/IOS) podjetja Apple, ki je osnovan na operacijskem sistemu [macOS](https://en.wikipedia.org/wiki/MacOS). Forenziko mobilne naprave iOS si žal ne bomo pogledali na vajah, vendar uporablja enake postopke, kot pri drugih operacijskih sistemih mobilnih naprav, seveda z nekaj specifikami.
 
+Mobilne naprave za dostop do mobilnega omrežja ponavadi potrebujejo še [SIM kartico (Subscriber Identification Module)](https://en.wikipedia.org/wiki/SIM_card), ki je svoje vrstni neodvisni računalnik ter služi za identificiranje in avtenticiranje uporabnika. Varno hrani [idenifikacijsko številko uporabnik (International Mobile Subscriber Identity (IMSI))](https://en.wikipedia.org/wiki/International_mobile_subscriber_identity) in pripadajoč ključ za šifriranje podatkov. Hrani lahko tudi omejeno število telefonskih številk in kratkih sporočil z namenom enostavnega prenosa med mobilnimi telefoni, vendar se za to danes v praksi ne uporablja več, saj te podatke hranimo na telefonu ali v oblaku. Za branje SIM kartic potrebujemo namenski bralnik in namensko programsko opremo, na primer [bralec](https://www.ladyada.net/make/simreader/) in [pySIM](https://github.com/twhiteman/pySIM).
+
 Najprej si bomo pogledali mobilni telefon [N900](https://en.wikipedia.org/wiki/Nokia_N900), ki uporablja operacijski sistem [Maemo 5](https://en.wikipedia.org/wiki/Maemo), ki deluje kot splošni Linux operacijski sistem in podpira ukaze in orodja, ki smo si jih pogledali na vajah do sedaj. Večina uporabniških podatkov je shranjenih v obliki [Berkeley DB](https://en.wikipedia.org/wiki/Berkeley_DB), do njih lahko dostopamo z orodjem [db-util](https://www.unix.com/man-page/linux/1/dbutil/). Sliko pomnilnika telefona N900 dobite [tukaj](https://polz.si/dsrf/georgepicobello.tgz).
 
     wget https://polz.si/dsrf/georgepicobello.tgz
@@ -369,27 +371,345 @@ Razdelek `stl11` vsebuje uporabniške in sistemske podatke. Vsaka aplikacija ima
 
     cd stl11/data
 
-    find . | grep \\.db 
+    find . | grep \\.db
+
+    ./com.noshufou.android.su/databases/su.db
+    ./com.google.android.youtube/databases/downloads.db
+    ./com.sec.android.app.unifiedinbox/databases/UniboxProvider.db
+    ./com.android.browser/databases/browser.db
+    ./com.android.browser/databases/webviewCache.db
+    ./com.android.browser/databases/webview.db
+    ./com.android.browser/app_appcache/ApplicationCache.db
+    ./com.android.browser/app_databases/Databases.db
+    ./com.android.browser/app_geolocation/CachedGeoposition.db
+    ./com.android.browser/app_geolocation/GeolocationPermissions.db
+    ./com.android.browser/app_icons/WebpageIcons.db
+    ./com.google.android.gm/databases/downloads.db
+    ./com.google.android.gm/databases/gmail.db
+    ./com.google.android.gm/databases/webview.db
+    ./com.google.android.gm/databases/mailstore.friforenzik@gmail.com.db
+    ./com.google.android.gm/databases/webviewCache.db
+    ./com.android.email/databases/EmailProvider.db
+    ./com.android.email/databases/EmailProviderBody.db
+    ./com.cooliris.media/databases/picasa.db
+    ./com.android.providers.userdictionary/databases/user_dict.db
+    ./com.google.android.gsf/databases/googlesettings.db
+    ./com.google.android.gsf/databases/gservices.db
+    ./com.google.android.gsf/databases/gls.db
+    ./com.google.android.gsf/databases/subscribedfeeds.db
+    ./com.google.android.gsf/databases/talk.db
+    ./com.google.android.gsf/databases/talk.db-mj41628A22
+    ./com.sec.android.providers.downloads/databases/sisodownloads.db
+    ./com.android.providers.telephony/databases/mmssms.db
+    ./com.android.providers.telephony/databases/telephony.db
+    ./com.android.providers.telephony/databases/nwk_info.db
+    ./com.android.providers.telephony/databases/tether_dun.db
+    ./com.sec.android.app.memo/databases/Memo.db
+    ./com.sec.android.app.twlauncher/databases/launcher.db
+    ./com.android.deskclock/databases/alarms.db
+    ./com.android.providers.contacts/databases/contacts2.db
+    ./com.android.providers.calendar/databases/calendar.db
+    ./com.sec.android.provider.logsprovider/databases/logs.db
+    ./com.google.android.googlequicksearchbox/databases/qsb-history.db
+    ./com.android.settings/databases/webview.db
+    ./com.android.settings/databases/webviewCache.db
+    ./com.google.android.apps.maps/databases/webview.db
+    ./com.google.android.apps.maps/databases/webviewCache.db
+    ./com.google.android.apps.maps/databases/google_analytics.db
+    ./com.google.android.apps.maps/databases/userfeedback.db
+    ./com.smlds/databases/smldsdb.db
+    ./com.sec.android.provider.badge/databases/badge.db
+    ./com.android.vending/databases/library.db
+    ./com.android.vending/databases/localappstate.db
+    ./com.android.vending/databases/package_verification.db
+    ./com.android.vending/databases/suggestions.db
+    ./com.android.providers.settings/databases/settings.db
+    ./com.android.providers.media/databases/internal.db
+    ./com.android.providers.media/databases/external-4b122b9f.db
+    ./com.osp.app.signin/databases/osp.db
+    ./com.wssyncmldm/databases/wssdmdatabase.db
+    ./com.android.providers.drm/databases/drm.db
+    ./com.sec.android.providers.drm/databases/drmdatabase.db
+    ./com.android.providers.downloads/databases/downloads.db
+    ./com.google.android.partnersetup/databases/rlz_data.db
+    ./com.facebook.lite/databases/webview.db
+    ./com.facebook.lite/databases/webviewCache.db
+    ./com.facebook.orca/databases/webview.db
+    ./com.facebook.orca/databases/webviewCache.db
 
     apt update
     apt install sqlite3 sqlitebrowser
 
     sqlite3 com.android.providers.telephony/databases/mmssms.db
 
+    .help
+
     .schema
 
     .tables
+
+    addr                 part                 sr_pending         
+    android_metadata     pdu                  threads            
+    attachments          pending_msgs         words              
+    canonical_addresses  rate                 words_content      
+    drm                  raw                  words_segdir       
+    mychannels           sms                  words_segments     
 
     select * from sms;
 
-    quit
+    1|2|668||1459156825198|0|1|-1|1|0||veljavnost tvojega bob racuna potece 31.05.2016, zato napolni svoj racun in brezskrbno uporabljaj bob storitve se naprej. cena minute, sms/mms ali MB je 6,6 centa v Sloveniji. bob|+3864044100010|0|0|1|1|
+    2|3|bob||1459426618423|0|1|-1|1|0||pozdravljen-a. obvescamo te, da s 30.4.2016 stopijo v veljavo novi pogoji gostovanja v drzavah EU. hkrati se spremenijo pogoji o nacinu obvescanja ob nizkem dobroimetju. ko stanje na tvojem racunu pade pod 0,51 eur, bos o tem obvescen-a s sms sporocilom. vec info na 068 680680 in na www.bob.si. tvoj bob|+3864044100010|0|0|0|1|
+    3|5|+38640792227||1460625266320|0|1|-1|1|0||Pozdravljeni, danes lahko pridem na ogled. Prosim za potrditev do 14.00 ure in naslov.
+    Lep dan, Rado Jurca.|+3864044100010|0|0|0|1|
+    4|6|040458386||1463398229275||1|-1|2|||Drugic daj studentom pravo telefonsko!||0|0|1|1|
+    5|6|+38640458386||1463398299796|0|1|-1|1|0||Ha ha hi hi ho ho.|+3864044100010|0|0|1|1|
+    6|6|+38640458386||1463398330261|0|1|-1|1|0||Mogoce jim bom raje dal kak piskot... ali nekaj podobnega.|+3864044100010|0|0|1|1|
+    7|6|+38640458386||1463404603265|0|1|-1|1|0||Ej, kreten! Dvign, no!|+3864044100010|0|0|1|1|
 
-    sqlite3 com.android.providers.telephony/databases/telephony.db
+    .quit
 
-    .schema
+    sqlite3 com.android.providers.contacts/databases/contacts2.db
+
+    _sync_state                       settings                        
+    _sync_state_metadata              speed_dial                      
+    accounts                          status_updates                  
+    activities                        v1_settings                     
+    agg_exceptions                    view_contacts                   
+    android_metadata                  view_contacts_restricted        
+    calls                             view_data                       
+    contact_entities_view             view_data_restricted            
+    contact_entities_view_restricted  view_groups                     
+    contacts                          view_raw_contacts               
+    data                              view_raw_contacts_restricted    
+    groups                            view_v1_contact_methods         
+    mimetypes                         view_v1_extensions              
+    name_lookup                       view_v1_group_membership        
+    nickname_lookup                   view_v1_groups                  
+    packages                          view_v1_organizations           
+    phone_lookup                      view_v1_people                  
+    properties                        view_v1_phones                  
+    raw_contacts                      view_v1_photos 
+
+    select * from contacts;
+
+    1|1|||0|0|0|0|1|1|0i1||0|0|0|1|1|vnd.sec.contact.sim|0||0||0||0|
+    2|2|||0|0|0|0|1|1|0i249||0|0|0|1|2|vnd.sec.contact.sim|0||0||0||0|
+    3|3|||0|0|0|0|1|1|0i250||0|0|0|1|3|vnd.sec.contact.sim|0||0||0||0|
+    4|4|||0|0|0|0|1|1|2238i6e2a07280ebf74c4||0|0|0|1|4|com.google|0||0||0||0|
+    5|5|||0|0|0|0|1|1|2238i2e28b2820b50eb4d||0|0|0|1|5|com.google|0||0||0||0|
+    6|6|||0|0|0|0|0|0|2238i153efc500fbd8d8d||0|0|1|1|6|com.google|0||0||0||0|
+    7|7|||0|0|0|1|1|0|2238i5b427c9c8ac2b926||0|0|1|1|7|com.google|0||0||0||0|
+    8|8|||0|0|0|0|0|0|2238i25445b56096a409b||0|0|1|1|8|com.google|0||0||0||0|
+    9|9|||0|2|1463742641757|0|0|0|2238i3cda596d8ec4895c||0|0|1|1|9|com.google|0||0||0||0|
+    10|10|45||0|0|0|0|0|0|2238i20c130e309806749||0|0|1|1|10|com.google|0||0||0||0|
+    11|11|||0|0|0|0|1|1|2238i26bdd8020a9bcbad||0|0|0|1|11|com.google|0||0||0||0|
+    13|13|||0|0|0|0|0|0|2238i5dfa6b398a24e891||0|0|1|1|13|com.google|0||0||0||0|
+
+    select * from [view_contacts];
+
+    1||40|Dusan K.|Dusan K.||0|Dusan K.|Dusan K.|1|1|0i1||0|0|0|0||0|0|1|1|vnd.sec.contact.sim|0||0||0||0|
+    2||40|Info|Info||0|Info|Info|1|1|0i249||0|0|0|0||0|0|1|2|vnd.sec.contact.sim|0||0||0||0|
+    3||40|Sklenite narocnino|Sklenite narocnino||0|Sklenite narocnino|Sklenite narocnino|1|1|0i250||0|0|0|0||0|0|1|3|vnd.sec.contact.sim|0||0||0||0|
+    4||40|Jernej Korosec|Korosec, Jernej||3|Jernej Korosec|Korosec, Jernej|1|1|2238i6e2a07280ebf74c4||0|0|0|0||0|0|1|4|com.google|0||0||0||0|
+    5||40|Forenzicarka 1|Forenzicarka 1||3|Forenzicarka 1|Forenzicarka 1|1|1|2238i2e28b2820b50eb4d||0|0|0|0||0|0|1|5|com.google|0||0||0||0|
+    6||40|polz|polz||3|polz|polz|0|0|2238i153efc500fbd8d8d||0|0|0|0||0|1|1|6|com.google|0||0||0||0|
+    7||10|polz@polz.si|polz@polz.si||0|polz@polz.si|polz@polz.si|1|0|2238i5b427c9c8ac2b926||0|0|1|0||0|1|1|7|com.google|0||0||0||0|
+    8||10|matic.junk@gmail.com|matic.junk@gmail.com||0|matic.junk@gmail.com|matic.junk@gmail.com|0|0|2238i25445b56096a409b||0|0|0|0||0|1|1|8|com.google|0||0||0||0|
+    9||10|polz@fri.uni-lj.si|polz@fri.uni-lj.si||0|polz@fri.uni-lj.si|polz@fri.uni-lj.si|0|0|2238i3cda596d8ec4895c||1463742641757|0|0|2||0|1|1|9|com.google|0||0||0||0|
+    10||10|ozbolt.menegatti@gmail.com|ozbolt.menegatti@gmail.com||0|ozbolt.menegatti@gmail.com|ozbolt.menegatti@gmail.com|0|0|2238i20c130e309806749|45|0|0|0|0||0|1|1|10|com.google|0||0||0||0|
+    11||40|Luka Krsnik|Krsnik, Luka||3|Luka Krsnik|Krsnik, Luka|1|1|2238i26bdd8020a9bcbad||0|0|0|0||0|0|1|11|com.google|0||0||0||0|
+    13||10|jan@k0s.si|jan@k0s.si||0|jan@k0s.si|jan@k0s.si|0|0|2238i5dfa6b398a24e891||0|0|0|0||0|1|1|13|com.google|0||0||0||0|
+
+    select * from [view_v1_phones];
+
+    20|5|1|031844429|2||924448130|Forenzicarka 1|Forenzicarka 1|Forenzicarka 1|||friforenzik@gmail.com|com.google|0|||0|0|||20|031844429|2||924448130
+    57|11|1|040914122|2||221419040|Luka Krsnik|Luka Krsnik|Krsnik, Luka|||friforenzik@gmail.com|com.google|0|||0|0|||57|040914122|2||221419040
+    13|4|1|041424007|2||700424140|Jernej Korosec|Jernej Korosec|Korosec, Jernej|||friforenzik@gmail.com|com.google|0|||0|0|||13|041424007|2||700424140
+    2|1|1|051254503|2||305452150|Dusan K.|Dusan K.|Dusan K.|||vnd.sec.contact.sim|vnd.sec.contact.sim|0|||0|0|||2|051254503|2||305452150
+    6|3|1|080680680|2||086086080|Sklenite narocnino|Sklenite narocnino|Sklenite narocnino|||vnd.sec.contact.sim|vnd.sec.contact.sim|0|||0|0|||6|080680680|2||086086080
+    4|2|1|090068068|2||860860090|Info|Info|Info|||vnd.sec.contact.sim|vnd.sec.contact.sim|0|||0|0|||4|090068068|2||860860090
+
+    .quit
+
+    sqlite3 com.android.browser/databases/browser.db
 
     .tables
 
-    select * from 
+    android_metadata  bookmarks         folders           searches
 
-    sqlite3 com.android.providers.telephony/databases/mwk_info.db
+    select * from bookmarks;
+
+    1|Vodafone live!|http://wap.simobil.si|0|0|0||1|�PNG
+    �
+    |�PNG
+    �
+    |||0
+    2|Sign in - Google Accounts|https://accounts.google.com/ServiceLogin?continue=https%3A%2F%2Fmyaccount.google.com%2Fprivacy%2Fo%2Fads%3Futm_source%3DAndroid%26utm_campaign%3DMobileSettings&sacu=1&passive=1209600&ignoreShadow=0#Email=friforenzik%40gmail.com|1|1463394846518|0||0||||0|99
+    3|https://accounts.google.com/AccountChooser?hl=en_US&Email=friforenzik%40gmail.com&continue=https%3A%2F%2Fmyaccount.google.com%2Fprivacy%2Fo%2Fads%3Futm_source%3DAndroid%26utm_campaign%3DMobileSettings|https://accounts.google.com/AccountChooser?hl=en_US&Email=friforenzik%40gmail.com&continue=https%3A%2F%2Fmyaccount.google.com%2Fprivacy%2Fo%2Fads%3Futm_source%3DAndroid%26utm_campaign%3DMobileSettings|1|1463394846524|0||0||||0|99
+    4|Sign in - Google Accounts|https://accounts.google.com/AccountLoginInfo|2|1463394992373|0||0||||0|99
+    5|Sign in - Google Accounts|https://accounts.google.com/signin/challenge/sl/password|4|1463395091625|0||0||||0|99
+    6|https://accounts.google.com/ServiceLogin?continue=https%3A%2F%2Fmyaccount.google.com%2Fprivacy%2Fo%2Fdashboard%3Futm_source%3DAndroid%26utm_campaign%3DMobileSettings&sacu=1&passive=1209600&ignoreShadow=0#Email=friforenzik%40gmail.com|https://accounts.google.com/ServiceLogin?continue=https%3A%2F%2Fmyaccount.google.com%2Fprivacy%2Fo%2Fdashboard%3Futm_source%3DAndroid%26utm_campaign%3DMobileSettings&sacu=1&passive=1209600&ignoreShadow=0#Email=friforenzik%40gmail.com|1|1463394885412|0||0||||0|99
+    7|https://accounts.google.com/AccountChooser?hl=en_US&Email=friforenzik%40gmail.com&continue=https%3A%2F%2Fmyaccount.google.com%2Fprivacy%2Fo%2Fdashboard%3Futm_source%3DAndroid%26utm_campaign%3DMobileSettings|https://accounts.google.com/AccountChooser?hl=en_US&Email=friforenzik%40gmail.com&continue=https%3A%2F%2Fmyaccount.google.com%2Fprivacy%2Fo%2Fdashboard%3Futm_source%3DAndroid%26utm_campaign%3DMobileSettings|1|1463394885409|0||0||||0|99
+    8|https://accounts.google.com/AccountChooser?hl=en_US&Email=friforenzik%40gmail.com&continue=https%3A%2F%2Fmyaccount.google.com%2Fprivacy%2Fo%2Fpersonalinfo%3Futm_source%3DAndroid%26utm_campaign%3DMobileSettings|https://accounts.google.com/AccountChooser?hl=en_US&Email=friforenzik%40gmail.com&continue=https%3A%2F%2Fmyaccount.google.com%2Fprivacy%2Fo%2Fpersonalinfo%3Futm_source%3DAndroid%26utm_campaign%3DMobileSettings|1|1463394893870|0||0||||0|99
+    9|Sign in - Google Accounts|https://accounts.google.com/ServiceLogin?continue=https%3A%2F%2Fmyaccount.google.com%2Fprivacy%2Fo%2Fpersonalinfo%3Futm_source%3DAndroid%26utm_campaign%3DMobileSettings&sacu=1&passive=1209600&ignoreShadow=0#Email=friforenzik%40gmail.com|1|1463394893874|0||0||||0|99
+    10|Personal info & privacy|https://myaccount.google.com/privacy?utm_source=Android&utm_campaign=MobileSettings&pli=1#personalinfo|1|1463395025167|0||0||||0|99
+    11|Gender|https://myaccount.google.com/gender?utm_source=Android&utm_campaign=MobileSettings&pli=1|1|1463395059884|0||0||||0|99
+    12|Personal info & privacy|https://myaccount.google.com/privacy?utm_source=Android&utm_campaign=MobileSettings#personalinfo|1|1463395091625|0||0||||0|99
+    13|About me|https://aboutme.google.com/|1|1463395124246|0||0||||0|99
+    14|Storitve | Si.mobil|https://www.simobil.si/storitve|3|1463645687550|0||0||||0|99
+    15|http://wap.simobil.si/|http://wap.simobil.si/|3|1463645687552|0||0||||0|99
+    16|Web page not available|http://upyachka.com/|0|1463400008473|0||0||||1|99
+    17|upyachka|upyachka|0|1463400027487|0||0||||1|99
+    18|http://www.google.si/search?hl=en&redir_esc=&source=android-browser-type&v=133247963&qsubts=1463400027664&action=devloc&q=upyachka&v=133247963|http://www.google.si/search?hl=en&redir_esc=&source=android-browser-type&v=133247963&qsubts=1463400027664&action=devloc&q=upyachka&v=133247963|1|1463400028166|0||0||||0|99
+    19|Web page not available|http://oldupyachka.ru/|1|1463400032633|0||0||||0|99
+    20|http://www.google.si/url?q=http://oldupyachka.ru/&sa=U&ved=0ahUKEwiF1sX3xd7MAhWFbhQKHZXzDW4QFggPMAA&sig2=_cpP0t9FYjADFzhZhaKQPA&usg=AFQjCNGgMFqrpj_3VVvSasLgu9SuPvs8JQ|http://www.google.si/url?q=http://oldupyachka.ru/&sa=U&ved=0ahUKEwiF1sX3xd7MAhWFbhQKHZXzDW4QFggPMAA&sig2=_cpP0t9FYjADFzhZhaKQPA&usg=AFQjCNGgMFqrpj_3VVvSasLgu9SuPvs8JQ|1|1463400032630|0||0||||0|99
+    21|Web page not available|http://oldupyachka.ru/5/|1|1463400111296|0||0||||0|99
+    22|Web page not available|http://oldupyachka.ru/7/|1|1463400505740|0||0||||0|99
+    23|http://kuvaton.fi/|http://kuvaton.fi/|1|1463466999224|0||0||||1|99
+    24|KuvatON.com - Just some shitty pics|http://m.kuvaton.com/|1|1463466999225|0||0||||0|99
+    25|KuvatON.com - Just some shitty pics|http://m.kuvaton.com/2/|1|1463467223719|0||0||||0|99
+    26|KuvatON.com - Just some shitty pics|http://m.kuvaton.com/browse/42093/hop32.gif|1|1463467286713|0||0||||0|99
+    27|http://m.kuvaton.com/browse/42094/autokaistalla2.jpg|http://m.kuvaton.com/browse/42094/autokaistalla2.jpg|1|1463467316740|0||0||||0|99
+    28|KuvatON.com - Just some shitty pics|http://m.kuvaton.com/3/|1|1463467405634|0||0||||0|99
+    29|http://m.kuvaton.com/4/|http://m.kuvaton.com/4/|1|1463467479965|0||0||||0|99
+    30|KuvatON.com - Just some shitty pics|http://m.kuvaton.com/5/|1|1463467664345|0||0||||0|99
+    31|http://m.kuvaton.com/browse/42062/kid_cant_go_to_jail.gif|http://m.kuvaton.com/browse/42062/kid_cant_go_to_jail.gif|1|1463467710843|0||0||||0|99
+    32|http://hyves.nl/|http://hyves.nl/|1|1463645757465|0||0||||1|99
+    33|http://m.hyvesgames.nl/|http://m.hyvesgames.nl/|1|1463645757468|0||0||||0|99
+    34|Web page not available|http://atdmt.com/|0|1463645813707|0||0||||1|99
+    35|http://weborama.fr/|http://weborama.fr/|1|1463645941280|0||0||||1|99
+    36|http://www.weborama.com/|http://www.weborama.com/|1|1463645941282|0||0||||0|99
+    37|http://9292ov.nl/|http://9292ov.nl/|1|1463646060376|0||0||||1|99
+    38|http://m.9292.nl/|http://m.9292.nl/|1|1463646060378|0||0||||0|99
+    39|Web page not available|http://xgraph.net/|0|1463646193329|0||0||||1|99
+    40|GetItOn|http://getiton.com/|1|1463646322835|0||0||||1|99
+    41|Adult AdWorld : Adult Advertising Network|http://adultadworld.com/|1|1463646366822|0||0||||1|99
+    42|http://adultadworld.com/advertisers.html|http://adultadworld.com/advertisers.html|1|1463646381483|0||0||||0|99
+    43|Web page not available|http://rts.doublepimp.com/|0|1463646457267|0||0||||1|99
+    44|girlgaze.com - girlgaze Resources and Information.|http://girlgaze.com/|1|1463646488145|0||0||||1|99
+    45|http://girlgaze.com/caf/?ses=Y3JlPTE0NjM2NDY0ODkmdGNpZD1naXJsZ2F6ZS5jb201NzNkNzkxOThkZjYxOC45NzUyODMwMCZma2k9ODM5NDE3MjImdGFzaz1zZWFyY2gmZG9tYWluPWdpcmxnYXplLmNvbSZzPTU0M2JlMmRhMWU1MGRiMmZlNmI4Jmxhbmd1YWdlPWVuJmFfaWQ9Mw==&query=Free%20Arab%20Dating%20Site&afdToken=CvgBChMI_NicitzlzAIVlTHTCh0XIAZcGAEgBlDw0KABULGJtANQw8_sD1C6z_wPUOL97BBQveuEG1Dj57AqUJmk3DlQu7rfOVCx3Yw6UPexpzpQ6O-zOlCdjdZ_ULery5UBUNmc7pcBUP6c7pcBUMud7pcBUIie7pcBUKvxgZoBUO-hvp0BUKSdhq8BUKzJuLkBUIrRuLkBUMSeqPcBUO6y9oYFUPnop60FUJ-RiuEGUOLcrMIHUI6ulNcHaPDQoAFxuj6UZg0WNRmCARMIp9ieitzlzAIV8APTCh1zMwHFjQFiv8otkQEj9PP4B9hYmpEBpNKEh_qigfQSGQBtOoqQAGL5vweztygKL4y37wTgjYRiiWQ|http://girlgaze.com/caf/?ses=Y3JlPTE0NjM2NDY0ODkmdGNpZD1naXJsZ2F6ZS5jb201NzNkNzkxOThkZjYxOC45NzUyODMwMCZma2k9ODM5NDE3MjImdGFzaz1zZWFyY2gmZG9tYWluPWdpcmxnYXplLmNvbSZzPTU0M2JlMmRhMWU1MGRiMmZlNmI4Jmxhbmd1YWdlPWVuJmFfaWQ9Mw==&query=Free%20Arab%20Dating%20Site&afdToken=CvgBChMI_NicitzlzAIVlTHTCh0XIAZcGAEgBlDw0KABULGJtANQw8_sD1C6z_wPUOL97BBQveuEG1Dj57AqUJmk3DlQu7rfOVCx3Yw6UPexpzpQ6O-zOlCdjdZ_ULery5UBUNmc7pcBUP6c7pcBUMud7pcBUIie7pcBUKvxgZoBUO-hvp0BUKSdhq8BUKzJuLkBUIrRuLkBUMSeqPcBUO6y9oYFUPnop60FUJ-RiuEGUOLcrMIHUI6ulNcHaPDQoAFxuj6UZg0WNRmCARMIp9ieitzlzAIV8APTCh1zMwHFjQFiv8otkQEj9PP4B9hYmpEBpNKEh_qigfQSGQBtOoqQAGL5vweztygKL4y37wTgjYRiiWQ|1|1463646500043|0||0||||0|99
+    46|Web page not available|http://hardcrap.com/|0|1463646570675|0||0||||1|99
+    47|Etology – Dating Traffic Provider|http://etology.com/|2|1463646651752|0||0||||1|99
+    48|Online Mercuriusgids. Bedrijvengids en internet telefoongids | Mercuriusgids.nl|http://mercuriusgids.nl/|2|1463646784802|0||0||||1|99
+    49|Not Found|http://tackfilm.se/|0|1463646828840|0||0||||1|99
+    50|http://timoco.eu/|http://timoco.eu/|1|1463646873575|0||0||||1|99
+    51|Timoco B.V.|http://business.timoco.eu/|1|1463646873576|0||0||||0|99
+    52|http://startvagina.nl/|http://startvagina.nl/|1|1463646908589|0||0||||1|99
+    53|http://m.startvagina.nl/|http://m.startvagina.nl/|1|1463646908591|0||0||||0|99
+    54|Buienradar.nl - Weer - Actuele neerslag, weerbericht, weersverwachting, sneeuwradar en satellietbeelden|http://buienradar.nl/|1|1463646949213|0||0||||1|99
+    55|http://cookiewet.buienradar.nl/?s=http%3A%2F%2Fbuienradar.nl%2F|http://cookiewet.buienradar.nl/?s=http%3A%2F%2Fbuienradar.nl%2F|1|1463646950139|0||0||||0|99
+    56|http://buienradar.nl/?cookieakkoord=true|http://buienradar.nl/?cookieakkoord=true|1|1463646956658|0||0||||0|99
+    57|Web page not available|http://rhinogym.nl/|0|1463647004412|0||0||||1|99
+    58|InsideGamer - De grootste bron voor games, cheats, trailers en recensies|http://insidegamer.nl/|2|1463647046723|0||0||||1|99
+    59|http://xxlnutrition.nl/|http://xxlnutrition.nl/|1|1463647093280|0||0||||1|99
+    60|https://xxlnutrition.com/nl/nld|https://xxlnutrition.com/nl/nld|1|1463647093283|0||0||||0|99
+    61|VVGi.nl / Vincent van Gogh voor geestelijke gezondheidszorg|http://vvgi.nl/|2|1463647142816|0||0||||1|99
+    62|http://foreca.com/|http://foreca.com/|1|1463647168621|0||0||||1|99
+    63|Weather Forecast Ljubljana - Foreca.com|http://www.foreca.com/Slovenia/Ljubljana|1|1463647168623|0||0||||0|99
+    64|Chatten doe je op Kletsen.com - De gratis chat voor Nederland en België|http://kletsen.com/|1|1463647329568|0||0||||1|99
+    65|Wij kopen je oude toestel - ZONZOO|http://zonzoo.nl/|1|1463647439912|0||0||||1|99
+    66|Databasefout|http://gezondenzo.net/|0|1463647538975|0||0||||1|99
+    67|http://noknok.tv/|http://noknok.tv/|1|1463647572916|0||0||||1|99
+    68|http://lumiaconversationsuk.microsoft.com/|http://lumiaconversationsuk.microsoft.com/|1|1463647572918|0||0||||0|99
+    69|http://asterpix.com/|http://asterpix.com/|1|1463647609240|0||0||||1|99
+    70|http://ww38.asterpix.com/|http://ww38.asterpix.com/|1|1463647609242|0||0||||0|99
+    71|http://tbidvzc.com/sk-clkrdr.php?_t=zro&_d=195fNgWY.JvV&_p=t+nTHHOtH&_pr=HEFHbAt&_v=zzGGzzztFGzzTFzFEGE&_rdfu=X55g%3ADD9fJ3Nf.%2FW4mfN4N4.JvVDgfNQvNV1BJfD%2F4moN4.4%2FV%3FfBg1NV9GPztAG%2CzTZbztT%2CzTtHTHE%2CztFF%2CztFE%2CFtFG%2CGzzG%2Cb%2Cb%2CztFT%2Cb%2CzTZEttt%2CFEtTGt%2CAZHAF%2CzFGFAzHFFTbt%2CzHEFbbbbz%2CBaY.JNUWmsXC%26Wv1Pb%26BJVPz%26%2F4oNfQomPiii.%2FW4mfN5W9fN.JvV%26r7-_Pz%26SKLoLpl-P%26e15fsvNqPT%26viBW4PHETZtGGHE%263o1sB5P%269U5fNPXmN5msCWsX%25Gh5VNsmgWCB%269Ui4%2FPvvCoimm3&_bku=X55g%3ADD3BWmfN91aQi4WBs.JvVD%3F%26QgP%25GhNx5VfvnJ%2FKE7BF838NC%25G_xgFggt5WyLiTOIy8ru0LSTpikzEzmSS4U4II%25G_9J_7Ouj%3DX76Gvxbm8ya-AMSmV7H%3DU%25GhyTfl%25G_0-KSZzuZ6kU-mpWyTnxlEtV2GL7pQ72mLg-%3DO0QHET%25G_Xe9fqWRutE7bRw%25FI%25FI|http://tbidvzc.com/sk-clkrdr.php?_t=zro&_d=195fNgWY.JvV&_p=t+nTHHOtH&_pr=HEFHbAt&_v=zzGGzzztFGzzTFzFEGE&_rdfu=X55g%3ADD9fJ3Nf.%2FW4mfN4N4.JvVDgfNQvNV1BJfD%2F4moN4.4%2FV%3FfBg1NV9GPztAG%2CzTZbztT%2CzTtHTHE%2CztFF%2CztFE%2CFtFG%2CGzzG%2Cb%2Cb%2CztFT%2Cb%2CzTZEttt%2CFEtTGt%2CAZHAF%2CzFGFAzHFFTbt%2CzHEFbbbbz%2CBaY.JNUWmsXC%26Wv1Pb%26BJVPz%26%2F4oNfQomPiii.%2FW4mfN5W9fN.JvV%26r7-_Pz%26SKLoLpl-P%26e15fsvNqPT%26viBW4PHETZtGGHE%263o1sB5P%269U5fNPXmN5msCWsX%25Gh5VNsmgWCB%269Ui4%2FPvvCoimm3&_bku=X55g%3ADD3BWmfN91aQi4WBs.JvVD%3F%26QgP%25GhNx5VfvnJ%2FKE7BF838NC%25G_xgFggt5WyLiTOIy8ru0LSTpikzEzmSS4U4II%25G_9J_7Ouj%3DX76Gvxbm8ya-AMSmV7H%3DU%25GhyTfl%25G_0-KSZzuZ6kU-mpWyTnxlEtV2GL7pQ72mLg-%3DO0QHET%25G_Xe9fqWRutE7bRw%25FI%25FI|1|1463647615087|0||0||||0|99
+    72|http://secure.bidverdrd.com/performance/bdv_rd.dbm?enparms2=1982,1760197,1795754,1933,1934,3932,2112,0,0,1937,0,1764999,349729,86583,132381533709,154300001,nlx.crkivghz&ioa=0&ncm=1&bd_ref_v=www.bidvertiser.com&TREF=1&WIN_NAME=&Category=7&ownid=547692254&u_agnt=&skter=hvrtvgzigh%2Btmrgvpizn&skwdb=ooz_wvvu|http://secure.bidverdrd.com/performance/bdv_rd.dbm?enparms2=1982,1760197,1795754,1933,1934,3932,2112,0,0,1937,0,1764999,349729,86583,132381533709,154300001,nlx.crkivghz&ioa=0&ncm=1&bd_ref_v=www.bidvertiser.com&TREF=1&WIN_NAME=&Category=7&ownid=547692254&u_agnt=&skter=hvrtvgzigh%2Btmrgvpizn&skwdb=ooz_wvvu|1|1463647615099|0||0||||0|99
+    73|Video Game Cheats, Codes, Cheat Codes, Walkthroughs, Guides, FAQs, Reviews, Previews, News, Videos for Xbox 360, PS3, PC, Xbox One, PS4, Wii U, 3DS, PS Vita, Wii, PS2, PSP, DS, and more from Cheat Code Central.|http://cheatcc.com/|1|1463647672040|0||0||||1|99
+    74|Video Game News - Cheat Code Central|http://news.cheatcc.com/|1|1463647716139|0||0||||0|99
+    75|Uitzendbureau.nl - Vacatures van uitzendbureaus|http://uitzendbureau.nl/|2|1463647752619|0||0||||1|99
+    76|404 pagina niet gevonden|http://bodyresource.nl/|0|1463647859764|0||0||||1|99
+    77|paper mario|paper mario|0|1463648098543|0||0||||1|99
+    78|http://www.google.si/search?hl=en&redir_esc=&source=android-browser-type&v=133247963&qsubts=1463648098695&action=devloc&q=paper+mario&v=133247963|http://www.google.si/search?hl=en&redir_esc=&source=android-browser-type&v=133247963&qsubts=1463648098695&action=devloc&q=paper+mario&v=133247963|1|1463648099293|0||0||||0|99
+    79|https://en.m.wikipedia.org/wiki/Paper_Mario|https://en.m.wikipedia.org/wiki/Paper_Mario|1|1463648112915|0||0||||0|99
+    80|http://www.google.si/url?q=https://en.m.wikipedia.org/wiki/Paper_Mario&sa=U&ved=0ahUKEwie-fCI4uXMAhWEPRQKHbOdA_QQFggyMA4&sig2=MxtG1qG3Y3DGqveVW31i9w&usg=AFQjCNFJeEYaNA-Nh8sTBTc_q-QDUBT9ag|http://www.google.si/url?q=https://en.m.wikipedia.org/wiki/Paper_Mario&sa=U&ved=0ahUKEwie-fCI4uXMAhWEPRQKHbOdA_QQFggyMA4&sig2=MxtG1qG3Y3DGqveVW31i9w&usg=AFQjCNFJeEYaNA-Nh8sTBTc_q-QDUBT9ag|1|1463648112913|0||0||||0|99
+    81|Benov kotiček — Andrejeva spletna stran|http://andro.splet.arnes.si/|1|1463648635025|0||0||||1|99
+    82|http://universepeople.com/|http://universepeople.com/|1|1463648753701|0||0||||1|99
+    83|http://www.afternic.com/domain/universepeople.com|http://www.afternic.com/domain/universepeople.com|1|1463648753702|0||0||||0|99
+    84|Web page not available|http://universepeople.cz/|0|1463648821735|0||0||||1|99
+    85|Izklop|http://izklop.com/|1|1463648849860|0||0||||1|99
+    86|Izklop|http://izklop.com/?mod=mod_ext_links&act=get_links&page=2|1|1463649360066|0||0||||1|99
+    87|http://izklop.com/?mod=mod_ext_links&act=get_links&page=4|http://izklop.com/?mod=mod_ext_links&act=get_links&page=4|1|1463648935570|0||0||||0|99
+    88|Izklop|http://izklop.com/?mod=mod_ext_links&act=get_links&page=3|1|1463648977965|0||0||||0|99
+    89|http://izklop.com/?mod=mod_ext_links&act=get_link&id=98707|http://izklop.com/?mod=mod_ext_links&act=get_link&id=98707|1|1463648986560|0||0||||0|99
+
+    select * from searches;
+
+    1|upyachka|1463400028141
+    2|paper mario|1463648099384
+
+    .quit
+
+    sqlite3 com.android.providers.media/databases/internal.db
+
+    .tables
+
+    album_art           artist_info         audio_meta          thumbnails        
+    album_info          artists             images              video             
+    albums              artists_albums_map  search              videothumbnails   
+    android_metadata    audio               searchhelpertitle 
+
+    select * from audio;
+
+    1|/system/media/audio/ringtones/Polaris.ogg|Polaris.ogg|136841|application/ogg|1293840200|1336569214|PolarisQQQQQQQQ|8348|1||1|0||1|0|0|0|Ringtone|0||1QQQQQQQQ|Samsung|1QQQQQQQQ293500348|Samsung
+    2|/system/media/audio/ringtones/Emotive_sensation.ogg|Emotive_sensation.ogg|62654|application/ogg|1293840202|1336569214|Emotive sensationQQQQQQQQQQQQQQQQQ|5205|1||1|0||1|0|0|0|Ringtone|0||1QQQQQQQQ|Samsung|1QQQQQQQQ293500348|Samsung
+    3|/system/media/audio/ringtones/Steppin_Out.ogg|Steppin_Out.ogg|29989|application/ogg|1293840206|1336569214|Steppin' outQQQQQQQQQQQ|4000|2||2|0||1|0|0|0|Ringtone|0||2QQQQQQ|Dr. MAD|2QQQQQQQQQQ293500348|ringtones
+    4|/system/media/audio/ringtones/Rich_Tone.ogg|Rich_Tone.ogg|38287|application/ogg|1293840206|1336569214|Rich toneQQQQQQQQQ|3110|1||1|0||1|0|0|0|Ringtone|0||1QQ|Samsung|1QQQQQQQQ293500348|Samsung
+    5|/system/media/audio/ringtones/Basic_tone.ogg|Basic_tone.ogg|26729|application/ogg|1293840207|1336569214|Basic toneQQQQQQQQQQ|3448|1||1|0||1|0|0|0|Ringtone|0||1QQQQQQQQ|Samsung|1QQQQQQQQ293500348|Samsung
+    6|/system/media/audio/ringtones/Andromeda.ogg|Andromeda.ogg|35809|application/ogg|1293840213|1336569214|AndromedaQQQQQQQQQQ|3000|3||3|0||1|0|0|0|Ringtone|0||3Q|pdx, ORT=|3QQQQQQQQ293500348|Unknown
+    7|/system/media/audio/ringtones/Third_Eye.ogg|Third_Eye.ogg|24230|application/ogg|1293840213|1336569214|Third eyeQQQQQQQQQ|4000|2||2|0||1|0|0|0|Ringtone|0||2QQ|Dr. MAD|2QQQQQQQQQQ293500348|ringtones
+    8|/system/media/audio/ringtones/Over_the_horizon_Default_ringtone.ogg|Over_the_horizon_Default_ringtone.ogg|325196|application/ogg|1293840213|1336569214|Over the horizonQQQQQQQQQQQQQQQ|19999|1||1|0||1|0|0|0|Ringtone|0||1QQQQQQQQ|Samsung|1Q293500348|Samsung
+    9|/system/media/audio/ringtones/Cassiopeia.ogg|Cassiopeia.ogg|37066|application/ogg|1293840213|1336569214|CassiopeiaQQQQQQQQQQQ|4000|3||3|0||1|0|0|0|Ringtone|0||3QQQQQQQ|pdx, ORT=|3QQQQQQQQ293500348|Unknown
+    10|/system/media/audio/ringtones/Classic_bell.ogg|Classic_bell.ogg|32894|application/ogg|1293840213|1336569214|Classic bellQQQQQQQQQQQQ|4362|1||1|0||1|0|0|0|Ringtone|0||1QQQQQQQQ|Samsung|1QQQQQQQQ293500348|Samsung
+    11|/system/media/audio/ringtones/Basic_bell.ogg|Basic_bell.ogg|20504|application/ogg|1293840213|1336569214|Basic bellQQQQQQQQQQ|2325|1||1|0||1|0|0|0|Ringtone|0||1QQQQQQQQ|Samsung|1QQQQQQQQ293500348|Samsung
+    12|/system/media/audio/ringtones/Beat_Plucker.ogg|Beat_Plucker.ogg|27500|application/ogg|1293840214|1336569214|Beat pluckerQQQQQQQQQQQQ|4000|2||2|0||1|0|0|0|Ringtone|0||2QQQQQQ|Dr. MAD|2QQQQQQQQQQ293500348|ringtones
+    13|/system/media/audio/ringtones/No_Limits.ogg|No_Limits.ogg|25956|application/ogg|1293840214|1336569214|No limitsQQQQQQQQQ|3582|2||2|0||1|0|0|0|Ringtone|0||2Q|Dr. MAD|2QQQQQQQQQQ293500348|ringtones
+    14|/system/media/audio/ringtones/Gimme_Mo_Town.ogg|Gimme_Mo_Town.ogg|60804|application/ogg|1293840214|1336569214|Gimme mo' townQQQQQQQQQQQQ|4000|2||2|0||1|0|0|0|Ringtone|0||2QQQQQQ|Dr. MAD|2QQQQQQQQQQ293500348|ringtones
+    15|/system/media/audio/ringtones/Bollywood.ogg|Bollywood.ogg|39174|application/ogg|1293840215|1336569214|BollywoodQQQQQQQQQQ|4211|2||2|0||1|0|0|0|<unknown>|0||2QQQQQQ|Dr. MAD|2QQQQQQQQQQ293500348|ringtones
+    16|/system/media/audio/ringtones/Curve_Ball_Blend.ogg|Curve_Ball_Blend.ogg|66482|application/ogg|1293840215|1336569214|Curve ball blendQQQQQQQQQQQQQQQ|4000|2||2|0||1|0|0|0|Ringtone|0||2QQQQQQ|Dr. MAD|2QQQQQQQQQQ293500348|ringtones
+    17|/system/media/audio/ringtones/Funk_Yall.ogg|Funk_Yall.ogg|67077|application/ogg|1293840215|1336569214|Funk y'allQQQQQQQQQ|4103|2||2|0||1|0|0|0|Ringtone|0||Q|Dr. MAD|2QQQQQQQQQQ293500348|ringtones
+    18|/system/media/audio/ringtones/Single_tone.ogg|Single_tone.ogg|24185|application/ogg|1293840215|1336569214|Single toneQQQQQQQQQQQ|3680|1||1|0||1|0|0|0|Ringtone|0||1QQQQQQQQ|Samsung|1QQQQQQQQ293500348|Samsung
+    19|/system/media/audio/ringtones/Savannah.ogg|Savannah.ogg|64346|application/ogg|1293840215|1336569214|SavannahQQQQQQQQQ|4000|2||2|0||1|0|0|0|Ringtone|0||2QQQQ|Dr. MAD|2QQQQQQQQQQ293500348|ringtones
+    20|/system/media/audio/ringtones/Pure_tone.ogg|Pure_tone.ogg|67204|application/ogg|1293840215|1336569214|Pure toneQQQQQQQQQ|8438|1||1|0||1|0|0|0|Ringtone|0||1Q|Samsung|1QQQQQQQQ293500348|Samsung
+    21|/system/media/audio/ringtones/Chime.ogg|Chime.ogg|35378|application/ogg|1293840215|1336569214|ChimeQQQQQQ|3631|1||1|0||1|0|0|0|Ringtone|0||1QQQQQQQQ|Samsung|1QQQQQQQQ293500348|Samsung
+    22|/system/media/audio/notifications/03_Bubbles.ogg|03_Bubbles.ogg|8046|application/ogg|1293840216|1336569214|BubblesQQQQQQQQ|534|1||4|0||0|0|0|1|<unknown>|0||1QQQQQQQQ|Samsung|4QQQQQQQQQQQQQQ-1608219629|notifications
+    23|/system/media/audio/notifications/04_Chopsticks.ogg|04_Chopsticks.ogg|7281|application/ogg|1293840216|1336569214|ChopsticksQQQQQQQQQQQ|351|1||4|0||0|0|0|1|<unknown>|0||1QQQQQQQQ|Samsung|4QQQQQQQQQQQQQQ-1608219629|notifications
+    24|/system/media/audio/notifications/05_Good_News.ogg|05_Good_News.ogg|18459|application/ogg|1293840216|1336569214|Good newsQQQQQQQQQ|1600|1||4|0||0|0|0|1|<unknown>|0||1QQQQQQQQ|Samsung|4QQQQQQQQQQQQQQ-1608219629|notifications
+    25|/system/media/audio/notifications/12_Sherbet_Default_message.ogg|12_Sherbet_Default_message.ogg|17292|application/ogg|1293840216|1336569214|SherbetQQQQQQQQ|1373|1||4|0||0|0|0|1|<unknown>|0||1QQQQQQQQ|Samsung|4QQQQQQQQQQQQQQ-1608219629|notifications
+    26|/system/media/audio/notifications/13_Whistle_Default_message.ogg|13_Whistle_Default_message.ogg|11638|application/ogg|1293840216|1336569214|WhistleQQQQQQQQ|1620|1||4|0||0|0|0|1|<unknown>|0||1QQQQQQQQ|Samsung|4QQQQQQQQQQQQQQ-1608219629|notifications
+    27|/system/media/audio/notifications/02_Haze.ogg|02_Haze.ogg|13672|application/ogg|1293840216|1336569214|HazeQQQQQ|1028|1||4|0||0|0|0|1|<unknown>|0||1QQQQQQQQ|Samsung|4QQQQQQQQQQQQQQ-1608219629|notifications
+    28|/system/media/audio/notifications/11_Pixiedust.ogg|11_Pixiedust.ogg|20105|application/ogg|1293840216|1336569214|Pixie dustQQQQQQQQQQ|1729|4||4|0||0|0|0|1|<unknown>|0||4||<unknown>|4QQQQQQQQQQQQQQ-1608219629|notifications
+    29|/system/media/audio/notifications/10_Pizzicato.ogg|10_Pizzicato.ogg|24249|application/ogg|1293840216|1336569214|PizzicatoQQQQQQQQQQ|2003|4||4|0||0|0|0|1|<unknown>|0||4||<unknown>|4QQQQQQQQQQQQQQ-1608219629|notifications
+    30|/system/media/audio/notifications/06_Knock.ogg|06_Knock.ogg|10984|application/ogg|1293840216|1336569214|KnockQQQQQQ|968|1||4|0||0|0|0|1|<unknown>|0||1QQQQQQ|Samsung|4QQQQQQQQQQQQQQ-1608219629|notifications
+    31|/system/media/audio/notifications/08_Pure_Bell.ogg|08_Pure_Bell.ogg|12702|application/ogg|1293840216|1336569214|Pure bellQQQQQQQQQ|2021|1||4|0||0|0|0|1|<unknown>|0||1QQQQQQQQ|Samsung|4QQQQQQQQQQQQQQ-1608219629|notifications
+    32|/system/media/audio/notifications/01_Cloud.ogg|01_Cloud.ogg|22531|application/ogg|1293840216|1336569214|CloudQQQQQQ|1910|1||4|0||0|0|0|1|<unknown>|0||1QQQQQ|Samsung|4QQQQQQQQQQQQQQ-1608219629|notifications
+    33|/system/media/audio/notifications/09_Tweeters.ogg|09_Tweeters.ogg|7626|application/ogg|1293840216|1336569214|TweetersQQQQQQQQQ|788|4||4|0||0|0|0|1|<unknown>|0||4||<unknown>|4QQQQQQQQQQQQQQ-1608219629|notifications
+    34|/system/media/audio/notifications/07_Postman_Default_Email.ogg|07_Postman_Default_Email.ogg|14081|application/ogg|1293840216|1336569214|PostmanQQQQQQQQ|2160|1||4|0||0|0|0|1|<unknown>|0||1QQQQQQQQ|Samsung|4QQQQQQQQQQQQQQ-1608219629|notifications
+    35|/system/media/audio/notifications/14_On_time_Default_Calendar.ogg|14_On_time_Default_Calendar.ogg|15079|application/ogg|1293840216|1336569214|On timeQQQQQQQ|2494|1||4|0||0|0|0|1|<unknown>|0||1QQQQQQQQ|Samsung|4QQQQQQQQQQQQQQ-1608219629|notifications
+    36|/system/media/audio/ui/Silent_mode_off.ogg|Silent_mode_off.ogg|6750|application/ogg|1293840216|1336569214|Silent mode offQQQQQQQQQQQQQQ|287|1||5|0||0|1|0|0|<unknown>|0||1QQQQQQQQ|Samsung|5QQQ78638153|ui
+    37|/system/media/audio/ui/camera_click.ogg|camera_click.ogg|4851|application/ogg|1293840217|1336569214|Camera ShutterQQQQQQQQQQQQQQ|140|4||5|0||0|1|0|0|<unknown>|0||4||<unknown>|5QQQ78638153|ui
+    38|/system/media/audio/ui/VideoRecord.ogg|VideoRecord.ogg|5582|application/ogg|1293840217|1336569214|Video RecordQQQQQQQQQQQQ|381|2||5|0||0|1|0|0|<unknown>|0||2QQQQQQ|Dr. MAD|5QQQ78638153|ui
+    39|/system/media/audio/ui/OTP.ogg|OTP.ogg|4161|application/ogg|1293840217|1336569214|OTPQQQQ|250|4||5|0||0|1|0|0|<unknown>|0||4||<unknown>|5QQQ78638153|ui
+    40|/system/media/audio/ui/Volume_control.ogg|Volume_control.ogg|5515|application/ogg|1293840217|1336569214|Volume controlQQQQQQQQQQQQQQ|141|4||5|0||0|1|0|0|<unknown>|0||4||<unknown>|5QQQ78638153|ui
+    41|/system/media/audio/ui/Lock.ogg|Lock.ogg|8476|application/ogg|1293840217|1336569214|LockQQQQQ|314|4||5|0||0|1|0|0|<unknown>|0||4||<unknown>|5QQQ78638153|ui
+    42|/system/media/audio/ui/KeypressDelete.ogg|KeypressDelete.ogg|6193|application/ogg|1293840217|1336569214|KeypressDeleteQQQQQQQQQQQQQQQ|169|5||5|0||0|1|0|0|<unknown>|0||5QQQQQQQQQQQQQ*QQQQQQQQQQQQQQQQQQQQQQQQQ|Copyright 2009 Android Open Source Project|5QQQ78638153|ui
+    43|/system/media/audio/ui/TW_Touch.ogg|TW_Touch.ogg|4894|application/ogg|1293840217|1336569214|TouchQQQQQQ|350|4||5|0||0|1|0|0|<unknown>|0||4||<unknown>|5QQQ78638153|ui
+    44|/system/media/audio/ui/MuteTone.ogg|MuteTone.ogg|3740|application/ogg|1293840217|1336569214|MuteToneQQQQQQQQQ|331|4||5|0||0|1|0|0|Blues|0||4||<unknown>|5QQQ78638153|ui
+    45|/system/media/audio/ui/Charger_Connection.ogg|Charger_Connection.ogg|10478|application/ogg|1293840217|1336569214|Charger_ConnectionQQQQQQQQ
+                                                                QQQQQQQQQQQ|528|4||5|0||0|1|0|0|<unknown>|0||4||<unknown>|5QQQ78638153|ui
+    46|/system/media/audio/ui/Insert.ogg|Insert.ogg|7274|application/ogg|1293840217|1336569214|InsertQQQQQQQ|331|4||5|0||0|1|0|0|Blues|0||4||<unknown>|5QQQ78638153|ui
+    47|/system/media/audio/ui/Unlock.ogg|Unlock.ogg|8436|application/ogg|1293840217|1336569214|UnlockQQQQQQQ|441|1||5|0||0|1|0|0|<unknown>|0||1QQQQQQQQ|Samsung|5QQ78638153|ui
+    48|/system/media/audio/ui/KeypressSpacebar.ogg|KeypressSpacebar.ogg|7392|application/ogg|1293840217|1336569214|KeypressSpacebarQQQQQQQQQQQQQQQQQ|279|5||5|0||0|1|0|0|<unknown>|0||5QQQQQQQQQQQQQ*QQQQQQQQQQQQQQQQQQQQQQQQQ|Copyright 2009 Android Open Source Project|5QQQ78638153|ui
+    49|/system/media/audio/ui/Effect_Tick.ogg|Effect_Tick.ogg|3994|application/ogg|1293840217|1336569214|Effect_TickQQQQQQQ
+                                        QQQQQ|32|4||5|0||0|1|0|0|<unknown>|0||4||<unknown>|5QQQ78638153|ui
+    50|/system/media/audio/ui/KeypressReturn.ogg|KeypressReturn.ogg|7972|application/ogg|1293840218|1336569214|KeypressReturnQQQQQQQQQQQQQQQ|364|5||5|0||0|1|0|0|<unknown>|0||5QQQQQQQQQQQQQ*QQQQQQQQQQQQQQQQQQQQQQQQQ|Copyright 2009 Android Open Source Project|5QQQ78638153|ui
+    51|/system/media/audio/ui/TW_Waterdrop.ogg|TW_Waterdrop.ogg|9627|application/ogg|1293840218|1336569214|TW_WaterdropQQQ
+                                        QQQQQQQQQQ|826|4||5|0||0|1|0|0|<unknown>|0||4||<unknown>|5QQQ78638153|ui
+    52|/system/media/audio/ui/KeypressStandard.ogg|KeypressStandard.ogg|5194|application/ogg|1293840218|1336569214|KeypressStandardQQQQQQQQQQQQQQQQQ|101|5||5|0||0|1|0|0|<unknown>|0||5QQQQQQQQQQQQQ*QQQQQQQQQQQQQQQQQQQQQQQQQ|Copyright 2009 Android Open Source Project|5QQQ78638153|ui
+    53|/system/media/audio/ui/TW_SIP.ogg|TW_SIP.ogg|4298|application/ogg|1293840218|1336569214|SIPQQQQ|149|4||5|0||0|1|0|0|<unknown>|0||4||<unknown>|5QQQ78638153|ui
+    54|/system/media/audio/ui/camera_click_short.ogg|camera_click_short.ogg|5432|application/ogg|1293840218|1336569214|camera_click_shortQQQQQQQ
+                                                            QQQQQQ
+                                                                    QQQQQQ|289|4||5|0||0|1|0|0|<unknown>|0||4||<unknown>|5QQQ78638153|ui
+    55|/system/media/audio/alarms/Alarm_Beep_02.ogg|Alarm_Beep_02.ogg|5898|application/ogg|1293840218|1336569214|BeeBeep AlarmQQQQQQQQQQQQQ|251|4||6|0||0|0|1|0|<unknown>|0||4||<unknown>|6QQQQQQQ-183121033|alarms
+    56|/system/media/audio/alarms/Alarm_Beep_03.ogg|Alarm_Beep_03.ogg|21153|application/ogg|1293840218|1336569214|Beep-Beep-Beep AlarmQQQQQ
+
