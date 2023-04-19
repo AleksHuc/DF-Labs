@@ -1,22 +1,23 @@
-# 9. Vaja: Forenzika mobilnih naprav
+# 9. Lab: Mobile Device Forensics
 
-## Navodila
+## Instructions
 
-1. Priklopite mobilno napravo ter najdite podatke, ki opisujejo uporabnikovo aktivnost.
+1. Connect the mobile device and find data describing the user's activity.
 
-## Dodatne informacije
+## More information
 
-## Podrobna navodila
+## Detailed instructions
 
-### 1. Forenzika mobilnih naprav
+### 1. Mobile device forensics
 
-V večini primerov mobilne naprave poganjajo prilagojene različice operacijskih sistemov, ki so lahko osnovani na operacijskem sistemu Linux ([Android](https://en.wikipedia.org/wiki/Android_(operating_system)), [Ubuntu Touch](https://en.wikipedia.org/wiki/Ubuntu_Touch), [postmarketOS](https://en.wikipedia.org/wiki/PostmarketOS), [SailfishOS](https://en.wikipedia.org/wiki/Sailfish_OS), [Mobian](https://mobian-project.org/), [PureOS](https://en.wikipedia.org/wiki/PureOS), [Plasma Mobile](https://en.wikipedia.org/wiki/Plasma_Mobile)), vendar imajo vsi razen Android-a težave zaradi neobstoječe podpore s strani proizvajalcev.
+In most cases, mobile devices run customized versions of operating systems that may be based on the Linux operating system ([Android](https://en.wikipedia.org/wiki/Android_(operating_system)), [Ubuntu Touch](https://en.wikipedia.org/wiki/Ubuntu_Touch), [postmarketOS](https://en.wikipedia.org/wiki/PostmarketOS), [SailfishOS](https://en.wikipedia.org/wiki/Sailfish_OS), [Mobian](https://mobian-project.org/), [PureOS](https://en.wikipedia.org/wiki/PureOS), [Plasma Mobile](https://en.wikipedia.org/wiki/Plasma_Mobile)), but all but Android have problems due to non-existent support from manufacturers.
 
-Drugi najbolj pogosti mobilni operacijski sistem je [iOS](https://en.wikipedia.org/wiki/IOS) podjetja Apple, ki je osnovan na operacijskem sistemu [macOS](https://en.wikipedia.org/wiki/MacOS). Forenziko mobilne naprave iOS si žal ne bomo pogledali na vajah, vendar uporablja enake postopke, kot pri drugih operacijskih sistemih mobilnih naprav, seveda z nekaj specifikami.
+The second most common mobile operating system is Apple's [iOS](https://en.wikipedia.org/wiki/IOS), which is based on the [macOS](https://en.wikipedia.org/wiki/macOS). Unfortunately, we will not look at iOS mobile device forensics in the lab, but it uses the same procedures as with other mobile device operating systems, of course with some specifics.
 
-Mobilne naprave za dostop do mobilnega omrežja ponavadi potrebujejo še [SIM kartico (Subscriber Identification Module)](https://en.wikipedia.org/wiki/SIM_card), ki je svoje vrstni neodvisni računalnik ter služi za identificiranje in avtenticiranje uporabnika. Varno hrani [idenifikacijsko številko uporabnik (International Mobile Subscriber Identity (IMSI))](https://en.wikipedia.org/wiki/International_mobile_subscriber_identity) in pripadajoč ključ za šifriranje podatkov. Hrani lahko tudi omejeno število telefonskih številk in kratkih sporočil z namenom enostavnega prenosa med mobilnimi telefoni, vendar se za to danes v praksi ne uporablja več, saj te podatke hranimo na telefonu ali v oblaku. Za branje SIM kartic potrebujemo namenski bralnik in namensko programsko opremo, na primer [bralec](https://www.ladyada.net/make/simreader/) in [pySIM](https://github.com/twhiteman/pySIM).
+Mobile devices to access the mobile network usually also need a [SIM card (Subscriber Identification Module)](https://en.wikipedia.org/wiki/SIM_card), which is an independent computer of its kind and serves to identify and authenticate the user. Securely stores the [International Mobile Subscriber Identity (IMSI)](https://en.wikipedia.org/wiki/International_mobile_subscriber_identity) and the associated data encryption key. It can also store a limited number of phone numbers and short messages for the purpose of easy transfer between mobile phones, but it is no longer used for this in practice today, as this data is stored on the phone or in the cloud. To read SIM cards we need a dedicated reader and dedicated software, for example [reader](https://www.ladyada.net/make/simreader/) and [pySIM](https://github.com/twhiteman/pySIM) .
 
-Najprej si bomo pogledali mobilni telefon [N900](https://en.wikipedia.org/wiki/Nokia_N900), ki uporablja operacijski sistem [Maemo 5](https://en.wikipedia.org/wiki/Maemo) in deluje kot splošni Linux operacijski sistem ter podpira ukaze in orodja, ki smo si jih pogledali na vajah do sedaj. Večina uporabniških podatkov je shranjenih v obliki [Berkeley DB](https://en.wikipedia.org/wiki/Berkeley_DB), do njih lahko dostopamo z orodjem [`db-util`](https://www.unix.com/man-page/linux/1/dbutil/). Sliko pomnilnika telefona N900 dobite [tukaj](https://polz.si/dsrf/georgepicobello.tgz). Sliko lahko prenesemo z ukazom [`wget`](https://linux.die.net/man/1/wget) in jo nato odpremo z ukazom [`tar`](https://linux.die.net/man/1/tar). Sedaj namestimo orodje za pregledovanje podatkovnih baz `db-util`, preko upravljalca paketov našega operacijskega sistema. Nato izpišemo vse datoteke, ki se končajo z `.db` z ukazom [`find`](https://linux.die.net/man/1/find). Posamezno podatkovno bazo nato izpišemo z ukazom `db_dump`.
+First, we'll look at the [N900](https://en.wikipedia.org/wiki/Nokia_N900) mobile phone, which uses the [Maemo 5](https://en.wikipedia.org/wiki/Maemo) operating system, which works like a general Linux operating system and supports the commands and tools we've looked at in the exercises so far. Most user data is stored in the [Berkeley DB](https://en.wikipedia.org/wiki/Berkeley_DB) format and can be accessed using the [db-util](https://www.unix.com/man-page/linux/1/dbutil/). You can get an image of the N900 phone memory [here](https://polz.si/dsrf/georgepicobello.tgz). The image can be downloaded with [`wget`](https://linux.die.net/man/1/wget) and then opened with [`tar`](https://linux.die.net/man/1/tar). Now let's install the `db-util` database inspection tool through our operating system's package manager. Then we list all files ending in `.db` with the [`find`](https://linux.die.net/man/1/find) command. The individual database is then printed with the `db_dump` command.
+
 
     wget https://polz.si/dsrf/georgepicobello.tgz
 
@@ -161,7 +162,7 @@ Najprej si bomo pogledali mobilni telefon [N900](https://en.wikipedia.org/wiki/N
     BEGIN:VCARD\0d\0aVERSION:3.0\0d\0aREV:2012-04-01T12:42:33Z\0d\0aUID:132\0d\0aFN:Nermine Shafan\0d\0aTEL;TYPE=CELL,VOICE:+201273098664\0d\0aX-SKYPE;X-OSSO-VALID=yes;TYPE=skype:nermine.shafan\0d\0aNICKNAME:Nermine Shafan\0d\0aN:;Nermine Shafan\0d\0aEND:VCARD\00
     DATA=END
 
-Mobilni operacijski sistem Android imajo določene podatke zakrite in prav tako uporablja šifriranje za celotni disk. Če želimo dostopati do vseh podatkov, moramo postati super uporabnik oz. `root`. Določena podjetja nam to omogočajo, vendar ne privzeto, za druge naprave pa moramo poznati kakšno varnostno pomanjkljivost, ki jo izkoristimo, da postanemo super uporabnik. Za delo z Android napravami se uporablja [ADB - Android Debug Bridge](https://developer.android.com/tools/adb). Orodje je sestavljeno iz dveh delov - prvi je storitev, ki teče na telefonu (`adbd`), drugi pa orodje, ki se prek USB pogovarja s storitvijo na telefonu (`adb`). Preko orodje `adb` lahko na telefonu odpremo lupino `adb shell`. Če `adbd` teče kot super uporabnik, lahko na telefonu dobite polni dostop, s pomočjo katerega lahko preberete vse podatke. En od načinov, kako to doseči, je opisan [tule](https://wiki.mozilla.org/Mobile/Fennec/Android/Rooting/adb). Ko na Android telefonu postanete super uporabnik, lahko prenesete vse datoteke z telefona z ukazom `adb pull`. Razdelke, zajete na Android telefonu, prav tako dobite [tukaj](polz.si/media/uploads/dsrf/android/samsung_ace.tgz). Sliko lahko prenesemo z ukazom `wget` in jo nato odpremo z ukazom `tar`. Dobljene razdeleke sedaj priklopimo z ukazom `mount`, da lahko dostopamo do njihovih datotek. 
+The Android mobile operating system has certain data hidden and also uses encryption for the entire disk. If we want to access all the data, we have to become a super user or `root`. Certain companies allow us to do this, but not by default, and for other devices we need to know some security flaw that we exploit to become a super user. [ADB - Android Debug Bridge](https://developer.android.com/tools/adb) is used to work with Android devices. The tool consists of two parts - the first is the service that runs on the phone (`adb`) and the second is the tool that talks to the service on the phone (`adb`) via USB. The `adb shell` can be opened on the phone using the `adb` tool. If `adbd` is running as superuser, you can get full access to the phone with the help of which you can read all the data. One way to achieve this is described in [here](https://wiki.mozilla.org/Mobile/Fennec/Android/Rooting/adb). Once you become a super user on your Android phone, you can download all the files from your phone using the `adb pull` command. You can also get partitions captured on an Android phone [here](polz.si/media/uploads/dsrf/android/samsung_ace.tgz). We can download the image with the `wget` command and then open it with the `tar` command. We now mount the resulting partitions with the `mount` command so that we can access their files.
 
     wget https://polz.si/dsrf/android/samsung_ace.tgz
 
@@ -184,7 +185,7 @@ Mobilni operacijski sistem Android imajo določene podatke zakrite in prav tako 
     mount stl10-cache.raw ./stl10
     mount stl11-data.raw ./stl11
 
-Razdelek `stl9` hrani operacijski sistem, kjer mapa `bin` vsebuje programe, mapa `lib` sistemske knjižnice, mapa `usr` uporabniške dele nameščenih aplikacij, mapa `xbin` vsebuje orodja za pridobitev super uporabnika in mapa `etc` vsebuje nastavitev naprave.
+The `stl9` partition holds the operating system, where the `bin` folder contains the programs, the `lib` folder contains the system libraries, the `usr` folder contains the user parts of the installed applications, the `xbin` folder contains the tools for rooting the phone, and the `etc` folder contains the device settings.
 
     ls stl9/
 
@@ -192,13 +193,13 @@ Razdelek `stl9` hrani operacijski sistem, kjer mapa `bin` vsebuje programe, mapa
     bin	    csc		  etc		  lib	     T9DB
     build.prop  CSCFiles.txt  fonts		  media      usr
 
-Razdelek `stl10` vsebuje del začasnih datotek in dnevnikov. 
+Partition `stl10` contains part of temporary files and logs.
 
     ls stl10/
 
     downloadfile.bin  lost+found  recovery
 
-V datoteki `stl10/recovery/last_log`, ki predstavlja dnevnik osnovne nastavitve naprave, vidimo da naprava uporablja datotečni sistem [Robust FAT File System - RFS](https://www.manualslib.com/manual/147588/Samsung-V1-3-0.html?page=9#manual).
+In the `stl10/recovery/last_log` file, which represents the device's basic setup log, we see that the device uses the [Robust FAT File System - RFS](https://www.manualslib.com/manual/147588/Samsung-V1-3-0.html?page=9#manual) file system.
 
     cat stl10/recovery/last_log 
 
@@ -418,7 +419,7 @@ V datoteki `stl10/recovery/last_log`, ki predstavlja dnevnik osnovne nastavitve 
     copy_kernel_file :: create kernel log file '/tmp/kernel.log' 
     copy_kernel_file :: create kernel log file '/cache/recovery/recovery_kernel_log'
 
-Razdelek `stl11` vsebuje uporabniške in sistemske podatke. Vsaka aplikacija ima svojo mapo kamor lahko shranjuje podatke, prav tako se vsak program zažene s svojim uporabnikom. Tako je aplikacija omejena in nima dostopa do podatkov, ki jih shranjujejo drugi programo. Mapa `data` vsebuje mape posameznih programov, ki vsebujejo [SQLite](https://en.wikipedia.org/wiki/SQLite) podatkovne baze, ki jih lahko preberemo z orodjem `sqlite3` ali `sqlitebrowser`.
+The `stl11` partition contains user and system data. Each application has its own folder where it can store data, and each program is launched with its own user. Thus, the application is limited and does not have access to data stored by other programs. The `data` folder contains individual program folders containing [SQLite](https://en.wikipedia.org/wiki/SQLite) databases which we can read using `sqlite3` or `sqlitebrowser` tool.
 
     ls stl11/
 
