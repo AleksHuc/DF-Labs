@@ -968,3 +968,5 @@ Program na vrne `Segmentation fault`, ki je posledica zaščite proti prepisovan
     Type "help", "copyright", "credits" or "license" for more information. 
 
     >>> 
+
+Od tukaj naprej pa lahko sledite članku [Smashing the stack for fun and profit](https://www.eecs.umich.edu/courses/eecs588/static/stack_smashing.pdf) in uspešno zaključite vaš napad.
