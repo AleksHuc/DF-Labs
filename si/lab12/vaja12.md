@@ -1,0 +1,436 @@
+# 12. Vaja: Forenzična analiza pomnilnika na računalniku
+
+## Navodila
+
+1. Med predvajanjem video datoteke povzročite predvajanje druge video datoteke.
+
+## Dodatne informacije
+
+## Podrobna navodila
+
+### 1. Forenzična analiza pomnilnika na računalniku
+
+V splošnem je računalnik po [von Neumann arhitekturi](https://en.wikipedia.org/wiki/Von_Neumann_architecture) sestavljen iz centralne procesne enote, pomnilnika in vhod/izhodnih naprav.
+
+Ponavadi izvajamo forenzično analizo na diskih, vendar v primeru šifriranih diskov ne moremo dostopati do podatkov, če ključa za dostop do podatkov ne poznamo. Da lahko analiziramo šifriran disk, moramo najprej analizirati pomnilnik in v njem najti šifrirni ključ. V pomnilniku se nahajajo še gesla, začasne datoteke in ostale začasne nastavitve.
+
+Da lahko pridemo do podatkov v pomnilniku dobro zaščitenega, zaklenjenega in zašifriranega računalnika, moramo izvesti [Cold Boot napad](https://en.wikipedia.org/wiki/Cold_boot_attack).
+
+Vsak računalnik ima pomnilnik v katerem hrani začasne datoteke, datoteke, ki so trenutno v uporabi in okoljske spremenljivke ter nastavitve operacijskega sistema in programov. Pomnilnik je sestavljen iz celic, ki vsebujejo kondenzatorje, ki držijo naboj, s katerim lahko hranimo podatke. Podatek se v kondenzatorju ohranja kadar imamo napajanje in lahko naboj v kondenzatorju pogosto osvežimo. Ko izklopimo napajanje, se obnavljanje nabojev oz. podatkov preneha, vendar pa naboj še nekaj časa ostane v kondenzatorjih. Kako dolgo je odvisno od izdelave kondenzatorja, lastnosti materialov in temperature. Nižja kot je temperatura, dlje časa ostane naboj v kondenzatorju in višja kot je temperatura, hitreje se naboj izgubi.
+
+Cilj Cold Boot napada je, da poskusimo čim bolj ohladiti pomnilnik s [tekočim dušikom](https://en.wikipedia.org/wiki/Liquid_nitrogen) ali [sprejem za zmrzovanje](https://en.wikipedia.org/wiki/Freeze_spray) na čim nižjo temperaturo. Ko je pomnilnik ohlajen, ga hitro prestavimo v drug delujoč računalnik in ga preberemo. Tako lahko naredimo sliko pomnilnika, ki jo nato uporabimo za nadaljnjo analizo.
+
+Potrebujemo prilagojen računalnik, ki omogoča priklop in branje pomnilnika med samim delovanjem, saj računalniki ponavadi sami pobrišejo pomnilnim med vklopom in/ali izklopom. Ta lastnost je odvisna od tega kako [BIOS](https://en.wikipedia.org/wiki/BIOS)/[UEFI](https://en.wikipedia.org/wiki/UEFI) inicializira pomnilnik.
+
+Za branje specifičnega pomnilnika potrebujemo procesorski krmilnik in matično ploščo, ki sta namenjen pravilnemu tipu pomnilnika. Danes je najbolj pogost pomnilnik tipa [Double Data Rate](Double_data_rate) verzije [3](https://en.wikipedia.org/wiki/DDR3_SDRAM), [4](https://en.wikipedia.org/wiki/DDR4_SDRAM) in [5](https://en.wikipedia.org/wiki/DDR5_SDRAM).
+
+Računalnik se zažene tako, da dobi napajanje, ki sproži da se [programski števec (program counter)](https://en.wikipedia.org/wiki/Program_counter) nastavi na privzeto vrednost, preko katere se zažene BIOS/UEFI, ki poskrbi za preverjanje in zagon strojne opreme. Potem preda izvajanje [sistemskemu nalagalniku (bootloader)](https://en.wikipedia.org/wiki/Bootloader), ki poskrbi za zagon operacijskega sistema.
+
+V idealnem svetu bi napisali svoj BIOS/UEFI, ki ne bi uničil podatkov v pomnilniku in bi omogoča branje brez inicializacije. Vendar je BIOS/UEFI ponavadi zaprta programska oprema, ki je zapisana na ločenem spominu na matični plošči jo težko spreminjamo. Lahko pa napišemo poljubni sistemski nalagalnik, ki bi nam to omogočal, saj je le ta kos poljubne programske opreme, ki se nahaja na poljubnem disku. Med zagonom operacijskega sistema in njegovim delovanjem ne želimo več prebrati pomnilnika, saj le ta uporablja pomnilnik in je že pripisal veliko pomembnih lokacij. Primera predelanih sistemskih nalagalnikov sta:
+- [msramdump](https://github.com/Schramp/msramdump)
+- [memimage](https://citp.princeton.edu/our-work/memory/code)
+
+Da se lahko obranimo Cold Boot napada, ne smemo imeti shranjenih zaupnih podatkov v pomnilniku, kot so na primer šifrirni ključ. Procesor ima posebej ločene registre in majhen pomnilnik do katerega je težko dostopati, ne izgubi podatkov med izgubo napajanja in je namenjen hranjenju zaupnih podatkov. Ločeni pomnilnik upravlja namenski ločeni procesor z namensko programsko opremo in komunicira z glavnim procesorjem preko dogovorjenega protokola. Na Intel procesorjih poznamo to funkcionalnost pod imenom [Intel Management Engine (IME)](https://en.wikipedia.org/wiki/Intel_Management_Engine) ter na procesorjih AMD pod imenom [Platform Security Processor (PSP)](https://en.wikipedia.org/wiki/AMD_Platform_Security_Processor) oz. [Microsoft Pluton](https://www.microsoft.com/en-us/security/blog/2020/11/17/meet-the-microsoft-pluton-processor-the-security-chip-designed-for-the-future-of-windows-pcs/). Tukaj se postavi vprašanje ali zaupamo zaprtemu sistemu, da skrbi za naše zaupne podatke? Podobno funkcionalnost opravljajo tudi [pametne kartice (smart cards)](https://en.wikipedia.org/wiki/Smart_card), ki je priključijo na računalnik preko vhodno/izhodnega krmilnika ter vsebujejo svoj ločeni procesor, ki opravlja podobno funkcionalnost kot IME in PSP.
+
+Na računalniku imamo veliko količino pomnilnika in sedaj si bomo pogledali kako lahko dostopamo do posameznih delov le tega. Sodobni operacijski sistemi uporabljajo navidezni pomnilnik, ki se nahaja v pomnilniku ter se razteza tudi na disk ter je določen z [tabelo strani (page table)](https://en.wikipedia.org/wiki/Page_table). Lahko naredimo kar kopijo celotnega pomnilnika, kjer se nahaja operacijski sistem, vsi programi, trenutne datoteke, nastavitve in okolje ter ga nato analiziramo. Lahko pa se osredotočimo na pomnilnik posameznega programa in zanj ugotovimo kaj ima v pomnilniku, katere datoteke ima odprte, kako se izvaja in podobno.
+
+Imamo namenska orodja za analiziranje pomnilnika programov:
+- Windows: [mimiKatz](https://github.com/ParrotSec/mimikatz)
+- Linux: [volatility](https://github.com/volatilityfoundation/volatility), [rekall](https://github.com/google/rekall), [yara](https://github.com/VirusTotal/yara)
+
+Lahko pa poskusimo analizirati in spremeniti pomnilnik programa kar sami. Namestimo si program za prenašanje video posnetkov s spleta [`yt-dlp`](https://github.com/yt-dlp/yt-dlp) in z njim prenesemo dva video posnetka s spleta in ju shranimo z enakim formatom. Predvajamo jih s programom [`vlc`](https://www.videolan.org/vlc/).
+
+    apt update
+    apt instal curl ffmpeg vlc
+
+    sudo curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp
+    sudo chmod a+rx /usr/local/bin/yt-dlp
+
+    yt-dlp -f "248+251" https://www.youtube.com/watch?v=2uzlfzrMu0E
+    yt-dlp -f "248+251" https://www.youtube.com/watch?v=ag2O2z99shY
+
+    ls
+
+    'Why Norway Is One Of The BEST Destinations In The World [2uzlfzrMu0E].webm'
+    'Why Slovenia Is The BEST Vacation Spot You'\''ve Never Heard Of [ag2O2z99shY].webm'
+
+    mv Why* /home/aleks
+
+    mv 'Why Norway Is One Of The BEST Destinations In The World [2uzlfzrMu0E].webm' Norway.webm
+
+    mv 'Why Slovenia Is The BEST Vacation Spot You'\''ve Never Heard Of [ag2O2z99shY].webm' S.webm
+
+    vlc Slovenia.webm
+
+Z ukazom [`ps`](https://www.man7.org/linux/man-pages/man1/ps.1.html) lahko izpišemo vse procese, ki se trenutno izvajajo v našem operacijskem sistemu. Oznaka `PID - Proces Identifier` oz. enolični identifikator procesa, ki nam označuje vsak proces in nam omogoča upravljanje z njim.
+
+    ps -a
+
+         PID TTY          TIME CMD
+        1061 tty2     00:00:00 gnome-session-b
+        3305 pts/1    00:00:00 su
+        3306 pts/1    00:00:00 bash
+        3404 pts/0    00:00:06 vlc
+        3469 pts/1    00:00:00 ps
+
+
+Linux ima navidezni imenik `/dev`, ki naslavlja vse naprave, `/sys`, ki naslavlja module, podsisteme ter nastavitve, ki niso del procesov ter [`/proc`](https://man7.org/linux/man-pages/man5/proc.5.html), ki naslavlja vse procese, ki se trenutno izvajajo.
+
+    ls /proc
+
+    1     1154  1277  1452	2195  3471  58	       dma	      pagetypeinfo
+    10    1161  1278  1454	22    382   59	       driver	      partitions
+    1000  1167  128   1455	2218  386   590        dynamic_debug  pressure
+    1001  117   1281  1456	23    388   593        execdomains    sched_debug
+    1015  119   129   1466	2314  390   594        fb	      schedstat
+    1016  1191  1291  1469	24    393   6	       filesystems    self
+    1018  12    1293  1479	241   399   640        fs	      slabinfo
+    1023  120   1294  1486	25    4     68	       interrupts     softirqs
+    1028  121   1296  1487	26    400   71	       iomem	      stat
+    1043  1215  13	  1491	27    401   72	       ioports	      swaps
+    1045  1219  130   1496	28    402   728        irq	      sys
+    1055  122   1302  15	288   405   799        kallsyms       sysrq-trigger
+    1058  1226  1303  1521	29    419   8	       kcore	      sysvipc
+    1061  123   131   16	296   430   9	       keys	      thread-self
+    1069  1234  132   17	3     473   928        key-users      timer_list
+    1078  124   1321  177	30    475   995        kmsg	      tty
+    109   1244  133   178	31    477   acpi       kpagecgroup    uptime
+    1090  1245  1331  18	3223  486   asound     kpagecount     version
+    1095  1257  134   1968	3303  489   buddyinfo  kpageflags     vmallocinfo
+    11    1258  135   1970	3305  49    bus        loadavg	      vmstat
+    1102  1268  136   1973	3306  50    cgroups    locks	      zoneinfo
+    1109  1269  137   2	3309  51    cmdline    meminfo
+    1115  1270  1371  20	3320  52    consoles   misc
+    112   1271  1375  2003	3325  53    cpuinfo    modules
+    1136  1272  1378  2096	3326  55    crypto     mounts
+    1137  1273  1439  2098	3402  56    devices    mtrr
+    1139  1276  1443  215	3404  57    diskstats  net
+
+    ls /proc/3404
+
+    arch_status	    cwd        mem	      patch_state   stat
+    attr		    environ    mountinfo      personality   statm
+    autogroup	    exe        mounts	      projid_map    status
+    auxv		    fd	       mountstats     root	    syscall
+    cgroup		    fdinfo     net	      sched	    task
+    clear_refs	    gid_map    ns	      schedstat     timens_offsets
+    cmdline		    io	       numa_maps      sessionid     timers
+    comm		    limits     oom_adj	      setgroups     timerslack_ns
+    coredump_filter     loginuid   oom_score      smaps	    uid_map
+    cpu_resctrl_groups  map_files  oom_score_adj  smaps_rollup  wchan
+    cpuset		    maps       pagemap	      stack
+
+Datoteka `mem` naslavlja celoten navidezni pomnilnik procesa, kot ga vidi proces sam z relativnimi odmiki. Ko ga hočemo shraniti, nam vrne napako, saj poskuša brati dele pomnilnika, ki ne obstajajo.
+
+    cat /proc/3404/mem > /home/aleks/vlcmemdump.raw
+
+    cat: /proc/3404/mem: Input/output error
+
+Datoteka `maps` nam pa pove kam v pomnilnik se preslika navidezni pomnilnik v datoteki `mem` in nam omogoča nadaljnjo analizo pomnilnika procesa. Prvi dve števili predstavljata del pomnilnika, ki ga vrstica naslavlja (naslov prvega bajta in naslov prvega bajta za zadnjim bajtom dela pomnilnika v šestnajstiški obliki), sledijo dovoljenja za uporabo (permission) ter informacije o datoteki (zamik (offset), naprava (device), vozlišče (inode) in ime (name)). Naslovi, ki kažejo na mapo `/usr/bin/...` na povejo, kateri program se izvaja. Pomnilnik se začne s programsko kodo programa, konstantami, lokalnimi in dinamičnimi spremenljivkami, nato sledi prosti pomnilnik in na koncu imamo sklad.
+
+    cat /proc/3404/maps > /home/aleks/vlcmapsdump
+    less /home/aleks/vlcmapsdump
+
+    55674e210000-55674e211000 r--p 00000000 08:01 976854                     /usr/bin/vlc
+    55674e211000-55674e212000 r-xp 00001000 08:01 976854                     /usr/bin/vlc
+    55674e212000-55674e213000 r--p 00002000 08:01 976854                     /usr/bin/vlc
+    55674e213000-55674e214000 r--p 00002000 08:01 976854                     /usr/bin/vlc
+    55674e214000-55674e215000 rw-p 00003000 08:01 976854                     /usr/bin/vlc
+    55674fe66000-55674ff8f000 rw-p 00000000 00:00 0                          [heap]
+    7f3a78000000-7f3a7bb2c000 rw-p 00000000 00:00 0 
+    7f3a7bb2c000-7f3a7c000000 ---p 00000000 00:00 0 
+    7f3a7cf94000-7f3a7d994000 rwxp 00000000 00:00 0 
+    7f3a7d994000-7f3a7d995000 ---p 00000000 00:00 0 
+    7f3a7d995000-7f3a7e195000 rw-p 00000000 00:00 0 
+    7f3a7e195000-7f3a7e197000 r--p 00000000 08:01 1102753                    /usr/lib/x86_64-linux-gnu/vlc/pl
+    ugins/codec/libvaapi_plugin.so
+    7f3a7e197000-7f3a7e19a000 r-xp 00002000 08:01 1102753                    /usr/lib/x86_64-linux-gnu/vlc/pl
+    ugins/codec/libvaapi_plugin.so
+    7f3a7e19a000-7f3a7e19b000 r--p 00005000 08:01 1102753                    /usr/lib/x86_64-linux-gnu/vlc/pl
+    ugins/codec/libvaapi_plugin.so
+    7f3a7e19b000-7f3a7e19c000 ---p 00006000 08:01 1102753                    /usr/lib/x86_64-linux-gnu/vlc/pl
+    ugins/codec/libvaapi_plugin.so
+    7f3a7e19c000-7f3a7e19d000 r--p 00006000 08:01 1102753                    /usr/lib/x86_64-linux-gnu/vlc/pl
+    ugins/codec/libvaapi_plugin.so
+    7f3a7e19d000-7f3a7e19e000 rw-p 00007000 08:01 1102753                    /usr/lib/x86_64-linux-gnu/vlc/pl
+    ugins/codec/libvaapi_plugin.so
+    7f3a7e19e000-7f3a7e1a0000 r--p 00000000 08:01 1103016                    /usr/lib/x86_64-linux-gnu/vlc/pl
+    ugins/vaapi/libvaapi_filters_plugin.so
+    7f3a7e1a0000-7f3a7e1b8000 r-xp 00002000 08:01 1103016                    /usr/lib/x86_64-linux-gnu/vlc/pl
+    ugins/vaapi/libvaapi_filters_plugin.so
+    7f3a7e1b8000-7f3a7e1bb000 r--p 0001a000 08:01 1103016                    /usr/lib/x86_64-linux-gnu/vlc/pl
+    ugins/vaapi/libvaapi_filters_plugin.so
+    7f3a7e1bb000-7f3a7e1bc000 r--p 0001c000 08:01 1103016                    /usr/lib/x86_64-linux-gnu/vlc/pl
+    ugins/vaapi/libvaapi_filters_plugin.so
+    7f3a7e1bc000-7f3a7e1bd000 rw-p 0001d000 08:01 1103016                    /usr/lib/x86_64-linux-gnu/vlc/pl
+    ugins/vaapi/libvaapi_filters_plugin.so
+    7f3a7e1bd000-7f3a7e1bf000 r--p 00000000 08:01 1103030                    /usr/lib/x86_64-linux-gnu/vlc/pl
+    ugins/video_output/libglconv_vaapi_drm_plugin.so
+    7f3a7e1bf000-7f3a7e1c2000 r-xp 00002000 08:01 1103030                    /usr/lib/x86_64-linux-gnu/vlc/pl
+    ugins/video_output/libglconv_vaapi_drm_plugin.so
+    7f3a7e1c2000-7f3a7e1c4000 r--p 00005000 08:01 1103030                    /usr/lib/x86_64-linux-gnu/vlc/pl
+    ugins/video_output/libglconv_vaapi_drm_plugin.so
+    7f3a7e1c4000-7f3a7e1c5000 r--p 00006000 08:01 1103030                    /usr/lib/x86_64-linux-gnu/vlc/pl
+    ugins/video_output/libglconv_vaapi_drm_plugin.so
+    7f3a7e1c5000-7f3a7e1c6000 rw-p 00007000 08:01 1103030                    /usr/lib/x86_64-linux-gnu/vlc/pl
+    ugins/video_output/libglconv_vaapi_drm_plugin.so
+    7f3a7e1c6000-7f3a7e1c8000 r--p 00000000 08:01 1103013                    /usr/lib/x86_64-linux-gnu/vlc/li
+    bvlc_vdpau.so.0.0.0
+
+Sedaj lahko napišemo kratek program, ki nam izpiše celoten pomnilnik procesa glede na vsebino datotek `mem` in `maps` ali pa si prenesemo [program](https://davidebove.com/blog/2021/03/27/how-to-dump-process-memory-in-linux/?pk_campaign=feed&pk_kwd=reverse-engineering-android-apps) s spleta in jo poženemo za željeni `PID`. Rezultat je binarna datoteka, ki predstavlja pomnilnik procesa in je namenjena za nadaljnjo analizo.
+
+    wget https://gist.githubusercontent.com/Dbof/b9244cfc607cf2d33438826bee6f5056/raw/aa4b75ddb55a58e2007bf12e17daadb0ebebecba/memdump.py
+
+    sudo python3 memdump.py 3404
+
+Direktorij `fd` vsebuje simbolične povezave, ki so poimenovane s številkami, na odprte datoteke tega procesa. Simbolične povezave nam omogočajo, da datoteko odpremo in jo preberemo, tudi v primeru, ko je bila datoteka predhodno izbrisana z diska. Da ugototovimo kam kažejo simbolične povezave uporabimo ukaz `ls -al` in vidimo, da številka 32 kaže na video, ki se trenuno predvaja.
+
+    ls /proc/3404/fd
+
+    0  10  12  14  16  18  2   21  23  25  29  30  32  34  4  6  8
+    1  11  13  15  17  19  20  22  24  26  3   31  33  35  5  7  9
+
+    ls -al /proc/43926/fd
+
+    total 0
+    dr-x------ 2 aleks aleks  0 May 16 14:30 .
+    dr-xr-xr-x 9 aleks aleks  0 May 16 14:30 ..
+    lrwx------ 1 aleks aleks 64 May 16 14:30 0 -> /dev/pts/1
+    lrwx------ 1 aleks aleks 64 May 16 14:30 1 -> /dev/pts/1
+    lrwx------ 1 aleks aleks 64 May 16 14:30 10 -> 'socket:[57854]'
+    lrwx------ 1 aleks aleks 64 May 16 14:30 11 -> 'socket:[58753]'
+    lrwx------ 1 aleks aleks 64 May 16 14:30 12 -> 'anon_inode:[eventfd]'
+    lrwx------ 1 aleks aleks 64 May 16 14:30 13 -> 'anon_inode:[eventfd]'
+    lrwx------ 1 aleks aleks 64 May 16 14:30 14 -> 'socket:[58755]'
+    lrwx------ 1 aleks aleks 64 May 16 14:30 15 -> 'anon_inode:[eventfd]'
+    lrwx------ 1 aleks aleks 64 May 16 14:30 16 -> 'anon_inode:[eventfd]'
+    lrwx------ 1 aleks aleks 64 May 16 14:30 17 -> '/memfd:wayland-cursor (deleted)'
+    lrwx------ 1 aleks aleks 64 May 16 14:30 18 -> 'socket:[58764]'
+    lrwx------ 1 aleks aleks 64 May 16 14:30 19 -> 'socket:[58766]'
+    lrwx------ 1 aleks aleks 64 May 16 14:30 2 -> /dev/pts/1
+    lrwx------ 1 aleks aleks 64 May 16 14:30 20 -> 'anon_inode:[eventfd]'
+    lrwx------ 1 aleks aleks 64 May 16 14:30 21 -> 'socket:[58756]'
+    lrwx------ 1 aleks aleks 64 May 16 14:30 22 -> 'anon_inode:[eventfd]'
+    lr-x------ 1 aleks aleks 64 May 16 14:30 23 -> anon_inode:inotify
+    lrwx------ 1 aleks aleks 64 May 16 14:30 24 -> 'anon_inode:[eventfd]'
+    lrwx------ 1 aleks aleks 64 May 16 14:30 25 -> 'socket:[57866]'
+    lrwx------ 1 aleks aleks 64 May 16 14:30 26 -> 'socket:[58768]'
+    lr-x------ 1 aleks aleks 64 May 16 14:30 29 -> /usr/share/icons/Adwaita/icon-theme.cache
+    lr-x------ 1 aleks aleks 64 May 16 14:30 3 -> 'pipe:[57849]'
+    lr-x------ 1 aleks aleks 64 May 16 14:30 30 -> /usr/share/icons/hicolor/icon-theme.cache
+    lrwx------ 1 aleks aleks 64 May 16 14:30 31 -> 'socket:[57886]'
+    lr-x------ 1 aleks aleks 64 May 16 14:30 32 -> '/home/aleks/Slovenia.webm'
+    lrwx------ 1 aleks aleks 64 May 16 14:30 33 -> 'socket:[58797]'
+    lrwx------ 1 aleks aleks 64 May 16 14:30 34 -> 'socket:[58799]'
+    lrwx------ 1 aleks aleks 64 May 16 14:30 35 -> 'socket:[57948]'
+    l-wx------ 1 aleks aleks 64 May 16 14:30 4 -> 'pipe:[57849]'
+    lrwx------ 1 aleks aleks 64 May 16 14:30 5 -> 'anon_inode:[eventfd]'
+    lrwx------ 1 aleks aleks 64 May 16 14:30 6 -> 'socket:[57851]'
+    lrwx------ 1 aleks aleks 64 May 16 14:30 7 -> 'anon_inode:[eventfd]'
+    lr-x------ 1 aleks aleks 64 May 16 14:30 8 -> 'pipe:[57853]'
+    l-wx------ 1 aleks aleks 64 May 16 14:30 9 -> 'pipe:[57853]'
+
+Pomnilnik programo lahko tudi pregledamo s programom [`radare2`](https://github.com/radareorg/radare2). Z nastavitvijo `v` omogočimo grafični vmesnik ter nato s klikom na meni `View\Hexdump`, kjer lahko pregledujemo vsebino pomnilnika.
+
+    apt update
+    apt install git
+    git clone https://github.com/radareorg/radare2
+    radare2/sys/install.sh
+
+    r2 3404.dump
+
+    v
+
+    View\Hexdump
+
+    q
+
+    q
+
+Za primer lahko tudi pregledamo pomnilnik tekstovenga urejevalnika `nano`. Tako, da ga odpremo in v njem napišemo poljubno besedilo ter ga pustimo odprtega. Nato z ukazom `ps` preverimo `PID` urejevalnika in naredimo kopijo pomnilnika s skripto `memdump.py`. Vsebino pomnilnika lahko nato izpišemo z ukazom [`strings`](https://www.man7.org/linux/man-pages/man1/strings.1.html) in nato z ukazom [`grep`](https://man7.org/linux/man-pages/man1/grep.1.html) filtriramo po ključni besedi, na primer `test`. Drugi bolj napredni programi, pa lahko iz kopije pomnilnika tudi izluščijo podatkovne strukture, ki jih uporablja proces.
+
+    nano test
+
+    This is a test string!
+
+    ps -a
+
+     PID TTY          TIME CMD
+    1095 tty2     00:00:00 gnome-session-b
+    1720 pts/0    00:00:00 su
+    1727 pts/0    00:00:00 bash
+    43926 pts/1    01:17:33 vlc
+    55197 pts/2    00:00:00 su
+    55198 pts/2    00:00:00 bash
+    56021 pts/2    00:00:00 nano
+    56032 pts/0    00:00:00 ps
+
+    sudo python3 memdump.py 56021
+
+    strings 56021.dump | grep test
+
+    quotestr
+    --quotestr=<regex>
+    test
+    This is a test string!
+    ./.test.swp
+    test
+    This is a test string!
+    test
+    glibc.malloc.arena_test
+    file you run.  This is mostly of use for maintainers to test new versions
+    is is a test 
+    test
+
+Razhroščevalnik [`gdb`](https://man7.org/linux/man-pages/man1/gdb.1.html) nam omogoča, da se priklopimo na proces, ki se trenutno izvaja. Ko se priklopimo na proces, se le ta ustavi in čaka, da mi požene naslenji ukaz. Nadaljnje izvajanje procesa lahko sprožimo z ukazom `continue` in nato z ukazom `CTRL+C` ponovno prekinemo izvajanje. Ukaz `where` nam pove kje se nahajamo v pomnilniku. Z uakzom `disassemble` pa lahko pogledamo pogramsko kodo posameznih funkcij. Z ukazom `frame` lahko izpisujemo vrednosti v pomnilniku, kot so kopica, sklad ter ostale spremenljivke in podatkovne strukture.
+
+    apt update
+    apt install gdb
+
+    gdb attach 56021
+
+    GNU gdb (Debian 10.1-1.7) 10.1.90.20210103-git
+    Copyright (C) 2021 Free Software Foundation, Inc.
+    License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+    This is free software: you are free to change and redistribute it.
+    There is NO WARRANTY, to the extent permitted by law.
+    Type "show copying" and "show warranty" for details.
+    This GDB was configured as "x86_64-linux-gnu".
+    Type "show configuration" for configuration details.
+    For bug reporting instructions, please see:
+    <https://www.gnu.org/software/gdb/bugs/>.
+    Find the GDB manual and other documentation resources online at:
+        <http://www.gnu.org/software/gdb/documentation/>.
+
+    For help, type "help".
+    Type "apropos word" to search for commands related to "word"...
+    attach: No such file or directory.
+    Attaching to process 56021
+    Reading symbols from /usr/bin/nano...
+    (No debugging symbols found in /usr/bin/nano)
+    Reading symbols from /lib/x86_64-linux-gnu/libncursesw.so.6...
+    (No debugging symbols found in /lib/x86_64-linux-gnu/libncursesw.so.6)
+    Reading symbols from /lib/x86_64-linux-gnu/libtinfo.so.6...
+    (No debugging symbols found in /lib/x86_64-linux-gnu/libtinfo.so.6)
+    Reading symbols from /lib/x86_64-linux-gnu/libc.so.6...
+    Reading symbols from /usr/lib/debug/.build-id/e1/5ec78d51a522023f9cfc58dc284f379d81860b.debug...
+    Reading symbols from /lib/x86_64-linux-gnu/libdl.so.2...
+    Reading symbols from /usr/lib/debug/.build-id/46/b3bf3f9b9eb092a5c0cf5575e89092f768054c.debug...
+    Reading symbols from /lib64/ld-linux-x86-64.so.2...
+    Reading symbols from /usr/lib/debug/.build-id/e2/5570740d590e5cb7b1a20d86332a8d1bb3b65f.debug...
+    Reading symbols from /lib/x86_64-linux-gnu/libnss_files.so.2...
+    Reading symbols from /usr/lib/debug/.build-id/ba/b4b71665bcc7f3f9b142804534c6de15b6e824.debug...
+    0x00007fe8067663ce in __GI___libc_read (fd=0, buf=0x7ffc5b984baf, nbytes=1)
+        at ../sysdeps/unix/sysv/linux/read.c:26
+    26	../sysdeps/unix/sysv/linux/read.c: No such file or directory.
+
+    (gdb) continue
+    
+    Continuing.
+    
+    ^C
+    
+    Program received signal SIGINT, Interrupt.
+    0x00007fe8067663ce in __GI___libc_read (fd=0, buf=0x7ffc5b984baf, nbytes=1)
+        at ../sysdeps/unix/sysv/linux/read.c:26
+    26	in ../sysdeps/unix/sysv/linux/read.c
+
+    (gdb) where
+    
+    #0  0x00007fe8067663ce in __GI___libc_read (fd=0, buf=0x7ffc5b984baf, nbytes=1)
+        at ../sysdeps/unix/sysv/linux/read.c:26
+    #1  0x00007fe8068906e1 in ?? () from /lib/x86_64-linux-gnu/libncursesw.so.6
+    #2  0x00007fe806891277 in wgetch () from /lib/x86_64-linux-gnu/libncursesw.so.6
+    #3  0x000055de729dc511 in ?? ()
+    #4  0x000055de729dc845 in ?? ()
+    #5  0x000055de729dd2e9 in ?? ()
+    #6  0x000055de729e26e8 in ?? ()
+    #7  0x000055de729ccf94 in ?? ()
+    #8  0x000055de729b58e5 in ?? ()
+    #9  0x00007fe80669ed0a in __libc_start_main (main=0x55de729b4ba0, argc=2, argv=0x7ffc5b9855e8, 
+        init=<optimized out>, fini=<optimized out>, rtld_fini=<optimized out>, stack_end=0x7ffc5b9855d8)
+        at ../csu/libc-start.c:308
+    #10 0x000055de729b5faa in ?? ()
+
+    (gdb) disassemble 0x00007fe8067663ce
+    
+    Dump of assembler code for function __GI___libc_read:
+    0x00007fe8067663c0 <+0>:	mov    %fs:0x18,%eax
+    0x00007fe8067663c8 <+8>:	test   %eax,%eax
+    0x00007fe8067663ca <+10>:	jne    0x7fe8067663e0 <__GI___libc_read+32>
+    0x00007fe8067663cc <+12>:	syscall 
+    => 0x00007fe8067663ce <+14>:	cmp    $0xfffffffffffff000,%rax
+    0x00007fe8067663d4 <+20>:	ja     0x7fe806766430 <__GI___libc_read+112>
+    0x00007fe8067663d6 <+22>:	ret    
+    0x00007fe8067663d7 <+23>:	nopw   0x0(%rax,%rax,1)
+    0x00007fe8067663e0 <+32>:	sub    $0x28,%rsp
+    0x00007fe8067663e4 <+36>:	mov    %rdx,0x18(%rsp)
+    0x00007fe8067663e9 <+41>:	mov    %rsi,0x10(%rsp)
+    0x00007fe8067663ee <+46>:	mov    %edi,0x8(%rsp)
+    0x00007fe8067663f2 <+50>:	call   0x7fe8066fb9c0 <__libc_enable_asynccancel>
+    0x00007fe8067663f7 <+55>:	mov    0x18(%rsp),%rdx
+    0x00007fe8067663fc <+60>:	mov    0x10(%rsp),%rsi
+    0x00007fe806766401 <+65>:	mov    %eax,%r8d
+    0x00007fe806766404 <+68>:	mov    0x8(%rsp),%edi
+    0x00007fe806766408 <+72>:	xor    %eax,%eax
+    0x00007fe80676640a <+74>:	syscall 
+    0x00007fe80676640c <+76>:	cmp    $0xfffffffffffff000,%rax
+    0x00007fe806766412 <+82>:	ja     0x7fe806766448 <__GI___libc_read+136>
+    0x00007fe806766414 <+84>:	mov    %r8d,%edi
+    0x00007fe806766417 <+87>:	mov    %rax,0x8(%rsp)
+    0x00007fe80676641c <+92>:	call   0x7fe8066fba20 <__libc_disable_asynccancel>
+    0x00007fe806766421 <+97>:	mov    0x8(%rsp),%rax
+    0x00007fe806766426 <+102>:	add    $0x28,%rsp
+    0x00007fe80676642a <+106>:	ret    
+    0x00007fe80676642b <+107>:	nopl   0x0(%rax,%rax,1)
+    0x00007fe806766430 <+112>:	mov    0xe2a39(%rip),%rdx        # 0x7fe806848e70
+    0x00007fe806766437 <+119>:	neg    %eax
+    0x00007fe806766439 <+121>:	mov    %eax,%fs:(%rdx)
+    0x00007fe80676643c <+124>:	mov    $0xffffffffffffffff,%rax
+    0x00007fe806766443 <+131>:	ret    
+    0x00007fe806766444 <+132>:	nopl   0x0(%rax)
+    0x00007fe806766448 <+136>:	mov    0xe2a21(%rip),%rdx        # 0x7fe806848e70
+    0x00007fe80676644f <+143>:	neg    %eax
+    0x00007fe806766451 <+145>:	mov    %eax,%fs:(%rdx)
+    0x00007fe806766454 <+148>:	mov    $0xffffffffffffffff,%rax
+    0x00007fe80676645b <+155>:	jmp    0x7fe806766414 <__GI___libc_read+84>
+    End of assembler dump.
+
+    (gdb) frame
+    
+    #0  0x00007fe8067663ce in __GI___libc_read (fd=0, buf=0x7ffc5b984baf, nbytes=1)
+        at ../sysdeps/unix/sysv/linux/read.c:26
+    26	in ../sysdeps/unix/sysv/linux/read.c
+
+Sedaj poskusimo napisati program, ki se preko `gdb` razhroščevalnika poveže na proces za predvajanje video posnetkov. Nato poišče referenco (file descriptor) na video datoteko, ki se trenutno predvaja. Trenutno video datoteko zapre in pod njeno referenco odpre novo video datoteko in tako povzroči, da predvajalni začne predvajati nov video posnetek. Težave se pojavi v primeru, ko uporabljamo različna formata za video datoteki in v tem primeru program javi napako. Naš program lahko povzamemo po naslednjem [primeru](https://sajjanrajjain.wordpress.com/2015/08/29/changing-file-descriptors-in-gdb/).
+
+Z ukazom [`chmod`](https://man7.org/linux/man-pages/man1/chmod.1.html) spremenimo pravice za dostop do naših dveh video datotek, tako da jih lahko preberejo poljubni programi. Nato ustvarimo naš program, ki bo prejel dva argumenta. Prvi argument `NAMEKEY` predstavlja celotno ali delno ime video datoteke, ki se predvaja. Drugi argument `NEWFILE` predstavlja pot in ime datoteke, ki jo želimo predvajati. V naslednjem koraku pridobimo `PID` video predvajalnika in nato pridobimo referenco `FD` (file descriptor) na video datoteko, ki se trenutno predvaja. Da izvedemo menjavo video datoteke v procesu video predvajalnik, uprabimo orodje `gdb`. Najprej se priključimo na proces z ukazom `attach`. Znotraj procesa sedaj odpremo novo video datoteko s sistemskim klicem [`open`](https://www.man7.org/linux/man-pages/man2/open.2.html), ki nam vrne reference (file descriptor) pod katerim je sedaj na voljo odprta datoteka. S sistemskim klicem [`dup2`](https://man7.org/linux/man-pages/man2/dup.2.html) klonira referenco (file descriptor) z datoteke, ki se trenutno predvaja na novo datoteko, ki smo jo ravnokar odprli. Na kocnu se še odklopimo iz procesa z ukazom `detach` in nato zapremo orodje `gdb` z ukazom `quit`.
+
+Spremenimo še pravice našega programa, da sedaj dovoljujejo izvajanje. Poženemo video predvajalnik s prvim video posnetkom ter nato poženemo naš program s pravilnima parametroma.
+
+    chmod 666 Norway.webm
+    chmod 666 Slovenia.webm
+
+    nano switcher
+
+    #!/bin/sh
+
+    NAMEKEY=$1
+    NEWFILE=$2
+
+    echo $NAMEKEY
+    echo $NEWFILE
+
+    PID=$(ps xa | grep "vlc" | head -n 1 | awk '{ print $1 }' )
+    echo $PID
+
+    FD=$(ls -al /proc/$PID/fd | grep $NAMEKEY | cut -d " " -f 9 )
+    echo $FD
+
+    echo -e "attach $PID\ncall open(\"$NEWFILE\", 0666)\ncall (int)dup2(\$1, $FD)\ndetach\nquit\n" | gdb
+
+    chmod +x switcher
+
+    vlc Slovenia.webm
+
+    ./switcher Slovenia /home/aleks/Norway.webm
