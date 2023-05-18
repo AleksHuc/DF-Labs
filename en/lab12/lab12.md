@@ -1,44 +1,44 @@
-# 12. Vaja: Forenzična analiza pomnilnika na računalniku
+# 12. Lab: Forensic analysis of computer memory
 
-## Navodila
+## Instructions
 
-1. Med predvajanjem video datoteke povzročite predvajanje druge video datoteke.
+1. While playing a video file, insert another video file to play.
 
-## Dodatne informacije
+## More information
 
-## Podrobna navodila
+## Detailed instructions
 
-### 1. Forenzična analiza pomnilnika na računalniku
+### 1. Forensic analysis of computer memory
 
-V splošnem je računalnik po [von Neumann arhitekturi](https://en.wikipedia.org/wiki/Von_Neumann_architecture) sestavljen iz centralne procesne enote, pomnilnika in vhod/izhodnih naprav.
+In general, a computer according to [von Neumann architecture](https://en.wikipedia.org/wiki/Von_Neumann_architecture) consists of a central processing unit, memory and input/output devices.
 
-Ponavadi izvajamo forenzično analizo na diskih, vendar v primeru šifriranih diskov ne moremo dostopati do podatkov, če ključa za dostop do podatkov ne poznamo. Da lahko analiziramo šifriran disk, moramo najprej analizirati pomnilnik in v njem najti šifrirni ključ. V pomnilniku se nahajajo še gesla, začasne datoteke in ostale začasne nastavitve.
+We usually perform forensic analysis on disks, but in the case of encrypted disks, we cannot access the data if we do not know the key to access the data. In order to analyze an encrypted disk, we must first analyze the memory and find the encryption key in it. The memory also contains passwords, temporary files and other temporary settings.
 
-Da lahko pridemo do podatkov v pomnilniku dobro zaščitenega, zaklenjenega in zašifriranega računalnika, moramo izvesti [Cold Boot napad](https://en.wikipedia.org/wiki/Cold_boot_attack).
+In order to get to the data in the memory of a well-protected, locked and encrypted computer, we need to perform a [Cold Boot attack](https://en.wikipedia.org/wiki/Cold_boot_attack).
 
-Vsak računalnik ima pomnilnik v katerem hrani začasne datoteke, datoteke, ki so trenutno v uporabi in okoljske spremenljivke ter nastavitve operacijskega sistema in programov. Pomnilnik je sestavljen iz celic, ki vsebujejo kondenzatorje, ki držijo naboj, s katerim lahko hranimo podatke. Podatek se v kondenzatorju ohranja kadar imamo napajanje in lahko naboj v kondenzatorju pogosto osvežimo. Ko izklopimo napajanje, se obnavljanje nabojev oz. podatkov preneha, vendar pa naboj še nekaj časa ostane v kondenzatorjih. Kako dolgo je odvisno od izdelave kondenzatorja, lastnosti materialov in temperature. Nižja kot je temperatura, dlje časa ostane naboj v kondenzatorju in višja kot je temperatura, hitreje se naboj izgubi.
+Every computer has memory in which it stores temporary files, files that are currently in use and environmental variables, as well as operating system and program settings. Memory consists of cells that contain capacitors that hold a charge that can be used to store data. The data is stored in the capacitor when we have power and the charge in the capacitor can be refreshed frequently. When we turn off the power supply, the recharging or the data stops, but the charge remains in the capacitors for some time. How long depends on the construction of the capacitor, the properties of the materials and the temperature. The lower the temperature, the longer the charge remains in the capacitor and the higher the temperature, the faster the charge is lost.
 
-Cilj Cold Boot napada je, da poskusimo čim bolj ohladiti pomnilnik s [tekočim dušikom](https://en.wikipedia.org/wiki/Liquid_nitrogen) ali [sprejem za zmrzovanje](https://en.wikipedia.org/wiki/Freeze_spray) na čim nižjo temperaturo. Ko je pomnilnik ohlajen, ga hitro prestavimo v drug delujoč računalnik in ga preberemo. Tako lahko naredimo sliko pomnilnika, ki jo nato uporabimo za nadaljnjo analizo.
+The goal of a Cold Boot attack is to try to cool down the memory as much as possible with [liquid nitrogen](https://en.wikipedia.org/wiki/Liquid_nitrogen) or [freeze spray](https://en.wikipedia.org/wiki/Freeze_spray) to the lowest possible temperature. Once the memory has cooled, we quickly transfer it to another working computer and read it. In this way, we can make an image of the memory, which can then be used for further analysis.
 
-Potrebujemo prilagojen računalnik, ki omogoča priklop in branje pomnilnika med samim delovanjem, saj računalniki ponavadi sami pobrišejo pomnilnim med vklopom in/ali izklopom. Ta lastnost je odvisna od tega kako [BIOS](https://en.wikipedia.org/wiki/BIOS)/[UEFI](https://en.wikipedia.org/wiki/UEFI) inicializira pomnilnik.
+We need a customized computer that allows connecting and reading the memory during operation, since computers usually erase their memory when they are turned on and/or turned off. This property depends on how [BIOS](https://en.wikipedia.org/wiki/BIOS)/[UEFI](https://en.wikipedia.org/wiki/UEFI) initializes memory.
 
-Za branje specifičnega pomnilnika potrebujemo procesorski krmilnik in matično ploščo, ki sta namenjen pravilnemu tipu pomnilnika. Danes je najbolj pogost pomnilnik tipa [Double Data Rate (DDR)](Double_data_rate) verzije [3](https://en.wikipedia.org/wiki/DDR3_SDRAM), [4](https://en.wikipedia.org/wiki/DDR4_SDRAM) in [5](https://en.wikipedia.org/wiki/DDR5_SDRAM).
+To read specific memory, we need a processor controller and motherboard dedicated to the correct type of memory. Today, the most common type of memory is the [Double Data Rate (DDR)](Double_data_rate) version [3](https://en.wikipedia.org/wiki/DDR3_SDRAM), [4](https://en.wikipedia.org/wiki/DDR4_SDRAM) and [5](https://en.wikipedia.org/wiki/DDR5_SDRAM).
 
-Računalnik se zažene tako, da dobi napajanje, ki sproži da se [programski števec (program counter)](https://en.wikipedia.org/wiki/Program_counter) nastavi na privzeto vrednost, preko katere se zažene BIOS/UEFI, ki poskrbi za preverjanje in zagon strojne opreme. Potem preda izvajanje [sistemskemu nalagalniku (bootloader)](https://en.wikipedia.org/wiki/Bootloader), ki poskrbi za zagon operacijskega sistema.
+The computer starts up by receiving power, which triggers the [program counter](https://en.wikipedia.org/wiki/Program_counter) to be set to its default value, through which the BIOS/UEFI boots, which take care of verifying and starting the hardware. It then hands off execution to the [bootloader](https://en.wikipedia.org/wiki/Bootloader), which takes care of booting the operating system.
 
-V idealnem svetu bi napisali svoj BIOS/UEFI, ki ne bi uničil podatkov v pomnilniku in bi omogoča branje brez inicializacije. Vendar je BIOS/UEFI ponavadi zaprta programska oprema, ki je zapisana na ločenem spominu na matični plošči jo težko spreminjamo. Lahko pa napišemo poljubni sistemski nalagalnik, ki bi nam to omogočal, saj je le ta kos poljubne programske opreme, ki se nahaja na poljubnem disku. Med zagonom operacijskega sistema in njegovim delovanjem ne želimo več prebrati pomnilnika, saj le ta uporablja pomnilnik in je že pripisal veliko pomembnih lokacij. Primera predelanih sistemskih nalagalnikov sta:
+In an ideal world, you would write your own BIOS/UEFI that would not destroy the data in the memory and allow reading without initialization. However, BIOS/UEFI is usually a closed software that is written on a separate memory on the motherboard and is difficult to change. But we can write any bootloader that would allow us to do this, since it is just a piece of any software located on any disk. We don't want to read the memory anymore while the operating system is booting and running, because it is the only one using the memory and has already allocated a lot of important locations. Examples of modified bootloaders are:
 - [msramdump](https://github.com/Schramp/msramdump)
 - [memimage](https://citp.princeton.edu/our-work/memory/code)
 
-Da se lahko obranimo Cold Boot napada, ne smemo imeti shranjenih zaupnih podatkov v pomnilniku, kot so na primer šifrirni ključ. Procesor ima posebej ločene registre in majhen pomnilnik do katerega je težko dostopati, ne izgubi podatkov med izgubo napajanja in je namenjen hranjenju zaupnih podatkov. Ločeni pomnilnik upravlja namenski ločeni procesor z namensko programsko opremo in komunicira z glavnim procesorjem preko dogovorjenega protokola. Na Intel procesorjih poznamo to funkcionalnost pod imenom [Intel Management Engine (IME)](https://en.wikipedia.org/wiki/Intel_Management_Engine) ter na procesorjih AMD pod imenom [Platform Security Processor (PSP)](https://en.wikipedia.org/wiki/AMD_Platform_Security_Processor) oz. [Microsoft Pluton](https://www.microsoft.com/en-us/security/blog/2020/11/17/meet-the-microsoft-pluton-processor-the-security-chip-designed-for-the-future-of-windows-pcs/). Tukaj se postavi vprašanje ali zaupamo zaprtemu sistemu, da skrbi za naše zaupne podatke? Podobno funkcionalnost opravljajo tudi [pametne kartice (smart cards)](https://en.wikipedia.org/wiki/Smart_card), ki je priključijo na računalnik preko vhodno/izhodnega krmilnika ter vsebujejo svoj ločeni procesor, ki opravlja podobno funkcionalnost kot IME in PSP.
+In order to defend against a Cold Boot attack, we should not have confidential data stored in memory, such as an encryption key. The processor has specially separated registers and a small memory that is difficult to access, does not lose data during power loss and is intended to store confidential data. Separate memory is managed by a dedicated separate processor with dedicated software and communicates with the main processor via an agreed upon protocol. This functionality is known on Intel processors under the name [Intel Management Engine (IME)](https://en.wikipedia.org/wiki/Intel_Management_Engine) and on AMD processors under the name [Platform Security Processor (PSP)](https://en.wikipedia.org/wiki/AMD_Platform_Security_Processor) or [Microsoft Pluto](https://www.microsoft.com/en-us/security/blog/2020/11/17/meet-the-microsoft-pluton-processor-the-security-chip-designed-for-the-future-of-windows-pcs/). This begs the question, if do we trust a closed system to look after our confidential data? Similar functionality is also performed by [smart cards](https://en.wikipedia.org/wiki/Smart_card), which are connected to a computer via an input/output controller and contain their own separate processor that performs a similar functionality to an IME and PSP.
 
-Na računalniku imamo veliko količino pomnilnika in sedaj si bomo pogledali kako lahko dostopamo do posameznih delov le tega. Sodobni operacijski sistemi uporabljajo navidezni pomnilnik, ki se nahaja v pomnilniku ter se razteza tudi na disk ter je določen z [tabelo strani (page table)](https://en.wikipedia.org/wiki/Page_table). Lahko naredimo kar kopijo celotnega pomnilnika, kjer se nahaja operacijski sistem, vsi programi, trenutne datoteke, nastavitve in okolje ter ga nato analiziramo. Lahko pa se osredotočimo na pomnilnik posameznega programa in zanj ugotovimo kaj ima v pomnilniku, katere datoteke ima odprte, kako se izvaja in podobno.
+We have a large amount of memory on our computer and now we will see how we can access individual parts of it. Modern operating systems use virtual memory, which resides in memory and also extends to disk, and is defined by a [page table](https://en.wikipedia.org/wiki/Page_table). We can make a copy of the entire memory, where the operating system, all programs, current files, settings and environment are located, and then analyze it. But we can focus on the memory of an individual program and find out what it has in memory, which files it has open, how it is executed, and the like.
 
-Imamo namenska orodja za analiziranje pomnilnika programov:
+We have dedicated tools for analyzing program memory:
 - Windows: [mimiKatz](https://github.com/ParrotSec/mimikatz)
 - Linux: [volatility](https://github.com/volatilityfoundation/volatility), [rekall](https://github.com/google/rekall), [yara](https://github.com/VirusTotal/yara)
 
-Lahko pa poskusimo analizirati in spremeniti pomnilnik programa kar sami. Namestimo si program za prenašanje video posnetkov s spleta [`yt-dlp`](https://github.com/yt-dlp/yt-dlp) in z njim prenesemo dva video posnetka s spleta in ju shranimo z enakim formatom. Predvajamo jih s programom [`vlc`](https://www.videolan.org/vlc/).
+But we can try to analyze and change the program memory ourselves. Let's install a program for downloading videos from the web [`yt-dlp`](https://github.com/yt-dlp/yt-dlp) and use it to download two videos from the web and save them with the same format. We play them with the program [`vlc`](https://www.videolan.org/vlc/).
 
     apt update
     apt instal curl ffmpeg vlc
@@ -62,7 +62,7 @@ Lahko pa poskusimo analizirati in spremeniti pomnilnik programa kar sami. Namest
 
     vlc Slovenia.webm
 
-Z ukazom [`ps`](https://www.man7.org/linux/man-pages/man1/ps.1.html) lahko izpišemo vse procese, ki se trenutno izvajajo v našem operacijskem sistemu. Oznaka `PID - Proces Identifier` oz. enolični identifikator procesa, ki nam označuje vsak proces in nam omogoča upravljanje z njim.
+With the command [`ps`](https://www.man7.org/linux/man-pages/man1/ps.1.html) we can list all the processes currently running in our operating system. The label `PID - Process Identifier` identifies each process and allows us to manage it.
 
     ps -a
 
@@ -74,7 +74,7 @@ Z ukazom [`ps`](https://www.man7.org/linux/man-pages/man1/ps.1.html) lahko izpi�
         3469 pts/1    00:00:00 ps
 
 
-Linux ima navidezni imenik `/dev`, ki naslavlja vse naprave, `/sys`, ki naslavlja module, podsisteme ter nastavitve, ki niso del procesov ter [`/proc`](https://man7.org/linux/man-pages/man5/proc.5.html), ki naslavlja vse procese, ki se trenutno izvajajo.
+Linux has a virtual directory `/dev` which addresses all devices, `/sys` which addresses modules, subsystems and non-process settings and [`/proc`](https://man7.org/linux/man-pages/man5/proc.5.html) which addresses all currently running processes.
 
     ls /proc
 
@@ -120,13 +120,13 @@ Linux ima navidezni imenik `/dev`, ki naslavlja vse naprave, `/sys`, ki naslavlj
     cpu_resctrl_groups  map_files  oom_score_adj  smaps_rollup  wchan
     cpuset		    maps       pagemap	      stack
 
-Datoteka `mem` naslavlja celoten navidezni pomnilnik procesa, kot ga vidi proces sam z relativnimi odmiki. Ko ga hočemo shraniti, nam vrne napako, saj poskuša brati dele pomnilnika, ki ne obstajajo.
+The `mem` file addresses the entire virtual memory of the process as seen by the process itself with relative offsets. When we try to save it, it returns an error because it tries to read parts of the memory that don't exist.
 
     cat /proc/3404/mem > /home/aleks/vlcmemdump.raw
 
     cat: /proc/3404/mem: Input/output error
 
-Datoteka `maps` nam pa pove kam v pomnilnik se preslika navidezni pomnilnik v datoteki `mem` in nam omogoča nadaljnjo analizo pomnilnika procesa. Prvi dve števili predstavljata del pomnilnika, ki ga vrstica naslavlja (naslov prvega bajta in naslov prvega bajta za zadnjim bajtom dela pomnilnika v šestnajstiški obliki), sledijo dovoljenja za uporabo (permission) ter informacije o datoteki (zamik (offset), naprava (device), vozlišče (inode) in ime (name)). Naslovi, ki kažejo na mapo `/usr/bin/...` na povejo, kateri program se izvaja. Pomnilnik se začne s programsko kodo programa, konstantami, lokalnimi in dinamičnimi spremenljivkami, nato sledi prosti pomnilnik in na koncu imamo sklad in povratni naslov.
+The `maps` file tells us where the virtual memory in the `mem` file is mapped to memory and allows us to further analyze the memory of the process. The first two numbers represent the part of the memory that the line addresses (the address of the first byte and the address of the first byte after the last byte of the memory part in hexadecimal), followed by permissions and information about the file (offset, device, inode and name). Addresses that point to the `/usr/bin/...` folder tell you which program is running. Memory starts with the program code, constants, local and dynamic variables, then comes free memory, and finally we have the stack and return address.
 
     cat /proc/3404/maps > /home/aleks/vlcmapsdump
     less /home/aleks/vlcmapsdump
@@ -177,13 +177,13 @@ Datoteka `maps` nam pa pove kam v pomnilnik se preslika navidezni pomnilnik v da
     7f3a7e1c6000-7f3a7e1c8000 r--p 00000000 08:01 1103013                    /usr/lib/x86_64-linux-gnu/vlc/li
     bvlc_vdpau.so.0.0.0
 
-Sedaj lahko napišemo kratek program, ki nam izpiše celoten pomnilnik procesa glede na vsebino datotek `mem` in `maps` ali pa si prenesemo [program](https://davidebove.com/blog/2021/03/27/how-to-dump-process-memory-in-linux/?pk_campaign=feed&pk_kwd=reverse-engineering-android-apps) s spleta in jo poženemo za željeni `PID`. Rezultat je binarna datoteka, ki predstavlja pomnilnik procesa in je namenjena za nadaljnjo analizo.
+Now we can write a short program that prints the entire memory of the process according to the contents of the `mem` and `maps` files, or we can download the [program](https://davidebove.com/blog/2021/03/27/how-to-dump-process-memory-in-linux/?pk_campaign=feed&pk_kwd=reverse-engineering-android-apps) from the web and run it for the desired `PID`. The result is a binary file that represents the memory of the process and is intended for further analysis.
 
     wget https://gist.githubusercontent.com/Dbof/b9244cfc607cf2d33438826bee6f5056/raw/aa4b75ddb55a58e2007bf12e17daadb0ebebecba/memdump.py
 
     sudo python3 memdump.py 3404
 
-Direktorij `fd` vsebuje simbolične povezave, ki so poimenovane s številkami, na odprte datoteke tega procesa. Simbolične povezave nam omogočajo, da datoteko odpremo in jo preberemo, tudi v primeru, ko je bila datoteka v vmesnem času izbrisana z diska. Da ugototovimo kam kažejo simbolične povezave uporabimo ukaz `ls -al` in vidimo, da številka 32 kaže na video, ki se trenuno predvaja.
+The `fd` directory contains symbolic links, named with numbers, to the open files of this process. Symbolic links allow us to open a file and read it, even if the file was deleted from the disk in the meantime. To find out where the symbolic links point to, use the `ls -al` command and see that the number 32 points to the video that is currently playing.
 
     ls /proc/3404/fd
 
@@ -230,7 +230,7 @@ Direktorij `fd` vsebuje simbolične povezave, ki so poimenovane s številkami, n
     lr-x------ 1 aleks aleks 64 May 16 14:30 8 -> 'pipe:[57853]'
     l-wx------ 1 aleks aleks 64 May 16 14:30 9 -> 'pipe:[57853]'
 
-Pomnilnik programo lahko tudi pregledamo s programom [`radare2`](https://github.com/radareorg/radare2). Z nastavitvijo `v` omogočimo grafični vmesnik ter nato s klikom na meni `View\Hexdump`, kjer lahko pregledujemo vsebino pomnilnika.
+The memory of the program can also be examined with the program [`radare2`](https://github.com/radareorg/radare2). With the setting `v` we enable the graphic interface and then by clicking on the menu `View\Hexdump`, where we can inspect the contents of the memory.
 
     apt update
     apt install git
@@ -247,7 +247,7 @@ Pomnilnik programo lahko tudi pregledamo s programom [`radare2`](https://github.
 
     q
 
-Za primer lahko tudi pregledamo pomnilnik tekstovenga urejevalnika `nano`. Tako, da ga odpremo in v njem napišemo poljubno besedilo ter ga pustimo odprtega. Nato z ukazom `ps` preverimo `PID` urejevalnika in naredimo kopijo pomnilnika s skripto `memdump.py`. Vsebino pomnilnika lahko nato izpišemo z ukazom [`strings`](https://www.man7.org/linux/man-pages/man1/strings.1.html) in nato z ukazom [`grep`](https://man7.org/linux/man-pages/man1/grep.1.html) filtriramo po ključni besedi, na primer `test`. Drugi bolj napredni programi, pa lahko iz kopije pomnilnika tudi izluščijo podatkovne strukture, ki jih uporablja proces.
+For example, we can also examine the memory of the `nano` text editor. By opening it and writing any text in it and leaving it open. Then we check the editor's `PID` with the `ps` command and make a copy of the memory with the `memdump.py` script. The contents of the memory can then be written out with the command [`strings`](https://www.man7.org/linux/man-pages/man1/strings.1.html) and then filtered with the command [`grep`](https://man7.org/linux/man-pages/man1/grep.1.html) by a keyword, for example `test`. Other more advanced programs can also extract the data structures used by the process from the memory copy.
 
     nano test
 
@@ -282,7 +282,7 @@ Za primer lahko tudi pregledamo pomnilnik tekstovenga urejevalnika `nano`. Tako,
     is is a test 
     test
 
-Razhroščevalnik [`gdb`](https://man7.org/linux/man-pages/man1/gdb.1.html) nam omogoča, da se priklopimo na proces, ki se trenutno izvaja. Ko se priklopimo na proces, se le ta ustavi in čaka, da mi požene naslenji ukaz. Nadaljnje izvajanje procesa lahko sprožimo z ukazom `continue` in nato z ukazom `CTRL+C` ponovno prekinemo izvajanje. Ukaz `where` nam pove kje se nahajamo v pomnilniku. Z uakzom `disassemble` pa lahko pogledamo pogramsko kodo posameznih funkcij. Z ukazom `frame` lahko izpisujemo vrednosti v pomnilniku, kot so kopica, sklad ter ostale spremenljivke in podatkovne strukture.
+The [`gdb`](https://man7.org/linux/man-pages/man1/gdb.1.html) debugger allows us to attach to the currently running process. When we connect to the process, it just stops and waits to run the next command. The further execution of the process can be initiated with the command `continue` and then with the command `CTRL+C` the execution can be stopped again. The command `where` tells us where we are in memory. With the `disassemble` command, we can look at the program code of individual functions. With the `frame` command, we can print values in memory, such as the heap, the stack, and other variables and data structures.
 
     apt update
     apt install gdb
@@ -402,11 +402,11 @@ Razhroščevalnik [`gdb`](https://man7.org/linux/man-pages/man1/gdb.1.html) nam 
         at ../sysdeps/unix/sysv/linux/read.c:26
     26	in ../sysdeps/unix/sysv/linux/read.c
 
-Sedaj poskusimo napisati program, ki se preko `gdb` razhroščevalnika poveže na proces za predvajanje video posnetkov. Nato poišče referenco (file descriptor) na video datoteko, ki se trenutno predvaja. Trenutno video datoteko zapre in pod njeno referenco odpre novo video datoteko in tako povzroči, da predvajalni začne predvajati nov video posnetek. Težave se pojavi v primeru, ko uporabljamo različna formata za video datoteki in v tem primeru program javi napako. Naš program lahko povzamemo po naslednjem [primeru](https://sajjanrajjain.wordpress.com/2015/08/29/changing-file-descriptors-in-gdb/).
+Now let's try to write a program that connects to the video playback process via the `gdb` debugger. It then looks for a reference (file descriptor) to the currently playing video file. It closes the current video file and opens a new video file under its reference, causing the player to start playing a new video clip. Problems arise when we use different formats for video files and in this case the program reports an error. Our program can be summarized by the following [example]((https://sajjanrajjain.wordpress.com/2015/08/29/changing-file-descriptors-in-gdb/).).
 
-Z ukazom [`chmod`](https://man7.org/linux/man-pages/man1/chmod.1.html) spremenimo pravice za dostop do naših dveh video datotek, tako da jih lahko preberejo poljubni programi. Nato ustvarimo naš program, ki bo prejel dva argumenta. Prvi argument `NAMEKEY` predstavlja celotno ali delno ime video datoteke, ki se predvaja. Drugi argument `NEWFILE` predstavlja pot in ime datoteke, ki jo želimo predvajati. V naslednjem koraku pridobimo `PID` video predvajalnika in nato pridobimo referenco `FD` (file descriptor) na video datoteko, ki se trenutno predvaja. Da izvedemo menjavo video datoteke v procesu video predvajalnik, uprabimo orodje `gdb`. Najprej se priključimo na proces z ukazom `attach`. Znotraj procesa sedaj odpremo novo video datoteko s sistemskim klicem [`open`](https://www.man7.org/linux/man-pages/man2/open.2.html), ki nam vrne reference (file descriptor) pod katerim je sedaj na voljo odprta datoteka. S sistemskim klicem [`dup2`](https://man7.org/linux/man-pages/man2/dup.2.html) kloniramo referenco (file descriptor) z datoteke, ki se trenutno predvaja na novo datoteko, ki smo jo ravnokar odprli. Na kocnu se še odklopimo iz procesa z ukazom `detach` in nato zapremo orodje `gdb` z ukazom `quit`.
+We use the command [`chmod`](https://man7.org/linux/man-pages/man1/chmod.1.html) to change the access rights of our two video files so that they can be read by any program. Next, we create our program that will receive two arguments. The first argument `NAMEKEY` represents the full or partial name of the video file to be played. The second argument `NEWFILE` represents the path and name of the file we want to play. In the next step, we get the `PID` of the video player and then get the `FD` (file descriptor) reference to the currently playing video file. To change the video file in the video player process, we use the `gdb` tool. First, we attach to the process with the `attach` command. Within the process, we now open a new video file with the system call [`open`](https://www.man7.org/linux/man-pages/man2/open.2.html), which returns references (file descriptor) under to which an open file is now available. Using the system call [`dup2`](https://man7.org/linux/man-pages/man2/dup.2.html) we clone a reference (file descriptor) from the currently playing file to a new file that we just opened it. Finally, disconnect from the process with the `detach` command and then close the `gdb` tool with the `quit` command.
 
-Spremenimo še pravice našega programa, da sedaj dovoljujejo izvajanje. Poženemo video predvajalnik s prvim video posnetkom ter nato poženemo naš program s pravilnima parametroma.
+Let's also change the rights of our program so that they now allow execution. We start the video player with the first video clip and then run our program with the correct parameters.    
 
     chmod 666 Norway.webm
     chmod 666 Slovenia.webm
