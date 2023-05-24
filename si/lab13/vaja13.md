@@ -108,7 +108,7 @@ Metoda `extract` prejme sliko iz katere izlušči skrito sporočilo, tako da v z
 
     if __name__ == "__main__":
         print("Steganography")
-        message = "This is the hidden message that I want to hide inside of a picture! This is the hidden message that I want to hide inside of a picture! This is the hidden message that I want to hide inside of a picture! This is the hidden message that I want to hide inside of a picture! This is the hidden message that I want to hide inside of a picture! This is the hidden message that I want to hide inside of a picture! This is the hidden message that I want to hide inside of a picture! This is the hidden message that I want to hide inside of a picture! This is the hidden message that I want to hide inside of a picture! This is the hidden message that I want to hide inside of a picture! This is the hidden message that I want to hide inside of a picture!"
+        message = "This is the hidden message that I want to hide inside of a picture!"
         print("Message to hide: ", message)
         original = Image.open("image.bmp")
         # original.show()
