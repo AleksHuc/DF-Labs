@@ -3,9 +3,9 @@
 ## Instructions
 
 1. Install any virtualization hypervisor, such as [VirtualBox](https://www.virtualbox.org/).
-2. Install any distribution of the Linux operating system, such as [Debian](https://www.debian.org/).
-3. Use cloning of the virtual computer to set up another one.
-4. Make sure that virtual computers can connect over a network using NAT, Internal Network, and Bridged Adapter.
+2. Create a virtual machine and install any distribution of the Linux operating system, such as [Debian](https://www.debian.org/).
+3. Use cloning of the virtual machine to create second virtual machine.
+4. Make sure that virtual machines can connect over a network using NAT, Internal Network, and Bridged Adapter.
 
 ## Additional information
 
