@@ -479,7 +479,7 @@ Sedaj naredimo kopije obeh navideznih diskov in zgoščenke z ukazom [`cat`](htt
 
 Sedaj zaustavimo naš navidezni računalnik ter odstranimo odstranimo zgoščenko `furry.iso` iz `Krmilnik: IDE`, tako da jo izberemo, kliknemo na gumb z zgoščenko na desno strani ter izberemo možnost `Odstrani disk iz navideznega pogona`. Prav tako iz `Krmilnik:SATA` odstranimo navidezna diska `raid0_1.vdi` in `raid0_2.vdi`, tako da izberemo vsak nosilec in spodaj levo pritisnemo na gumb z disketo in rdečim križem.
 
-Nato ponovno poženemo naš navidezni računalnik. Začnemo s priklopom slike zgoščenke, ki je ne moremo spreminjati. Podatki so zapisani z namenskim [datotečnim sistemom ISO9660](https://en.wikipedia.org/wiki/ISO_9660). Za priključitev zgoščenke uporabimo ukaz [`mount`](https://man7.org/linux/man-pages/man2/mount.2.html) ter preverimo katere nove datoteke so nam sedaj dostopne.
+Nato ponovno poženemo naš navidezni računalnik. Začnemo s priklopom slike zgoščenke, ki je ne moremo spreminjati. Podatki so zapisani z namenskim [datotečnim sistemom ISO9660](https://en.wikipedia.org/wiki/ISO_9660). Za priključitev zgoščenke uporabimo ukaz [`mount`](https://man7.org/linux/man-pages/man8/mount.8.html) ter preverimo katere nove datoteke so nam sedaj dostopne.
 
     mkdir /mnt/sr0
     mount sr0_copy.img /mnt/sr0
@@ -490,7 +490,7 @@ Nato ponovno poženemo naš navidezni računalnik. Začnemo s priklopom slike zg
 
     cute-cat-l.jpg	kitty1.jpeg  kitty2.jpeg  kitty3.jpeg  kitty4.jpg
 
-ISO9660 omejuje dolžino imen, ki jih imajo lahko datoteke, da zaobidemo to omejitev se privzeto uporablja [Joliet razširitev datotečnega sistema](https://en.wikipedia.org/wiki/ISO_9660#Joliet). Sedaj bomo najprej odklopili trenutno priklopljeno zgoščenko z ukazom [`umount`](https://man7.org/linux/man-pages/man8/umount.8.html) in jo nato ponovno priklopili brez Joliet razširitve ter preverili ali sedaj lahko dostopamo še do kakšnih datotek. Dodali bomo tudi nastavitev za prikaz skritih datotek.
+ISO9660 omejuje dolžino imen, ki jih imajo lahko datoteke, da zaobidemo to omejitev se privzeto uporablja [Joliet razširitev datotečnega sistema](https://en.wikipedia.org/wiki/ISO_9660#Joliet). Sedaj bomo najprej odklopili trenutno priklopljeno zgoščenko z ukazom [`umount`](https://man7.org/linux/man-pages/man8/umount.8.html) in jo nato ponovno priklopili z ukazom `mount` z uporabo dodatnih možnost z zastavico `-o`. Uporabimo zastavico `nojoliet`, da omogočimo priključitev brez Joliet razširitve in zastavico `unhide`, da prikažemo skrite datoteke. Sedaj preverimo ali lahko dostopamo še do kakšnih datotek.
 
     mount
 
@@ -726,9 +726,9 @@ Za delo z RAID polji potrebuje orodje [`mdadm`](https://linux.die.net/man/8/mdad
     ├─nbd0p3   43:3    0    1K  0 part 
     └─nbd0p5   43:5    0  1.4G  0 part /mnt/nbd0p5
 
-Avtomatsko sistem ni zaznal nobenega RAID polja, zato ga poskusimo z uporabo orodja `mdadm` in pononvno preverimo priključene disk z ukazom `lsblk`.
+Avtomatsko sistem ni zaznal nobenega RAID polja, zato ga poskusimo z uporabo orodja `mdadm` z uporabo zastavic `--assemble` in `--scan` ter preverimo RAID polje, ki smo ga pognali z zastavico `--detail`. Pononvno preverimo priključene disk z ukazom `lsblk`.
 
-    mdadm --assemble /dev/md0
+    mdadm --assemble --scan
 
     mdadm: /dev/md0 has been started with 2 drives.
 
@@ -823,7 +823,7 @@ Za delo z LVM logičnimi diski potrebujemo orodje [`lvm2`](https://linux.die.net
 
     lsblk
 
-Podatke o `LVM` logičnih diskih pridobimo z ukazom `pvdisplay` nam prikaže fizične diske in razdelke (`Physical Volume`), ki so razporejeni v skupine fizičnih diskov (`Volume Group`), ki jih nam prikaže ukaz `vgdisplay` in znotraj skupin lahko določimo logične diske (`Logical Volume`), ki jih nam prikaže ukaz `lvdisplay`.
+Podatke o `LVM` logičnih diskih pridobimo z ukazom [`pvdisplay`](https://man7.org/linux/man-pages/man8/pvdisplay.8.html) nam prikaže fizične diske in razdelke (`Physical Volume`), ki so razporejeni v skupine fizičnih diskov (`Volume Group`), ki jih nam prikaže ukaz [`vgdisplay`](https://man7.org/linux/man-pages/man8/vgdisplay.8.html) in znotraj skupin lahko določimo logične diske (`Logical Volume`), ki jih nam prikaže ukaz [`lvdisplay`](https://man7.org/linux/man-pages/man8/lvdisplay.8.html).
 
     pvdisplay
 
@@ -961,7 +961,7 @@ Vidimo tudi, da so razdelki razdeljeni v dve skupini (`Volume Group`), in sicer 
     Allocation             inherit
     Read ahead sectors     auto
 
-Prav tako vidimo znotraj skupine `joyjoy` ustvarjen en logični disk (`Logical Volume`) `ren` ter znotraj skupine `happy` imamo dva logična diska `stimpy` in `bmo`. Logični disk `bmo` zajema razdelek `md0p2` in del razdelka `loop1p5`, logični disk `stimpy` zajema del razdelka `loop1p5` in logični disk `ren` zajema razdelek `nbd0p2`. Vse logične diske lahko priklopimo na enkrat z ukazom `vgchange` in preverimo priključene disk z ukazom `lsblk`.
+Prav tako vidimo znotraj skupine `joyjoy` ustvarjen en logični disk (`Logical Volume`) `ren` ter znotraj skupine `happy` imamo dva logična diska `stimpy` in `bmo`. Logični disk `bmo` zajema razdelek `md0p2` in del razdelka `loop1p5`, logični disk `stimpy` zajema del razdelka `loop1p5` in logični disk `ren` zajema razdelek `nbd0p2`. Vse logične diske lahko priklopimo na enkrat z ukazom [`vgchange`](https://man7.org/linux/man-pages/man8/vgchange.8.html) in zastavico `-a y` in preverimo priključene disk z ukazom `lsblk`.
 
     vgchange -a y
 
@@ -1025,7 +1025,7 @@ Sedaj še priključimo vse tri logične diske z ukazom `mount` in preverimo do k
 
     '[HD_HQ Music Video] T-ara - Bo Peep Bo Peep-9403-9CptH8.mp4'  'Ken Ashcorp - 20 Percent Cooler-u6xRSafBV8o.mp4'   lost+found
 
-Vse trenutno priključene diske, razdelke, datotčne sisteme, RAID polja ter LVM logične diske lahko prikažemo še z detaljnim izpisom ukaza `lsblk`.
+Vse trenutno priključene diske, razdelke, datotčne sisteme, RAID polja ter LVM logične diske lahko prikažemo še z detaljnim izpisom ukaza `lsblk` z zastavico `-f`.
 
     lsblk -f
 

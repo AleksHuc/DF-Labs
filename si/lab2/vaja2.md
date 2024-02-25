@@ -14,7 +14,7 @@ V splošnem je [trdi disk](https://en.wikipedia.org/wiki/Hard_disk_drive) sestav
 
 **MFM diski**
 
-Prvi diski na IBM kompatibilnih osebnih računalnikih so bili na računalnik priključeni tako, da je računalnik povsem nadziral disk. Računalnik je torej povedal, kam naj se premakne glava, preštel sektorje in prebral podatke. Za povezovanje diskov se je uporabljal na primer vmesnik [ST506/ST412](https://en.wikipedia.org/wiki/ST506/ST412#Connector_pinouts) ter podatki so se zapisovalni na disk s kodiranjem osnovanim na modificirani frekvenčni modulaciji ([Modified frequency modulation - MFM](https://en.wikipedia.org/wiki/Modified_frequency_modulation)).
+Prvi diski na IBM kompatibilnih osebnih računalnikih leta 1957 so bili na računalnik priključeni tako, da je računalnik povsem nadziral disk. Računalnik je torej povedal, kam naj se premakne glava, preštel sektorje in prebral podatke. Za povezovanje diskov se je uporabljal na primer vmesnik [ST506/ST412](https://en.wikipedia.org/wiki/ST506/ST412#Connector_pinouts) ter podatki so se zapisovalni na disk s kodiranjem osnovanim na modificirani frekvenčni modulaciji ([Modified frequency modulation - MFM](https://en.wikipedia.org/wiki/Modified_frequency_modulation)).
 
 **CHS naslavljanje**
 

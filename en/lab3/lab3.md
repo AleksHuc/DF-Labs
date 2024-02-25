@@ -479,7 +479,7 @@ Now we make copies of both virtual disks and the CD with the command [`cat`](htt
 
 Now shutdown our virtual computer and remove the `furry.iso` CD from the `Controller: IDE` by selecting it, clicking on the button with the disk on the right and selecting the `Remove disk from virtual drive` option. We also remove the virtual disks `raid0_1.vdi` and `raid0_2.vdi` from `Controller:SATA` by selecting each volume and pressing the button with a floppy disk and a red cross at the bottom left.
 
-Then we restart our virtual machine. We start by mounting the CD image, which cannot be changed. Data is recorded using a dedicated [ISO9660 file system](https://en.wikipedia.org/wiki/ISO_9660). To mount the CD, use the command [`mount`](https://man7.org/linux/man-pages/man2/mount.2.html) and check which new files are now available to us.
+Then we restart our virtual machine. We start by mounting the CD image, which cannot be changed. Data is recorded using a dedicated [ISO9660 file system](https://en.wikipedia.org/wiki/ISO_9660). To mount the CD, use the command [`mount`](https://man7.org/linux/man-pages/man8/mount.8.html) and check which new files are now available to us.
 
     mkdir /mnt/sr0
     mount sr0_copy.img /mnt/sr0
@@ -490,7 +490,7 @@ Then we restart our virtual machine. We start by mounting the CD image, which ca
 
     cute-cat-l.jpg	kitty1.jpeg  kitty2.jpeg  kitty3.jpeg  kitty4.jpg
 
-ISO9660 limits the length of names that files can have, to get around this limit the [Joliet filesystem extension](https://en.wikipedia.org/wiki/ISO_9660#Joliet) is used by default. Now we will first unmount the currently mounted CD using the command [`umount`](https://man7.org/linux/man-pages/man8/umount.8.html) and then mount it again without the Joliet extension and check if we can now we access some other files. We will also add additional option to show hidden files.
+ISO9660 limits the length of names that files can have, to get around this limit the [Joliet filesystem extension](https://en.wikipedia.org/wiki/ISO_9660#Joliet) is used by default. Now we will first unmount the currently mounted CD using the command [`umount`](https://man7.org/linux/man-pages/man8/umount.8.html) and then mounting it again using the `mount` command using the additional options flag `-o`. We use the `nojoliet` flag to enable mounting without the Joliet extension and the `unhide` flag to show hidden files. Now let's check if we can access any other files.
 
     mount
 
@@ -529,7 +529,7 @@ ISO9660 limits the length of names that files can have, to get around this limit
 
 We see that file systems have their own switches or parameters that change how file systems work and respond to commands.
 
-Now we will mount more virtual disks to our file system. They can be mounted with the `mount` command and attached with tools such as [`qemu-nbd`](https://www.mankier.com/8/qemu-nbd) and [`kpartx`](https: //linux.die.net/man/8/kpartx). First install both tools using the package manager on our operating system.
+Now we will mount more virtual disks to our file system. They can be mounted with the `mount` command and attached with tools such as [`qemu-nbd`](https://www.mankier.com/8/qemu-nbd) and [`kpartx`](https://linux.die.net/man/8/kpartx). First install both tools using the package manager on our operating system.
 
     apt update
     apt install qemu-utils kpartx
@@ -726,9 +726,9 @@ To work with RAID arrays, we need the tool [`mdadm`](https://linux.die.net/man/8
     ├─nbd0p3   43:3    0    1K  0 part 
     └─nbd0p5   43:5    0  1.4G  0 part /mnt/nbd0p5
 
-The system did not automatically detect any RAID array, so let's try detecting it using the `mdadm` tool and recheck the attached disk with the `lsblk` command.
+No RAID array was detected automatically by the system, so try using the `mdadm` tool using the `--assemble` and `--scan` flags and check the RAID array that we ran with the `-detail` flag. We again check the attached disks using the `lsblk` command.
 
-    mdadm --assemble /dev/md0
+    mdadm --assemble --scan
 
     mdadm: /dev/md0 has been started with 2 drives.
 
@@ -823,7 +823,7 @@ To work with LVM logical disks, we need the tool [`lvm2`](https://linux.die.net/
 
     lsblk
 
-We obtain information about the `LVM` of logical disks with the command `pvdisplay`, it shows us physical disks and partitions (`Physical Volume`), which are arranged in groups of physical disks (`Volume Group`), which are shown by the command `vgdisplay` and inside groups, we can define logical disks (`Logical Volume`), which are displayed by the command `lvdisplay`.
+We obtain information about the `LVM` of logical disks with the command [`pvdisplay`](https://man7.org/linux/man-pages/man8/pvdisplay.8.html), it shows us physical disks and partitions (`Physical Volume`), which are arranged in groups of physical disks (`Volume Group`), which are shown by the command [`vgdisplay`](https://man7.org/linux/man-pages/man8/vgdisplay.8.html) and inside groups, we can define logical disks (`Logical Volume`), which are displayed by the command [`lvdisplay`](https://man7.org/linux/man-pages/man8/lvdisplay.8.html).
 
     pvdisplay
 
@@ -961,7 +961,7 @@ We can also see that the partitions are divided into two groups (`Volume Group`)
     Allocation             inherit
     Read ahead sectors     auto
 
-We also see one logical disk (`Logical Volume`) `ren` created within the group `joyjoy`, and within the group `happy` we have two logical disks `stimpy` and `bmo`. Logical disk `bmo` spans partition `md0p2` and part of partition `loop1p5`, logical disk `stimpy` spans part of partition `loop1p5` and logical disk `ren` spans partition `nbd0p2`. We can connect all logical disks at once with the `vgchange` command and check the attached disk with the `lsblk` command.
+We also see one logical disk (`Logical Volume`) `ren` created within the group `joyjoy`, and within the group `happy` we have two logical disks `stimpy` and `bmo`. Logical disk `bmo` spans partition `md0p2` and part of partition `loop1p5`, logical disk `stimpy` spans part of partition `loop1p5` and logical disk `ren` spans partition `nbd0p2`. We can connect all logical disks at once with the [`vgchange`](https://man7.org/linux/man-pages/man8/vgchange.8.html) command with the flag `-a y` and check the attached disk with the `lsblk` command.
 
     vgchange -a y
 
@@ -1025,7 +1025,7 @@ Now connect all three logical drives with the `mount` command and check which ne
 
     '[HD_HQ Music Video] T-ara - Bo Peep Bo Peep-9403-9CptH8.mp4'  'Ken Ashcorp - 20 Percent Cooler-u6xRSafBV8o.mp4'   lost+found
 
-All currently attached disks, partitions, file systems, RAID arrays and LVM logical disks can also be displayed with a detailed output of the `lsblk` command.
+All currently attached disks, partitions, file systems, RAID arrays and LVM logical disks can also be displayed with a detailed output of the `lsblk` command using the flag `-f`.
 
     lsblk -f
 

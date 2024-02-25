@@ -14,7 +14,7 @@ In general, a [hard disk](https://en.wikipedia.org/wiki/Hard_disk_drive) consist
 
 **MFM Discs**
 
-The first disks on IBM compatible personal computers were connected to the computer in such a way that the computer completely controlled the drive. So the computer told where to move the head, counted the sectors and read the data. For example, the interface [ST506/ST412](https://en.wikipedia.org/wiki/ST506/ST412#Connector_pinouts) was used, and data was written to the disk with coding based on [Modified frequency modulation - MFM](https://en.wikipedia.org/wiki/Modified_frequency_modulation).
+The first disks on IBM compatible personal computers in 1957 were connected to the computer in such a way that the computer completely controlled the drive. So the computer told where to move the head, counted the sectors and read the data. For example, the interface [ST506/ST412](https://en.wikipedia.org/wiki/ST506/ST412#Connector_pinouts) was used, and data was written to the disk with coding based on [Modified frequency modulation - MFM](https://en.wikipedia.org/wiki/Modified_frequency_modulation).
 
 **CHS Addressing**
 
