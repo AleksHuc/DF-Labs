@@ -106,13 +106,13 @@ MBR contains reserved space to describe 4 partitions. These four partitions are 
 
 Since it turned out quite early on that 4 partitions are not always enough, the developers added the option to add [another copy of the MBR (Extended boot record- EBR)](https://en.wikipedia.org/wiki/Extended_boot_record) to the beginning of the partition and describes an additional 4 partitions in it, giving us a total of 16 possible partitions.
 
-Furthermore, 2^24^ sectors ($16777216*512B = 8589934592B = 8.58GB$) also turned out to be insufficient. A 32-bit start of the partitions in [Logical Block Addressing (LBA)](https://en.wikipedia.org/wiki/Logical_block_addressing) format and a 32-bit length in number were added to the space reserved in each partition section.
+Furthermore, $2^{24}$ sectors ($16777216*512B = 8589934592B = 8.58GB$) also turned out to be insufficient. A 32-bit start of the partitions in [Logical Block Addressing (LBA)](https://en.wikipedia.org/wiki/Logical_block_addressing) format and a 32-bit length in number were added to the space reserved in each partition section.
 
 MBR partition table can be managed with several tools: [`fdisk`](https://www.man7.org/linux/man-pages/man8/fdisk.8.html), [`gdisk`](https://linux.die.net/man/8/gdisk), [`sfdisk`](https://man7.org/linux/man-pages/man8/sfdisk.8.html)...
 
 **GUID Partition Table (GPT)**
 
-Since 16 partitions are not enough, and since modern disks can have more than 2^32^ sectors, computer equipment manufacturers agreed on a new standard shortly after the year 2000, which allows for several larger partitions and for each of them more data.
+Since 16 partitions are not enough, and since modern disks can have more than $2^{32}$ sectors, computer equipment manufacturers agreed on a new standard shortly after the year 2000, which allows for several larger partitions and for each of them more data.
 
 The [GPT](https://en.wikipedia.org/wiki/GUID_Partition_Table) is located immediately after the 1st sector. In sector 1, something like MBR still remains, containing one huge, not quite valid partition, which is only there to prevent old programs from overwriting the new partition table. In addition, there is a copy of the partition table at the end of the GPT disk. In this way, we ensure that in the event of failure of one sector on the disk, we do not lose all data.
 

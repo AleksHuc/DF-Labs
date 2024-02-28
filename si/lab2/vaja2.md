@@ -106,13 +106,13 @@ MBR vsebuje rezerviran prostor za opis 4 razdelkov. Tem štirim razdelkom rečem
 
 Ker se je že precej zgodaj izkazalo, da 4 razdelki niso vedno dovolj, so razvijalci dodali možnost, da se na začetek razdelka doda [še ena kopija MBR (Extended boot record- EBR)](https://en.wikipedia.org/wiki/Extended_boot_record) in v njej opiše dodatne 4 razdelke, kar nam da skupaj 16 možnih razdelkov.
 
-Poleg tega se je izkazalo, da je 2^24^ sektorjev ($16777216*512B = 8589934592B = 8,58GB$) prav tako premalo. V prostor, ki je bil v vsakem razdelku rezerviran, so dodali 32-bitni začetek razdelka v [Logical Block Addressing (LBA)](https://en.wikipedia.org/wiki/Logical_block_addressing) formatu ter 32-bitno dolžino v številu sektorjev.
+Poleg tega se je izkazalo, da je $2^{24}$ sektorjev ($16777216*512B = 8589934592B = 8,58GB$) prav tako premalo. V prostor, ki je bil v vsakem razdelku rezerviran, so dodali 32-bitni začetek razdelka v [Logical Block Addressing (LBA)](https://en.wikipedia.org/wiki/Logical_block_addressing) formatu ter 32-bitno dolžino v številu sektorjev.
 
 MBR tabelo razdelkov lahko upravljamo z več orodji: [`fdisk`](https://www.man7.org/linux/man-pages/man8/fdisk.8.html), [`gdisk`](https://linux.die.net/man/8/gdisk), [`sfdisk`](https://man7.org/linux/man-pages/man8/sfdisk.8.html)...
 
 **GUID Partition Tabel (GPT)**
 
-Ker je 16 razdelkov premalo in ker imajo sodobni diski lahko tudi več kot 2^32^ sektorjev, so se proizvajalci računalniške opreme malo po letu 2000 dogovorili za nov standard, ki omogoča več večjih razdelkov in za vsakega od njih več podatkov.
+Ker je 16 razdelkov premalo in ker imajo sodobni diski lahko tudi več kot $2^{32}$ sektorjev, so se proizvajalci računalniške opreme malo po letu 2000 dogovorili za nov standard, ki omogoča več večjih razdelkov in za vsakega od njih več podatkov.
 
 [GPT](https://en.wikipedia.org/wiki/GUID_Partition_Table) se nahaja takoj za 1. sektorjem. V 1. sektorju še vedno ostaja nekaj podobnega MBR, ki vsebuje en ogromen, ne povsem veljaven razdelek, ki je tam le zato, da stari programi ne bi prepisali nove tabele razdelkov. Poleg tega je na koncu diska z GPT kopija tabele razdelkov. Tako poskrbimo, da v primeru odpovedi enega sektorja na disku ne izgubimo vseh podatkov.
 
