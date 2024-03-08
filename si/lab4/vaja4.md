@@ -57,7 +57,9 @@ Za branje metapodatkov lahko uporabimo namenska orodja, kot sta  [`exiv2`](https
     Copyright       : 
     Exif comment    : 
 
-    exif lovecnabiralec.jpgAnalysis of disks with GNU/Linux
+    exif lovecnabiralec.jpg
+    
+    Analysis of disks with GNU/Linux
 
     EXIF tags in 'lovecnabiralec.jpg' ('Motorola' byte order):
     --------------------+----------------------------------------------------------
@@ -525,7 +527,7 @@ Slike lahko vsebujejo tudi različice slike z nižjo resolucijo, ki jih lahko up
 Orodje [`dcraw`](https://linux.die.net/man/1/dcraw) nam omogoča izluščanje slik z nižjo resolucijo ter popravljanje originalnih slik. Vse pridobljene slike si ogledamo s programom za prikazovanje slik (originalna slika - `.NEF`, slika z nižjo resolucijo `.thumb.jpg` in popravljena slika - `.ppm`).
 
     apt update
-    apt instal dcraw
+    apt install dcraw
     dcraw JFP_5195.NEF
     dcraw -e JFP_5195.NEF
 

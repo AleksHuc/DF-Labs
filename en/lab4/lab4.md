@@ -26,7 +26,7 @@ First open the images by double-clicking and displaying their additional propert
 
 To read metadata we can use dedicated tools such as [`exiv2`](https://linux.die.net/man/1/exiv2), [`exif`](https://manpages.debian.org/bullseye/exif/exif.1.en.html) and [`exiftool`](https://linux.die.net/man/1/exiftool). With them, we can access all the metadata stored in the image and not only those displayed by the image display program. We install them with the package manager on our operating system and use them to print out the metadata of our two images.
 
-apt update
+    apt update
     apt install exiv2 exif exiftool
 
     exiv2 lovecnabiralec.jpg
@@ -57,7 +57,9 @@ apt update
     Copyright       : 
     Exif comment    : 
 
-    exif lovecnabiralec.jpgAnalysis of disks with GNU/Linux
+    exif lovecnabiralec.jpg
+    
+    Analysis of disks with GNU/Linux
 
     EXIF tags in 'lovecnabiralec.jpg' ('Motorola' byte order):
     --------------------+----------------------------------------------------------
@@ -525,7 +527,7 @@ Images may also contain lower resolution versions of the image that we can use t
 The tool [`dcraw`](https://linux.die.net/man/1/dcraw) allows us to extract images with a lower resolution and correct the original images. All obtained images are viewed with the program for displaying images (original image - `.NEF`, image with a lower resolution `.thumb.jpg` and corrected image - `.ppm`).
 
     apt update
-    apt instal dcraw
+    apt install dcraw
     dcraw JFP_5195.NEF
     dcraw -e JFP_5195.NEF
 
