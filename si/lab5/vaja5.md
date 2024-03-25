@@ -59,7 +59,7 @@ Lokacije posameznih delov registra:
 - `HKEY_LOCAL_MACHINE\SAM`: `\system32\config\SAM`
 - `HKEY_LOCAL_MACHINE\SECURITY`: `\system32\config\security`
 - `HKEY_LOCAL_MACHINE\SOFTWARE`: `\system32\config\software`
-- `HKEY_USERS` : `\Documents and Setting\User Profile\NTUSER.DAT`
+- `HKEY_USERS` : `\Documents and Setting\USER_PROFILE\NTUSER.DAT`
 - `HKEY_USERS.DEFAULT` : `\system32\config\default`
 
 Datoteke so binarne in jih ne moremo kar prebrati.
@@ -73,7 +73,7 @@ Za branje datotek registra rabimo posebno orodje, kot je na primer [`hivex`](htt
     apt update
     apt install libhivex-bin reglookup
 
-Z ukazom `hivexml` lahko pretvorimo binarne datoteke registra, ki je skupen celotnemu sistemu, v datoteke [`XML`](https://en.wikipedia.org/wiki/XML). Z orodjem `reglookup` pa binarne datoteke registra pretvorimo v tekstovne datoteke.
+Z ukazom [`hivexml`](https://linux.die.net/man/1/hivexml) lahko pretvorimo binarne datoteke registra, ki je skupen celotnemu sistemu, v datoteke [`XML`](https://en.wikipedia.org/wiki/XML). Z orodjem [`reglookup`](https://linux.die.net/man/1/reglookup) pa binarne datoteke registra pretvorimo v tekstovne datoteke.
 
     hivexml system > system.xml
     hivexml SAM > sam.xml
@@ -93,9 +93,9 @@ Z ukazom `hivexml` lahko pretvorimo binarne datoteke registra, ki je skupen celo
     reglookup software
     reglookup default
 
-Register specifičen za uporabnike pa se nahaja v datoteki `Documents and Settings/user/NTUSER.DAT`, ki ga prav tako odpremo z orodjem `hivexml` in `reglookup`.
+Register specifičen za uporabnike pa se nahaja v datoteki `Documents and Settings/USER_PROFILE/NTUSER.DAT`, ki ga prav tako odpremo z orodjem `hivexml` in `reglookup`.
 
-    cd /mnt/truplo1/Documents\ and\ Settings/user/
+    cd /mnt/truplo1/Documents\ and\ Settings/USER_PROFILE/
     hivexml system > system.xml
     hivexml NTUSER.DAT > NTUSER.DAT.xml
     cat NTUSER.DAT.xml | xmllint --format -
@@ -143,7 +143,7 @@ Nato zaustavimo naš navidezni računalnik in priklopimo navidezni disk `truplo2
     
     2846
 
-Vidimo, da ima razlika med obema registroma `2846` vrstic, kjer vsaka posamezna razlika zavzame 4 vrstice, torej nam ponovni zagon spremeni okoli 711 zapisov v registru.
+Vidimo, da ima razlika med obema registroma 2846 vrstic, kjer vsaka posamezna razlika zavzame 4 vrstice, torej nam ponovni zagon spremeni okoli 711 zapisov v registru.
 
 Zaustavimo navidezni računalnik in odstranimo navidezna diska `truplo1.vmdk` in `truplo2.vmdk`, tako da kliknem na izbranem navideznem računalniku gumb `Nastavitve` v vrstici zgoraj. V oknu, ki se nam odpre izberemo zavihek `Pomnilniške naprave` iz stolpca na levi, ter odstranim izbrane navidezne diske, tako do kliknemo na ikono diskete z rdečim križem.
 

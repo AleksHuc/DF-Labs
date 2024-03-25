@@ -59,7 +59,7 @@ Locations of individual parts of the registry:
 - `HKEY_LOCAL_MACHINE\SAM`: `\system32\config\SAM`
 - `HKEY_LOCAL_MACHINE\SECURITY`: `\system32\config\security`
 - `HKEY_LOCAL_MACHINE\SOFTWARE`: `\system32\config\software`
-- `HKEY_USERS` : `\Documents and Setting\User Profile\NTUSER.DAT`
+- `HKEY_USERS` : `\Documents and Setting\USER_PROFILE\NTUSER.DAT`
 - `HKEY_USERS.DEFAULT` : `\system32\config\default`
 
 The files are binary and we can't just read them.
@@ -73,7 +73,7 @@ To read registry files we need a special tool, such as [`hivex`](https://linux.d
     apt update
     apt install libhivex-bin reglookup
 
-The `hivexml` command can be used to convert system-wide registry binaries into [`XML`](https://en.wikipedia.org/wiki/XML) files. Using the `reglookup` tool, we convert registry binary files into text files.
+The [`hivexml`](https://linux.die.net/man/1/hivexml) command can be used to convert system-wide registry binaries into [`XML`](https://en.wikipedia.org/wiki/XML) files. Using the [`reglookup`](https://linux.die.net/man/1/reglookup) tool, we convert registry binary files into text files.
 
     hivexml system > system.xml
     hivexml SAM > sam.xml
@@ -93,9 +93,9 @@ The `hivexml` command can be used to convert system-wide registry binaries into 
     reglookup software
     reglookup default
 
-The user-specific registry is located in the `Documents and Settings/user/NTUSER.DAT` file, which can also be opened with `hivexml` and `reglookup`.
+The user-specific registry is located in the `Documents and Settings/USER_PROFILE/NTUSER.DAT` file, which can also be opened with `hivexml` and `reglookup`.
 
-    cd /mnt/truplo1/Documents\ and\ Settings/user/
+    cd /mnt/truplo1/Documents\ and\ Settings/USER_PROFILE/
     hivexml system > system.xml
     hivexml NTUSER.DAT > NTUSER.DAT.xml
     cat NTUSER.DAT.xml | xmllint --format -
@@ -143,7 +143,7 @@ Then we stop our virtual computer and connect the virtual disk `truplo2.vmdk` an
     
     2846
 
-We can see that the difference between the two registers has `2846` lines, where each individual difference occupies 4 lines, so restarting changes about 711 records in the register.
+We can see that the difference between the two registers has 2846 lines, where each individual difference occupies 4 lines, so restarting changes about 711 records in the register.
 
 We stop the virtual machine and remove the virtual disks `truplo1.vmdk` and `truplo2.vmdk` by clicking on the selected virtual machine the `Settings` button in the line above. In the window that opens, select the `Storage devices` tab from the column on the left, and remove the selected virtual disks by clicking on the floppy disk icon with the red cross.
 
