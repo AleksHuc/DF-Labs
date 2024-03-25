@@ -28,7 +28,13 @@ To our virtual computer with the Linux operating system, we attach the `truplo1.
     mkdir /mnt/truplo1
     mount /dev/sdb1 /mnt/truplo1
 
-Windows 7 and older operating systems hide passwords in the file `C:\windows\system32\config\SAM`, you can read more about it [here](http://www.nirsoft.net/articles/saved_password_location.html) and [here](https://learn.microsoft.com/en-us/previous-versions//cc723740(v=technet.10)?redirectedfrom=MSDN). Passwords are not stored in text format, but in values from hash function of given passwords (Password -> H(Password) -> HPassword). Such an approach is not secure, so from Windows 8 onwards passwords are stored with an added salt (Password -> Salt -> H(Password + Salt) -> HPasswordSalt).
+Windows 7 and older operating systems hide passwords in the file `C:\windows\system32\config\SAM`, you can read more about it [here](http://www.nirsoft.net/articles/saved_password_location.html) and [here](https://learn.microsoft.com/en-us/previous-versions//cc723740(v=technet.10)?redirectedfrom=MSDN). Passwords are not stored in text format, but in values from hash function of given passwords:
+
+$$Password \rightarrow HashFunction(Password) \rightarrow HashedPassword$$
+
+This approach is not secure, since two identical passwords always return the same hashed password. From Windows 8 onwards, passwords are saved with added public random salt, which is a result of [cryptographic hash functions](https://en.wikipedia.org/wiki/Cryptographic_hash_function), and the password hash process itself is further slowed down:
+
+$$Password + (CryptographicHashFunction \rightarrow Salt) \rightarrow HashFunction(Password + Salt) \rightarrow HashedPasswordSalt$$
 
 We find and crack passwords with a dedicated tool that uses [rainbow tables](https://en.wikipedia.org/wiki/Rainbow_table) to find passwords. Rainbow tables contain already calculated values of hash functions for frequently used passwords. The hashing function assures us with a high probability that two different inputs almost never map to the same output value. We install the tool with the mentioned functionality [`ophcrack`](https://manpages.org/ophcrack) and [`ophcrack-cli`](https://linuxcommandlibrary.com/man/ophcrack-cli) and the tool for opening archives [`unzip`](https://linux.die.net/man/1/unzip) with the package manager on our operating system.
 

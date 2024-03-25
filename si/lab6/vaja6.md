@@ -28,7 +28,13 @@ V naš navidezni računalnik z operacijskim sistemom Linux priklopimo navidezni 
     mkdir /mnt/truplo1
     mount /dev/sdb1 /mnt/truplo1
 
-Operacijski sistemi Windows 7 in starejši gesla skrivajo v datoteki `C:\windows\system32\config\SAM`, več o tem si lahko preberete [tukaj](http://www.nirsoft.net/articles/saved_password_location.html) in [tukaj](https://learn.microsoft.com/en-us/previous-versions//cc723740(v=technet.10)?redirectedfrom=MSDN). Gesla niso shranjena v tekstovni obliki, vendar so shranjene vrednosti zgoščevalne funkcije za podana gesla (geslo -> Z(geslo) -> Zgeslo). Tak pristop ni varen, zato se od Windows 8 naprej gesla shranjujejo z dodano soljo (geslo -> sol -> Z(geslo + sol) -> Zgeslosol).
+Operacijski sistemi Windows 7 in starejši gesla skrivajo v datoteki `C:\windows\system32\config\SAM`, več o tem si lahko preberete [tukaj](http://www.nirsoft.net/articles/saved_password_location.html) in [tukaj](https://learn.microsoft.com/en-us/previous-versions//cc723740(v=technet.10)?redirectedfrom=MSDN). Gesla niso shranjena v tekstovni obliki, vendar so shranjene vrednosti zgoščevalne funkcije za podana gesla:
+
+$$Geslo \rightarrow ZgoščevalnaFunkcija(Geslo) \rightarrow ZgoščenoGeslo$$
+
+Tak pristop ni varen, saj dve enaki gesli vedno vrneta enako zgoščeno geslo. Od Windows 8 naprej se gesla shranjujejo z dodano javno naključno soljo, ki je rezultat [kriptografske zgoščevalne funkcije](https://en.wikipedia.org/wiki/Cryptographic_hash_function), poleg tega pa je sam postopek zgoščevanja gesel še dodatno upočasnjen: 
+
+$$Geslo + (KritptografskaZgoščevalnaFunkcija \rightarrow Sol) \rightarrow ZgoščevalnaFunkcija(Geslo + Sol) \rightarrow ZgoščenoGesloSol$$
 
 Gesla poiščemo in zlomimo z namenskim orodjem, ki za iskanje gesel uporablja [mavrične tabele](https://en.wikipedia.org/wiki/Rainbow_table). Mavrične tabele vsebujejo v naprej izračunane vrednosti zgoščevalne funkcije za pogosto uporabljena gesla. Zgoščevalna funkcija nam zagotavlja z visoko verjetnostjo, da se dva različna vhoda skoraj nikoli ne preslikata v isto izhodno vrednost. Namestimo orodje z omenjeno funkcionalnostjo [`ophcrack`](https://manpages.org/ophcrack) in [`ophcrack-cli`](https://linuxcommandlibrary.com/man/ophcrack-cli) ter orodje za odpiranje arhivov [`unzip`](https://linux.die.net/man/1/unzip) z upravljalcem paketov na našem operacijskem sistemu.
 
