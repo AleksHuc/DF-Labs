@@ -61,7 +61,7 @@ Now we click on the `Load` button, where we select `Encrypted SAM`.
 
 ![Select the file where the usernames and passwords are stored.](images/lab6-oph4.png)
 
-Then, through the wizard, find the folder in which `SAM` is located, namely `/mnt/truplo1/WINDOWS/system32/config`, and press the `Open` button. Usernames, password values from [LM hashing function](https://en.wikipedia.org/wiki/LAN_Manager#Password_hashing_algorithm), and password values from[NT hashing function](https://en.wikipedia.org/wiki/NTLM).
+Then, through the wizard, find the folder in which `SAM` is located, namely `/mnt/truplo1/WINDOWS/system32/config`, and press the `Open` button. Usernames, password values from [LM hashing function](https://en.wikipedia.org/wiki/LAN_Manager#Password_hashing_algorithm), and password values from[NT hashing function](https://en.wikipedia.org/wiki/NTLM). The comparison of both hashing procedures is presented in this [article](https://medium.com/@petergombos/lm-ntlm-net-ntlmv2-oh-my-a9b235c58ed4).
 
 ![Properly configured user password retrieval tool.](images/lab6-oph5.png)
 

@@ -61,7 +61,7 @@ Sedaj kliknemo na gumb `Load`, kjer izberemo `Encrypted SAM`.
 
 ![Izberemo datoteko, kjer so shranjena uporabniška imena in gesla.](slike/vaja6-oph4.png)
 
-Nato preko čarovnik najdemo mapo v kateri se nahaja `SAM`, in sicer `/mnt/truplo1/WINDOWS/system32/config` ter pritisnemo na gumb `Open`. Izpišejo se nam uporabniška imena, vrednosti gesel [LM zgoščevalne funkcije](https://en.wikipedia.org/wiki/LAN_Manager#Password_hashing_algorithm), ter vrednosti gesel [NT zgoščevalne funkcije](https://en.wikipedia.org/wiki/NTLM).
+Nato preko čarovnik najdemo mapo v kateri se nahaja `SAM`, in sicer `/mnt/truplo1/WINDOWS/system32/config` ter pritisnemo na gumb `Open`. Izpišejo se nam uporabniška imena, vrednosti gesel [LM zgoščevalne funkcije](https://en.wikipedia.org/wiki/LAN_Manager#Password_hashing_algorithm), ter vrednosti gesel [NT zgoščevalne funkcije](https://en.wikipedia.org/wiki/NTLM). Primerjava obeh metod je predstavljena v naslednjem [članku](https://medium.com/@petergombos/lm-ntlm-net-ntlmv2-oh-my-a9b235c58ed4).
 
 ![Pravilno nastavljeno orodje za pridobivanje gesel uporabnikov.](slike/vaja6-oph5.png)
 
