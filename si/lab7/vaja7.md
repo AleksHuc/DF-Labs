@@ -44,6 +44,8 @@ Sedaj kloniramo naš Linux navidezni računalnik, nastavimo omrežje na obeh na 
 
 Z ukazom [`apt`](https://manpages.ubuntu.com/manpages/xenial/man8/apt.8.html) preverimo ali imamo nameščeno kakšno implementacijo `syslog` protokola, če ne ga namestimo z upravljalcem paketom našega operacijskega sistema. Sedaj izpišemo sistemske beležke z ukazi [`cat`](https://man7.org/linux/man-pages/man1/cat.1.html), [`less`](https://man7.org/linux/man-pages/man1/less.1.html), [`tail`](https://man7.org/linux/man-pages/man1/tail.1.html) ter podobnimi.
 
+    apt install rsyslog
+
     apt list --installed | grep syslog
 
     WARNING: apt does not have a stable CLI interface. Use with caution in scripts.

@@ -44,6 +44,8 @@ Now we clone our Linux virtual computer, set the network on both to `Bridged Ada
 
 With the command [`apt`](https://manpages.ubuntu.com/manpages/xenial/man8/apt.8.html) we check whether we have any implementation of the `syslog` protocol installed, if we do not install it with the package manager of our operating system. Now we print the system logs with the commands [`cat`](https://man7.org/linux/man-pages/man1/cat.1.html), [`less`](https://man7.org/linux/man-pages/man1/less.1.html), [`tail`](https://man7.org/linux/man-pages/man1/tail.1.html) and the like.
 
+    apt install rsyslog
+    
     apt list --installed | grep syslog
 
     WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
