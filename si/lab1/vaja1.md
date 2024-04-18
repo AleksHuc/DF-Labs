@@ -206,7 +206,7 @@ Dodatno lahko namestimo tudi `VirtualBox Guest Additions`, ki nam omogočajo avt
 
     apt install build-essential dkms linux-headers-$(uname -r)
 
-Sedaj vstavimo namestitveno sliko `VirtualBox Guest Additions`, tako da v oknu navideznega računalnika izberemo `Naprave\Vstavi odtis CD Guest Additions ...`. V primeru, da namestitvene slike še nimamo, nam VirtualBox ponudi, da jo prenesemo, tako da potrdimo prenos s spleta s pritiskom na gumb `Prenos` dvakrat in nato še enkrat na gumb `Vstavi`.
+Sedaj vstavimo namestitveno sliko `VirtualBox Guest Additions`, tako da v oknu navideznega računalnika izberemo `Naprave\Vstavi odtis CD Guest Additions ...`. V primeru, da namestitvene slike še nimamo, nam VirtualBox ponudi, da jo prenesemo, tako da potrdimo prenos s spleta s pritiskom na gumb `Prenos` dvakrat in nato še enkrat na gumb `Vstavi`. Če samodejni prenos ne uspe, ročno prenesite pravo različico iz `VirtualBox Guest Additions` z naslednje [povezave](https://download.virtualbox.org/virtualbox/).
 
 ![Prva potrditev prenosa namestitvene slike `VirtualBox Guest Additions`.](slike/vaja1-guest1.png)
 

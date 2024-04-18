@@ -206,7 +206,7 @@ In addition, we can also install `VirtualBox Guest Additions`, which allow us to
 
     apt install build-essential dkms linux-headers-$(uname -r)
 
-Now insert the `VirtualBox Guest Additions` installation image by selecting `Devices\Insert Guest Additions CD Image ...` in the virtual machine window. If we don't have the installation image yet, VirtualBox offers us to download it by confirming the download from the web by pressing the `Download` button twice and then the `Insert` button once more.
+Now insert the `VirtualBox Guest Additions` installation image by selecting `Devices\Insert Guest Additions CD Image ...` in the virtual machine window. If we don't have the installation image yet, VirtualBox offers us to download it by confirming the download from the web by pressing the `Download` button twice and then the `Insert` button once more. If the automatic download does not succeeds, than manually download the right version of  from this `VirtualBox Guest Additions` [link](https://download.virtualbox.org/virtualbox/).
 
 ![First confirmation of the download of the installation image `VirtualBox Guest Additions`.](images/lab1-guest1.png)
 
