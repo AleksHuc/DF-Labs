@@ -40,7 +40,7 @@ In general, we run the program like this `program file1 -d rw 1` and at startup 
 
 Let's write a short program in the C programming language that will run the command shell of the `python` programming language. Since we want to follow the general execution of the programs, we choose the `execve` function to run another program from within the program itself:
 
-    int execve(char const *path, char const *argv[], char const *envp[]);
+`int execve(char const *path, char const *argv[], char const *envp[]);`
 
     nano program.c
 
@@ -200,7 +200,7 @@ First, we find out more precisely where the return address is located, so we add
     gcc program.S -o program
     ./program
 
-Since our program will be presented as a string, it must not contain any zeros, because the general functions for reading strings in the programming language C expect a special end character at the end of the string to know when to stop reading. And that special trailing character contains a zero (`\0`). Therefore, we replace all commands that directly write zeros to registers with the logical XOR operation. In the case when we write the value 59 in the `rax' register, we cannot use it, so we first set the register to zero by using the logical XOR operation and then write the value 59 only in the lower byte of the register, since they are not added during translation zeros before the value 59 to the full length of the register.
+Since our program will be presented as a string, it must not contain any zeros, because the general functions for reading strings in the programming language C expect a special end character at the end of the string to know when to stop reading. And that special trailing character contains a zero (`\0`). Therefore, we replace all commands that directly write zeros to registers with the logical XOR operation. In the case when we write the value 59 in the `rax` register, we cannot use it, so we first set the register to zero by using the logical XOR operation and then write the value 59 only in the lower byte of the register (the lower 8 bits of the `rax` registry can be accessed via the `al` register), since they are not added during translation zeros before the value 59 to the full length of the register.
 
     nano program.S
 
@@ -292,6 +292,8 @@ We want, when returning from the function, to jump directly to the `printf` comm
     run
 
     break main
+
+    run
 
     s
 
@@ -487,15 +489,17 @@ Now let's use the `gdb` debugger to determine the `X` and `Y` constants. First, 
 
     End of assembler dump.
 
-    $3 = (void *) 0x7fffffffebc8 
+    (gdb) p $rsp+8 
+
+    $2 = (void *) 0x7fffffffebc8 
 
     (gdb) p &a 
 
-    $4 = (int *) 0x7fffffffebac 
+    $3 = (int *) 0x7fffffffebac 
 
     (gdb) p (unsigned long)($rsp + 8) - (unsigned long)&a 
 
-    $5 = 28
+    $4 = 28
 
 Now we fix the line `#define X 28` and compile the code and check that the variable `f` contains the return address `0x5555555551a3`, which points to the `cltq` command.
 
@@ -539,7 +543,7 @@ In our code, the `f` variable now stores the address in memory where the return 
 
     $2 = 20
 
-The address of the command that indicates the start of the call to the `callme` function can also be found by setting the `Y` variable to 0 and using `gdb` to run our program with the `s` command and stop when we reach the line `c = c + e;` and then print the program code with the `disassemble` command and look at which address the arrow of the current command points to.
+The address of the command that indicates the start of the call to the `printf` function can also be found by setting the `Y` variable to 0 and using `gdb` to run our program with the `s` command and stop when we reach the line `printf("c: %d\n", c);` and then print the program code of the `main` function with the `disassemble` command and look at which address the arrow of the current command points to.
 
     nano stacky.c
 
@@ -719,7 +723,7 @@ The line `f = (unsigned long*)(((char*)&a) + X);` can be simplified by working w
 
     c: 5
 
-Now we will specify our initial program as a string program `stacky.c`. The string is obtained by writing the program in the compiler with the `gdb` tool and writing it as a string from the `xor %rsi,%rsi` command up to and including the line after the `call` command.
+Now we will specify our initial program as a string program `stacky.c`. The string is obtained by writing the program in the compiler with the `gdb` tool and writing it as a string from the `jmp    0x114e <main+41>` command up to and including the line after the `call` command.
 
     gcc program.S -g -o program
 
@@ -793,13 +797,13 @@ Add the string of our program `\353\016_H1\366H1\322H1\300\260;\017\005\350\355\
 
     #include <stdio.h>
 
-    #define Y 20
+    #define X 7
 
     int callme(int a, unsigned long *b){
         unsigned long *f;
         char program[64] = "\353\016_H1\366H1\322H1\300\260;\017\005\350\355\377\377\377/usr/bin/python3";
         f = (unsigned long*)(&a + X);	// Override return address.
-        *f = (unsigned long)&(program[0])
+        *f = (unsigned long)&(program[0]);
         return a + *b;
     }
 

