@@ -37,7 +37,7 @@ Za podatkovni nosilec izberemo poljubno sliko in jo pretvorimo v brez izgubni fo
     apt update
     apt install libpng-dev libjpeg-dev libtiff-dev imagemagick
     wget https://i.redd.it/urj7zxd7dt0b1.jpg
-    convert image.jpg image.bmp
+    convert urj7zxd7dt0b1.jpg image.bmp
 
 Sedaj napišemo naš program, ki je sestavljen iz metode `hide`, ki skrije sporočilo v slike, metode `extract`, ki iz slike izlušči skrito sporočilo in metode `main`, ki požene program.
 
@@ -45,8 +45,7 @@ Metoda `hide` prejme sporočilo in sliko. Sliko pretvorimo v bajte in ustvarimo 
 
 Metoda `extract` prejme sliko iz katere izlušči skrito sporočilo, tako da v zanki bere bajt po bajt in shranjuje najmanj pomembne bite v bajte skritega sporočila. Ko prebere štiri bajte iz njih izlušči dolžino skritega sporočila v bajtih, nato v zanki prebere še celotno skrito sporočilo, ki ga nato vrne.
 
-    apt install python3-pip
-    pip install Pillow
+    apt install python3-pillow
 
     nano steganography.py
 
@@ -97,7 +96,6 @@ Metoda `extract` prejme sliko iz katere izlušči skrito sporočilo, tako da v z
             if c & 0b00000001:
                 next_d = next_d | mask
             if check and len(hidden_message) == 4:
-                print(hidden_message)
                 length = i + int.from_bytes(hidden_message, byteorder='big') * 8
                 hidden_message = b""
                 check = False
