@@ -56,58 +56,106 @@ The `extract` method receives an image from which it extracts the hidden message
 
     def hide(hidden_message, original_image):
 
+        # Convert image to bytes
         image_data = original_image.tobytes()
+        # New binary variable
         new_data = b""
+        # Create new image of the same type and size as original
         new_image = Image.new(original_image.mode, original_image.size)
+        # Concatenate the length of the hidden message and the hidden message
         hidden_message = len(hidden_message).to_bytes(4, byteorder='big') + hidden_message
+
+        # Iterate over the image bytes
         idx = 0
         for i, d in enumerate(image_data):
 
+            # Current byte position of the hidden message
             byte_position = i // 8
+            # Current bit position of the hidden message
             bit_position = i % 8
+            # Create bit mask from the current bit position
             mask = 1 << bit_position
+            # Current image byte
             next_b = d
+
+            # Check if current byte position is still in the hidden message, otherwise break
             if byte_position < len(hidden_message):
+
+                # Get the value a of the current bit from the current byte of the hidden message
                 cb = hidden_message[byte_position] & mask
+
+                # If value at the current bit is 0 then set the last bit of the current image byte also to zero, otherwise set it to 1
                 if cb == 0:
                     next_b = next_b & 0b11111110
+
                 else:
                     next_b = next_b | 0b00000001
+
             else:
                 break
+
+            # Add the modified current image byte to the binary data of the new image.
             new_data += next_b.to_bytes(1, "big")
             idx = i
+
+        # Add all the remaining image bytes to the modified image bytes
         new_data += image_data[idx+1:]
+
+        # Create new image from binary data and return it
         new_image.frombytes(new_data)
         return new_image
 
 
     def extract(image):
 
+        # Convert image to bytes
         image_data = image.tobytes()
+        # New binary variable
         hidden_message = b""
+        # Get the length of the image in bytes
         length = len(image_data)
+        # Boolean variable for switching from reading length to data of the hidden message
         check = True
+
+        # Iterate over the image bytes
         for i, c in enumerate(image_data):
+
+            # Every 8 bits write them as byte to hidden message variable
             if i % 8 == 0:
                 if i > 0:
                     hidden_message += next_d.to_bytes(1, "big")
+
+                # Set current byte to 0
                 next_d = 0
+
+            # Create mask for the current bit
             mask = 1 << (i % 8)
+
+            # Check if last bit in the current image byte is 1
             if c & 0b00000001:
+                # Set the current bit to 1
                 next_d = next_d | mask
+
+            # Check if we are still waiting for the length to be read and current length of the hidden>
             if check and len(hidden_message) == 4:
-                print(hidden_message)
+
+                # Read the length of the hidden message from 4 bytes as integer
                 length = i + int.from_bytes(hidden_message, byteorder='big') * 8
+                # Reset the hidden message variable
                 hidden_message = b""
+                # Set the boolean variable to False
                 check = False
+
+            # Check if we have come to the end of the hidden message and break
             if length == i:
                 break
+
+        # Return the hidden message
         return hidden_message
 
 
+
     if __name__ == "__main__":
-    
         print("Steganography")
         message = "This is the hidden message that I want to hide inside of a picture!"
         print("Message to hide: ", message)
@@ -123,3 +171,5 @@ The `extract` method receives an image from which it extracts the hidden message
     chmod +x steganography.py
 
     ./steganography.py
+
+Now compare the values of the individual pixels of the original and modified image using the program [Krita](https://krita.org/).
