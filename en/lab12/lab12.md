@@ -58,7 +58,7 @@ But we can try to analyze and change the program memory ourselves. Let's install
 
     mv 'Why Norway Is One Of The BEST Destinations In The World [2uzlfzrMu0E].webm' Norway.webm
 
-    mv 'Why Slovenia Is The BEST Vacation Spot You'\''ve Never Heard Of [ag2O2z99shY].webm' S.webm
+    mv 'Why Slovenia Is The BEST Vacation Spot You'\''ve Never Heard Of [ag2O2z99shY].webm' Slovenia.webm
 
     vlc Slovenia.webm
 
@@ -177,7 +177,7 @@ The `maps` file tells us which parts of the virtual memory in the `mem` file are
     7f3a7e1c6000-7f3a7e1c8000 r--p 00000000 08:01 1103013                    /usr/lib/x86_64-linux-gnu/vlc/li
     bvlc_vdpau.so.0.0.0
 
-Now we can write a short program that prints the entire memory of the process according to the contents of the `mem` and `maps` files, or we can download the [program](https://davidebove.com/blog/2021/03/27/how-to-dump-process-memory-in-linux/?pk_campaign=feed&pk_kwd=reverse-engineering-android-apps) from the web and run it for the desired `PID`. The result is a binary file that represents the memory of the process and is intended for further analysis.
+Now we can write a short program that prints the entire memory of the process according to the contents of the `mem` and `maps` files, or we can download the [program](https://davidebove.com/blog/how-to-dump-process-memory-in-linux/) from the web and run it for the desired `PID`. The result is a binary file that represents the memory of the process and is intended for further analysis.
 
     wget https://gist.githubusercontent.com/Dbof/b9244cfc607cf2d33438826bee6f5056/raw/aa4b75ddb55a58e2007bf12e17daadb0ebebecba/memdump.py
 
@@ -190,7 +190,7 @@ The `fd` directory contains symbolic links, named with numbers, to the open file
     0  10  12  14  16  18  2   21  23  25  29  30  32  34  4  6  8
     1  11  13  15  17  19  20  22  24  26  3   31  33  35  5  7  9
 
-    ls -al /proc/43926/fd
+    ls -al /proc/3404/fd
 
     total 0
     dr-x------ 2 aleks aleks  0 May 16 14:30 .
@@ -413,7 +413,7 @@ Let's also change the rights of our program so that they now allow execution. We
 
     nano switcher
 
-    #!/bin/sh
+    #!/bin/bash
 
     NAMEKEY=$1
     NEWFILE=$2
@@ -424,10 +424,10 @@ Let's also change the rights of our program so that they now allow execution. We
     PID=$(ps xa | grep "vlc" | head -n 1 | awk '{ print $1 }' )
     echo $PID
 
-    FD=$(ls -al /proc/$PID/fd | grep $NAMEKEY | cut -d " " -f 9 )
+    FD=$(ls -al /proc/$PID/fd | grep $NAMEKEY | cut -d " " -f 10 )
     echo $FD
 
-    echo -e "attach $PID\ncall open(\"$NEWFILE\", 0666)\ncall (int)dup2(\$1, $FD)\ndetach\nquit\n" | gdb
+    echo -e "attach $PID\ncall open(\"$NEWFILE\", 0666)\ncall (int)dup2(\$1, $FD)\ndetach\nquit" | gdb
 
     chmod +x switcher
 

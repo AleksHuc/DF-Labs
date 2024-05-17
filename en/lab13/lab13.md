@@ -37,7 +37,7 @@ We choose an arbitrary image for the data carrier and convert it into a lossless
     apt update
     apt install libpng-dev libjpeg-dev libtiff-dev imagemagick
     wget https://i.redd.it/urj7zxd7dt0b1.jpg
-    convert image.jpg image.bmp
+    convert urj7zxd7dt0b1.jpg image.bmp
 
 Now we write our program, which consists of the `hide` method, which hides the message in the images, the `extract` method, which extracts the hidden message from the image, and the `main` method, which runs the program.
 
@@ -45,8 +45,7 @@ The `hide` method receives a message and an image. We convert the image to bytes
 
 The `extract` method receives an image from which it extracts the hidden message, reading byte by byte in a loop and storing the least significant bits in the bytes of the hidden message. After reading four bytes, it extracts the length of the hidden message in bytes from them, then reads the entire hidden message in a loop, and then returns it.
 
-    apt install python3-pip
-    pip install Pillow
+    apt install python3-pillow
 
     nano steganography.py
 

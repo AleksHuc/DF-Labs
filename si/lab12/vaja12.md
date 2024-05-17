@@ -58,7 +58,7 @@ Lahko pa poskusimo analizirati in spremeniti pomnilnik programa kar sami. Namest
 
     mv 'Why Norway Is One Of The BEST Destinations In The World [2uzlfzrMu0E].webm' Norway.webm
 
-    mv 'Why Slovenia Is The BEST Vacation Spot You'\''ve Never Heard Of [ag2O2z99shY].webm' S.webm
+    mv 'Why Slovenia Is The BEST Vacation Spot You'\''ve Never Heard Of [ag2O2z99shY].webm' Slovenia.webm
 
     vlc Slovenia.webm
 
@@ -120,7 +120,7 @@ Linux ima navidezni imenik `/dev`, ki naslavlja vse naprave, `/sys`, ki naslavlj
     cpu_resctrl_groups  map_files  oom_score_adj  smaps_rollup  wchan
     cpuset		    maps       pagemap	      stack
 
-The `mem` file addresses the entire virtual memory of the process as seen by the process itself. When we want to save it, it returns the error because it tries to read parts of the memory that do not exist or cannot be read.
+Datoteka `mem` naslavlja celoten navidezni pomnilnik procesa, kot ga vidi sam proces. Ko ga želimo shraniti, vrne napako, ker poskuša prebrati dele pomnilnika, ki ne obstajajo ali jih ni mogoče prebrati.
 
     cat /proc/3404/mem > /home/aleks/vlcmemdump.raw
 
@@ -177,7 +177,7 @@ Datoteka `maps` nam pa pove katere dele pomnilnika v navideznem pomnilniku v dat
     7f3a7e1c6000-7f3a7e1c8000 r--p 00000000 08:01 1103013                    /usr/lib/x86_64-linux-gnu/vlc/li
     bvlc_vdpau.so.0.0.0
 
-Sedaj lahko napišemo kratek program, ki nam izpiše celoten pomnilnik procesa glede na vsebino datotek `mem` in `maps` ali pa si prenesemo [program](https://davidebove.com/blog/2021/03/27/how-to-dump-process-memory-in-linux/?pk_campaign=feed&pk_kwd=reverse-engineering-android-apps) s spleta in jo poženemo za željeni `PID`. Rezultat je binarna datoteka, ki predstavlja pomnilnik procesa in je namenjena za nadaljnjo analizo.
+Sedaj lahko napišemo kratek program, ki nam izpiše celoten pomnilnik procesa glede na vsebino datotek `mem` in `maps` ali pa si prenesemo [program](https://davidebove.com/blog/how-to-dump-process-memory-in-linux/) s spleta in jo poženemo za željeni `PID`. Rezultat je binarna datoteka, ki predstavlja pomnilnik procesa in je namenjena za nadaljnjo analizo.
 
     wget https://gist.githubusercontent.com/Dbof/b9244cfc607cf2d33438826bee6f5056/raw/aa4b75ddb55a58e2007bf12e17daadb0ebebecba/memdump.py
 
@@ -190,7 +190,7 @@ Direktorij `fd` vsebuje simbolične povezave, ki so poimenovane s številkami, n
     0  10  12  14  16  18  2   21  23  25  29  30  32  34  4  6  8
     1  11  13  15  17  19  20  22  24  26  3   31  33  35  5  7  9
 
-    ls -al /proc/43926/fd
+    ls -al /proc/3404/fd
 
     total 0
     dr-x------ 2 aleks aleks  0 May 16 14:30 .
@@ -413,7 +413,7 @@ Spremenimo še pravice našega programa, da sedaj dovoljujejo izvajanje. Požene
 
     nano switcher
 
-    #!/bin/sh
+    #!/bin/bash
 
     NAMEKEY=$1
     NEWFILE=$2
@@ -424,10 +424,10 @@ Spremenimo še pravice našega programa, da sedaj dovoljujejo izvajanje. Požene
     PID=$(ps xa | grep "vlc" | head -n 1 | awk '{ print $1 }' )
     echo $PID
 
-    FD=$(ls -al /proc/$PID/fd | grep $NAMEKEY | cut -d " " -f 9 )
+    FD=$(ls -al /proc/$PID/fd | grep $NAMEKEY | cut -d " " -f 10 )
     echo $FD
 
-    echo -e "attach $PID\ncall open(\"$NEWFILE\", 0666)\ncall (int)dup2(\$1, $FD)\ndetach\nquit\n" | gdb
+    echo -e "attach $PID\ncall open(\"$NEWFILE\", 0666)\ncall (int)dup2(\$1, $FD)\ndetach\nquit" | gdb
 
     chmod +x switcher
 
