@@ -1,4 +1,4 @@
-# 2. Vaja: Diski in diskovni sistemi
+		# 2. Vaja: Diski in diskovni sistemi
 
 ## Navodila
 
@@ -26,6 +26,10 @@ CHS naslavljanje uporablja 24 bitov dolge zapise za naslavljanje posameznega sek
 - S: sektor, ki ima vrednosti med 1 in 63 (6 bitov). Vsaka sled je razdeljene na sektorje.
 
 Prvi sektor je namenjen za sistemski nalagalnik in tabelo razdelkov. Sektor je imel privzeto velikost 512B, novejši diski pa imajo sektorje velikosti 4096B. Če predpostavimo velikost sektorja 512B, potem lahko z CHS naslovimo maksimalno 1024 * 255 * 63 * 512 = 8.422.686.720B.
+
+**LBA naslavljanje**
+
+Novejši diski se izognejo omejitvam CHS naslavljanja z uporabo LBA naslavljanjem ([LBA Addressing](https://en.wikipedia.org/wiki/Logical_block_addressing)), kjer so posamezni sektorji označeni z zaporednimi številkami oz. indeksi in do njih dostopamo kar direktno preko njihovega indeksa.
 
 **IDE/ATA diski**
 
@@ -67,7 +71,7 @@ Prvi IBMovi osebni računalniki so imeli več možnosti za zagon:
 
 Količini ROM in RAM sta bili omejeni - [40KiB za ROM](https://www.pcjs.org/machines/pcx86/ibm/5150/rom/), 128KiB za RAM. Na takšnem sistemu je jasno, da bo zagon čim bolj preprost. Princip je:
 
-1. Izvedi program v ROM [začni na (naslovu 0xffff0; PC=0, CS=0xffff](https://en.wikipedia.org/wiki/Intel_8086#Segmentation).
+1. Izvedi program v ROM; začni izvajanje na [naslovu 0xffff0; PC=0, CS=0xffff](https://en.wikipedia.org/wiki/Intel_8086#Segmentation).
 2. Če na računalnik ni priklopljen noben disk ali disketa, zaženi [BASIC](https://en.wikipedia.org/wiki/IBM_BASIC).
 3. Če ja na voljo disk, naloži 1. sektor z diska v RAM na [naslov 0x7c00](https://wiki.osdev.org/Memory_Map_(x86)) - to je zagonski program.
 4. Preveri, ali je program veljaven (ima na koncu posebno vrednost).
@@ -75,19 +79,27 @@ Količini ROM in RAM sta bili omejeni - [40KiB za ROM](https://www.pcjs.org/mach
 
 **Basic Input Output System (BIOS)**
 
-Prvi program, ki ga požene CPU je program BIOS:
-
-1. Izvajati začne ukaze shranjene v [Basic Input Output System (BIOS)](https://en.wikipedia.org/wiki/BIOS) sistemu, ki se nahaja na ločenem pomnilniku na matični plošči, ki zazna in upravlja s strojno opremo ter preda izvajanje sistemskemu nalagalniku. Izvede se [Power-On Self-Test (POST)](https://en.wikipedia.org/wiki/Power-on_self-test) proces, ki zazna ter preveri strojno opremo, na primer procesor, pomnilnik, grafična kartica, trdi diski ter ostale vhodno/izhodno naprave.
+1. Ob pritisku na gumb za zagon računalnika procesor začne z izvajanjem kode na v naprej določenem naslovu, na primer na `0xFFFFFFF0` pri 32-bitnih in 64-bitnih x86 procesorjih.
+2. Izvajati začne ukaze shranjene v [Basic Input Output System (BIOS)](https://en.wikipedia.org/wiki/BIOS) sistemu, ki se nahaja na ločenem pomnilniku ([Read Only Memory - ROM](https://en.wikipedia.org/wiki/Read-only_memory)) na matični plošči, ki zazna in upravlja s strojno opremo ter preda izvajanje sistemskemu nalagalniku. Izvede se [Power-On Self-Test (POST)](https://en.wikipedia.org/wiki/Power-on_self-test) proces, ki zazna ter preveri strojno opremo, na primer procesor, pomnilnik, grafična kartica, trdi diski ter ostale vhodno/izhodno naprave in jih zažene.
 2. Nato se izvedejo še BIOS razširitve (BIOS Extensions), ki omogočajo izvedbo ukazov shranjenih v BIOS pomnilnikih razširitvenih kartic za njihov zagon, na primer mrežne kartice, diskovni krmilniki, grafični pospeševalniki in ostale naprave.
-3. BIOS prebere prvih 512B na izbranem nosilcu in jih zažene, omenjenemu programu nudi tudi možnost za dostop do nadaljnjih podatkov na napravi. Teh prvih 512B na nosilcu imenujemo [Master Boot Record (MBR)](https://en.wikipedia.org/wiki/Master_boot_record), ki v prvih 446B vsebuje sistemski nalagalnik, nato v naslednjih 64B [tabelo razdelkov - partition table](https://en.wikipedia.org/wiki/Master_boot_record#Disk_partitioning) in v zadnjih 2B še podpis, ki potrjuje veljavnost MBR. MBR se lahko nahaja na trdem disku, USB prenosnem pomnilniku, CD ali DVD nosilcu.
-4. [Sistemski nalagalnik (Bootloader)](https://en.wikipedia.org/wiki/Bootloader) v MBR poskrbi za zagon operacijskega sistema. Ker sistemski nalagalnik za sodobni operacijski sistem potrebuje več prostora kot 446B, ga razdelimo v dva dela. 1. stopnja sistemskega nalagalnika se nahaja v MBR in poskrbi za zagon 2. stopnje sistemskega nalagalnika, ki se nahaja v eni od razdelkov na podatkovnem nosilcu.
-5. Sistemski nalagalnik na 2. stopnji poskrbi za zagon operacijskega sistema, tako da požene [jedro (kernel)](https://en.wikipedia.org/wiki/Linux_kernel) z dodatnimi parametri ter [začetni navidezni disk (initial RAM disk - initrd or initramfs)](https://en.wikipedia.org/wiki/Initial_ramdisk) z začasnim datotečnim izhodiščnim datotečnim sistemom.
-6. Nato se zažene [prvi program (init)](https://en.wikipedia.org/wiki/Init) na operacijskem sistemu po poskrbi za zagon in dobi procesorsko oznako 1.
-7. Sedaj sledi zagon uporabniških programov, grafičnega okolja in drugih programov.
+3. Nato se izvedejo še [BIOS razširitve (BIOS Extensions)](https://en.wikipedia.org/wiki/BIOS#Extensions_(option_ROMs)), ki omogočajo izvedbo ukazov shranjenih v BIOS pomnilnikih razširitvenih kartic za njihov zagon, na primer mrežne kartice, diskovni krmilniki, grafični pospeševalniki in ostale naprave.
+4. BIOS prebere prvih 512B na izbranem podatkovnemu nosilcu, ki je na voljo, in jih zažene, omenjenemu programu nudi tudi možnost za dostop do nadaljnjih podatkov na napravi. Teh prvih 512B na nosilcu imenujemo [Master Boot Record (MBR)](https://en.wikipedia.org/wiki/Master_boot_record), ki v prvih 446B vsebuje sistemski nalagalnik, nato v naslednjih 64B tabelo razdelkov in v zadnjih 2B še podpis. MBR se lahko nahaja na trdem disku, USB prenosnem pomnilniku, CD ali DVD nosilcu.
+5. [Sistemski nalagalnik (Bootloader)](https://en.wikipedia.org/wiki/Bootloader) v MBR poskrbi za zagon operacijskega sistema. Ker sistemski nalagalnik za sodobni operacijski sistem potrebuje več prostora kot 446B, ga razdelimo v dva dela. 1. stopnja sistemskega nalagalnika se nahaja v MBR in poskrbi za zagon 2. stopnje sistemskega nalagalnika, ki se nahaja v eni od razdelkov na podatkovnem nosilcu.
+6. Sistemski nalagalnik na 2. stopnji poskrbi za zagon operacijskega sistema, tako da požene [jedro (kernel)](https://en.wikipedia.org/wiki/Linux_kernel) z dodatnimi parametri ter [začetni navidezni disk (initial RAM disk - initrd or initramfs)](https://en.wikipedia.org/wiki/Initial_ramdisk) z začasnim datotečnim izhodiščnim datotečnim sistemom.
+7. Nato se zažene prvi program ([init](https://en.wikipedia.org/wiki/Init), [systemd](https://en.wikipedia.org/wiki/Systemd)...) na operacijskem sistemu po poskrbi za zagon in dobi procesorsko oznako 1.
+8. Sedaj sledi zagon uporabniških programov, grafičnega okolja in drugih programov.
 
 **Unified Extensible Firmware Interface (UEFI)**
 
 Prvi program, ki ga pa požene sodobni CPU je pa program [UEFI](https://en.wikipedia.org/wiki/UEFI), ki nadomesti BIOS. Sam postopek zagona je podoben vendar UEFI ne pričakuje posebnega sektorja MBR za zagon operacijskega sistema, ampak sam zazna nameščene sistemske nalagalnike in operacijske sisteme, ter zažene tistega na katerega kažejo trenutne nastavitve. Sistemski nalagalniki se nahajajo v posebnih EFI razdelkih na disku in na v naprej določenih poteh `<EFI_SYSTEM_PARTITION>\EFI\BOOT\BOOT<MACHINE_TYPE_SHORT_NAME>.EFI`. Prav tako ker so EFI razdelki lahko poljubne velikosti, sistemski nalagalniki niso več omejeni po velikosti. UEFI sistemi prav tako podpirajo sodobnejšo ureditev razdelkov z [GUID tabelami razdelkov (GPT)](https://en.wikipedia.org/wiki/GUID_Partition_Table).
+
+**Sistemski nalagalniki**
+
+- [GNU GRand Unified Bootloader (GRUB)](https://en.wikipedia.org/wiki/GNU_GRUB)
+- [SYSLINUX](https://wiki.syslinux.org/wiki/index.php?title=SYSLINUX)
+- [ISOLINUX](https://wiki.syslinux.org/wiki/index.php?title=ISOLINUX)
+- [PXELINUX](https://wiki.syslinux.org/wiki/index.php?title=PXELINUX)
+- [LILO](https://en.wikipedia.org/wiki/LILO_(bootloader))
 
 ### Razdelki
 

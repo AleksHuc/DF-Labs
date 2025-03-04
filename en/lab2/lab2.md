@@ -27,6 +27,10 @@ CHS addressing uses 24-bit long records to address each sector on the disk:
 
 The first sector is dedicated to the bootloader and the partition table. The sector had a default size of 512B, but newer disks have sectors of size 4096B. Assuming a sector size of 512B, then we can address a maximum of 1024 * 255 * 63 * 512 = 8.422.686.720B with CHS.
 
+**LBA Addressing**
+
+Newer disks avoid the limitations of CHS addressing by using LBA addressing ([LBA Addressing](https://en.wikipedia.org/wiki/Logical_block_addressing)), where individual sectors are marked with sequential numbers or indexes and are accessed directly via their index.
+
 **IDE/ATA drives**
 
 Because a long cable with many parallel wires between the read/write head and the computer caused headaches, disk manufacturers soon moved most of the electronics from the expansion card to the disk itself. Thus [Integrated Drive Electronics - IDE disks](https://en.wikipedia.org/wiki/Parallel_ATA#IDE_and_ATA-1) were born. The interface is almost identical to the expansion bus on the first IBM PCs.
@@ -67,7 +71,7 @@ The first IBM personal computers had several boot options:
 
 The amounts of ROM and RAM were limited - [40KiB for ROM](https://www.pcjs.org/machines/pcx86/ibm/5150/rom/), 128KiB for RAM. On such a system, it is clear that the booting will be as simple as possible. The principle is:
 
-1. Execute the program in ROM [start at (address 0xffff0; PC=0, CS=0xffff](https://en.wikipedia.org/wiki/Intel_8086#Segmentation).
+1. Execute the program in ROM; start at [address 0xffff0; PC=0, CS=0xffff](https://en.wikipedia.org/wiki/Intel_8086#Segmentation).
 2. If no disk or floppy disk is connected to the computer, run [BASIC](https://en.wikipedia.org/wiki/IBM_BASIC).
 3. If disk is available, load sector 1 from disk into RAM at [address 0x7c00](https://wiki.osdev.org/Memory_Map_(x86)) - this is the boot program.
 4. Check if the program is valid (has a special value at the end).
@@ -75,19 +79,26 @@ The amounts of ROM and RAM were limited - [40KiB for ROM](https://www.pcjs.org/m
 
 **Basic Input Output System (BIOS)**
 
-The first program run by the CPU is the BIOS program:
-
-1. Begins executing commands stored in the [Basic Input Output System (BIOS)](https://en.wikipedia.org/wiki/BIOS) a system located on separate memory on the motherboard that detects and controls hardware and hands over execution to the system loader. A [Power-On Self-Test (POST)](https://en.wikipedia.org/wiki/Power-on_self-test) process is performed that detects and checks hardware such as processor, memory, graphics card, hard disks and other input/output devices.
-2. Next, BIOS extensions are performed, which enable the execution of commands stored in the BIOS memories of expansion cards for their startup, for example network cards, disk controllers, graphics accelerators and other devices.
-3. The BIOS reads the first 512B on the selected drive and starts them, it also provides the mentioned program with the possibility to access further data on the device. These first 512B on the drive are called [Master Boot Record (MBR)](https://en.wikipedia.org/wiki/Master_boot_record), which contains the system loader in the first 446B, then in the next 64B [partition table](https://en.wikipedia.org/wiki/Master_boot_record#Disk_partitioning) and in the last 2B a signature confirming the validity of the MBR. The MBR can be located on a hard drive, USB flash drive, CD or DVD.
-4. [System Loader (Bootloader)](https://en.wikipedia.org/wiki/Bootloader) in the MBR takes care of starting the operating system. Since the bootloader for a modern operating system needs more space than 446B, we split it into two parts. Level 1 bootloader resides in the MBR and provides booting for level 2 bootloader, which resides in one of the partitions on the data drive.
-5. The level 2 bootloader takes care of starting the operating system by starting the [kernel](https://en.wikipedia.org/wiki/Linux_kernel) with additional parameters and the [initial virtual disk (initial RAM disk - initrd or initramfs)](https://en.wikipedia.org/wiki/Initial_ramdisk) with a temporary initial file system.
-6. Then the [first program (init)](https://en.wikipedia.org/wiki/Init) is run on the operating system after taking care of booting and getting a processor mark of 1.
-7. Now comes the start of user programs, graphic environment and other programs.
+1. When you press the computer's start button, the processor starts executing code at a predetermined address, for example `0xFFFFFFF0` on 32-bit and 64-bit x86 processors.
+2. It starts executing commands stored in the [Basic Input Output System (BIOS)](https://en.wikipedia.org/wiki/BIOS) system located on a separate memory ([Read Only Memory - ROM](https://en.wikipedia.org/wiki/Read-only_memory)) on the motherboard that detects and controls the hardware and hands over execution to the bootloader. A [Power-On Self-Test (POST)](https://en.wikipedia.org/wiki/Power-on_self-test) process is performed that detects and checks hardware such as processor, memory, graphics card, hard disks and other input/output devices.
+3. Next, [BIOS Extensions](https://en.wikipedia.org/wiki/BIOS#Extensions_(option_ROMs)) are run, which enables the execution of commands stored in the BIOS flash of expansion cards for their startup, for example network cards, disk controllers, graphics accelerators and other devices.
+4. The BIOS reads the first 512B of the selected data volume available and starts them, it also provides the mentioned program with the possibility to access further data on the device. These first 512B on the volume are called [Master Boot Record (MBR)](https://en.wikipedia.org/wiki/Master_boot_record), which contains the bootloader in the first 446B, then the partition table in the next 64B and the signature in the last 2B . The MBR can be located on a hard drive, USB flash drive, CD or DVD.
+5. [Bootloader](https://en.wikipedia.org/wiki/Bootloader) in the MBR takes care of starting the operating system. Since the system loader for a modern operating system needs more space than 446B, we split it into two parts. Stage 1 bootloader resides in the MBR and provides booting for stage 2 bootloader, which resides in one of the partitions on the data volume.
+6. The 2 stage bootloader takes care of starting the operating system by starting the [kernel](https://en.wikipedia.org/wiki/Linux_kernel) with additional parameters and the [initial virtual disk (initial RAM disk - initrd or initramfs)](https://en.wikipedia.org/wiki/Initial_ramdisk) with a temporary initial file system.
+7. Then the first program ([init](https://en.wikipedia.org/wiki/Init), [systemd](https://en.wikipedia.org/wiki/Systemd)...) is run on the operating system that takes care of booting and gets the process ID of 1.
+8. Now the user programs, graphic environment and other programs are able to start.
 
 **Unified Extensible Firmware Interface (UEFI)**
 
 The first program that a modern CPU runs is the [UEFI](https://en.wikipedia.org/wiki/UEFI) program, which replaces the BIOS. The boot process itself is similar, but UEFI does not expect a special MBR sector to boot the operating system, but detects the installed bootloaders and operating systems itself, and starts the one pointed to by the current settings. The bootloaders are located in special EFI partitions on the disk and in the predefined paths `<EFI_SYSTEM_PARTITION>\EFI\BOOT\BOOT<MACHINE_TYPE_SHORT_NAME>.EFI`. Also, since EFI partitions can be any size and thus bootloaders are no longer limited in size. UEFI systems also support more modern partitioning with [GUID Partition Tables (GPT)](https://en.wikipedia.org/wiki/GUID_Partition_Table).
+
+**Bootloaders**
+
+- [GNU GRand Unified Bootloader (GRUB)](https://en.wikipedia.org/wiki/GNU_GRUB)
+- [SYSLINUX](https://wiki.syslinux.org/wiki/index.php?title=SYSLINUX)
+- [ISOLINUX](https://wiki.syslinux.org/wiki/index.php?title=ISOLINUX)
+- [PXELINUX](https://wiki.syslinux.org/wiki/index.php?title=PXELINUX)
+- [LILO](https://en.wikipedia.org/wiki/LILO_(bootloader))
 
 ### Partitions
 
