@@ -1,4 +1,4 @@
-		# 2. Vaja: Diski in diskovni sistemi
+# 2. Vaja: Diski in diskovni sistemi
 
 ## Navodila
 
@@ -81,7 +81,6 @@ Količini ROM in RAM sta bili omejeni - [40KiB za ROM](https://www.pcjs.org/mach
 
 1. Ob pritisku na gumb za zagon računalnika procesor začne z izvajanjem kode na v naprej določenem naslovu, na primer na `0xFFFFFFF0` pri 32-bitnih in 64-bitnih x86 procesorjih.
 2. Izvajati začne ukaze shranjene v [Basic Input Output System (BIOS)](https://en.wikipedia.org/wiki/BIOS) sistemu, ki se nahaja na ločenem pomnilniku ([Read Only Memory - ROM](https://en.wikipedia.org/wiki/Read-only_memory)) na matični plošči, ki zazna in upravlja s strojno opremo ter preda izvajanje sistemskemu nalagalniku. Izvede se [Power-On Self-Test (POST)](https://en.wikipedia.org/wiki/Power-on_self-test) proces, ki zazna ter preveri strojno opremo, na primer procesor, pomnilnik, grafična kartica, trdi diski ter ostale vhodno/izhodno naprave in jih zažene.
-2. Nato se izvedejo še BIOS razširitve (BIOS Extensions), ki omogočajo izvedbo ukazov shranjenih v BIOS pomnilnikih razširitvenih kartic za njihov zagon, na primer mrežne kartice, diskovni krmilniki, grafični pospeševalniki in ostale naprave.
 3. Nato se izvedejo še [BIOS razširitve (BIOS Extensions)](https://en.wikipedia.org/wiki/BIOS#Extensions_(option_ROMs)), ki omogočajo izvedbo ukazov shranjenih v BIOS pomnilnikih razširitvenih kartic za njihov zagon, na primer mrežne kartice, diskovni krmilniki, grafični pospeševalniki in ostale naprave.
 4. BIOS prebere prvih 512B na izbranem podatkovnemu nosilcu, ki je na voljo, in jih zažene, omenjenemu programu nudi tudi možnost za dostop do nadaljnjih podatkov na napravi. Teh prvih 512B na nosilcu imenujemo [Master Boot Record (MBR)](https://en.wikipedia.org/wiki/Master_boot_record), ki v prvih 446B vsebuje sistemski nalagalnik, nato v naslednjih 64B tabelo razdelkov in v zadnjih 2B še podpis. MBR se lahko nahaja na trdem disku, USB prenosnem pomnilniku, CD ali DVD nosilcu.
 5. [Sistemski nalagalnik (Bootloader)](https://en.wikipedia.org/wiki/Bootloader) v MBR poskrbi za zagon operacijskega sistema. Ker sistemski nalagalnik za sodobni operacijski sistem potrebuje več prostora kot 446B, ga razdelimo v dva dela. 1. stopnja sistemskega nalagalnika se nahaja v MBR in poskrbi za zagon 2. stopnje sistemskega nalagalnika, ki se nahaja v eni od razdelkov na podatkovnem nosilcu.
