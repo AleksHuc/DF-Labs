@@ -123,7 +123,7 @@ Z orodjem [`gdisk`](https://linux.die.net/man/8/gdisk) lahko spremenimo ime razd
     q
 
     r2 /dev/sda
-    px 2042
+    px 2048
 
     - offset -   0 1  2 3  4 5  6 7  8 9  A B  C D  E F  0123456789ABCDEF
     0x00000000  eb63 9010 8ed0 bc00 b0b8 0000 8ed8 8ec0  .c..............
@@ -255,6 +255,8 @@ Z orodjem [`gdisk`](https://linux.die.net/man/8/gdisk) lahko spremenimo ime razd
     0x000007e0  0000 0000 0000 0000 0000 0000 0000 0000  ................
     0x000007f0  0000 0000 0000 0000 0000 0000 0000 0000  ................
 
+	q
+
 Sedaj moramo dodati še nov razdelek in popraviti sistemski nalagalnik, da se bo naš operacijski sistem znal zagnati z GPT tabele razdelkov. Poženemo orodje `gdisk` na disku operacijskega sistema, izberemo možnost `n` za ustvarjanje novega razdelka in izberemo vrednost `2` za številko razdelka. Za prvi sektor razdelka izberemo sektor 34, za zadnji sektor razdelka izberemo sektor 2047 nato še izberemo kodo za `BIOS boot` razdelek, ki je `ef02` ali pa ga poiščemo z izbiro možnosti `l`. Zapišemo spremembe na disk z možnostjo `w` in potrdimo z `Y`. Na koncu še ponovno namestimo sistemski nalagalnik z ukazom [`grub-install`](https://linux.die.net/man/8/grub-install).
 
     gdisk /dev/sda
@@ -333,7 +335,7 @@ Sedaj moramo dodati še nov razdelek in popraviti sistemski nalagalnik, da se bo
     q
 
     r2 /dev/sda
-    px 2042
+    px 2048
 
     - offset -   0 1  2 3  4 5  6 7  8 9  A B  C D  E F  0123456789ABCDEF
     0x00000000  eb63 9010 8ed0 bc00 b0b8 0000 8ed8 8ec0  .c..............
@@ -463,11 +465,13 @@ Sedaj moramo dodati še nov razdelek in popraviti sistemski nalagalnik, da se bo
     0x000007c0  0000 0000 0000 0000 0000 0000 0000 0000  ................
     0x000007d0  0000 0000 0000 0000 0000 0000 0000 0000  ................
     0x000007e0  0000 0000 0000 0000 0000 0000 0000 0000  ................
-    0x000007f0  0000 0000 0000 0000 0000                 ..........
+    0x000007f0 0000 0000 0000 0000 0000 0000 0000 0000  ................
+
+	q
 
 ### Priključitev navideznih diskov
 
-S [spletne strani](https://polz.si/dsrf/) prenesemo naslednje datoteke:
+S [spletne strani](https://polaris.fri.uni-lj.si/) prenesemo naslednje datoteke:
 
 - `furry.iso`
 - `raid0_1.vdi`
@@ -487,14 +491,26 @@ Sedaj imamo v zavihku `Pomnilniške naprave` pod `Krmilnik: IDE` dodano zgošče
 
 Sedaj poženemo naš navidezni računalnik. V operacijskih sistemih GNU/Linux lahko do diskov, ki so priklopljeni dostopamo preko imenika `/dev/NAME_OF_THE_DISK`, kjer je ponavadi ime diska `sdX`, kjer `X` zamenjamo z zaporedno črko abecede.
 
-    cd /dev
     ls /dev
-    cd /dev/sda
 
-Na katero pot v datotečnem sistemu so posamezni diski (`sdX`) in razdelki (`sdXN`) priklopljeni ugotovimo preko imenika `/dev/NAME_OF_THE_DISK_OR_PARTITION/by-path`.
-
-    ls -al /dev/sda/by-path
-    cd /dev/sda/by-path
+	autofs		 	hidraw0       mem     sdb		 stdin	 tty22	tty39  tty55  uinput	   vcsa6
+	block		 	hpet	      mqueue  sdb1		 stdout  tty23	tty4   tty56  urandom	   vcsu
+	bsg		 		hugepages     net     sdb2		 tty	 tty24	tty40  tty57  userfaultfd  vcsu1
+	btrfs-control	hwrng	      null    sdb5		 tty0	 tty25	tty41  tty58  vboxguest    vcsu2
+	bus		 		initctl       nvram   sdc		 tty1	 tty26	tty42  tty59  vboxuser	   vcsu3
+	cdrom		 	input	      port    sdc1		 tty10	 tty27	tty43  tty6   vcs		   vcsu4
+	char		 	kmsg	      ppp     sdc2		 tty11	 tty28	tty44  tty60  vcs1		   vcsu5
+	console		 	log	       	  psaux   sdc3		 tty12	 tty29	tty45  tty61  vcs2		   vcsu6
+	core		 	loop0	      ptmx    sdc5		 tty13	 tty3	tty46  tty62  vcs3		   vfio
+	cpu		 		loop1	      pts     sg0		 tty14	 tty30	tty47  tty63  vcs4		   vga_arbiter
+	cpu_dma_latency loop2	      random  sg1		 tty15	 tty31	tty48  tty7   vcs5		   vhci
+	cuse		 	loop3	      rfkill  sg2		 tty16	 tty32	tty49  tty8   vcs6		   vhost-net
+	disk		 	loop4	      rtc     sg3		 tty17	 tty33	tty5   tty9   vcsa		   vhost-vsock
+	dri		 		loop5	      rtc0    shm		 tty18	 tty34	tty50  ttyS0  vcsa1	   	   zero
+	fb0		 		loop6	      sda     snapshot   tty19	 tty35	tty51  ttyS1  vcsa2
+	fd		 		loop7	      sda1    snd		 tty2	 tty36	tty52  ttyS2  vcsa3
+	full		 	loop-control  sda2    sr0		 tty20	 tty37	tty53  ttyS3  vcsa4
+	fuse		 	mapper        sda5    stderr	 tty21	 tty38	tty54  uhid   vcsa5
 
 Priklopljene diske (`sdX`) in razdelke (`sdXN`) lahko izpišemo tudi z ukazom `lsblk`.
 
