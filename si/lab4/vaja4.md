@@ -17,7 +17,7 @@ Mnogi datotečni formati podpirajo zapis metapodatkov. Ti ponavadi vključujejo 
 
 Med najširše uporabljanimi standardi za zapis metapodatkov v slikah in videoposnetkih so Exif, IPTC in XMP, ki jih lahko obdelujemo z uporabo knjižnice in orodij [Exiv2](https://exiv2.org/). Dokumenti v sodobnih formatih, kot so Office Open XML, OpenDocument in EPUB, so shranjeni kot navadne datoteke ZIP, v kateri je med drugim tudi datoteka z metapodatki (ponavadi zapisana v formatu XML).
 
-S [spletne strani](https://polz.si/dsrf/) prenesemo naslednji dve sliki:
+S [spletne strani](https://polaris.fri.uni-lj.si/) prenesemo naslednji dve sliki:
 
 - `lovecnabiralec.jpg`
 - `JFP_5195.NEF`
@@ -539,9 +539,9 @@ V splošnem lahko na podlagi zajete slike ugotovimo s katerim fotoaparatom je bi
 
 ### 2. Metapodatki v dokumentih
 
-S [spletne učilnice](https://ucilnica.fri.uni-lj.si/course/view.php?id=178) prenesite datoteko:
+S [spletne strani](https://polaris.fri.uni-lj.si/) prenesemo naslednji dokument:
 
-- [`blinkenlichten.odt`](https://ucilnica.fri.uni-lj.si/mod/resource/view.php?id=28647)
+- `blinkenlichten.odt`
 
 Za dostop do metapodatkov lahko uporabimo kar orodja za dostop do metapodatkov v slikah.
 
@@ -1196,9 +1196,7 @@ Napisali bomo kratek program v programskem jeziku [`Python`](https://docs.python
     GPS Position                    : 46 deg 4' 27.00" N, 14 deg 28' 40.80" E
     Light Value                     : 6.6
 
-    apt install pip
-    pip install piexif
-    pip install Pillow
+    apt install python3-piexif python3-pillow
 
     nano exifprogram.py
 

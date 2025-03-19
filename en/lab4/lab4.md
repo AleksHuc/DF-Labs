@@ -17,7 +17,7 @@ Many file formats support metadata storing. These usually include the date and t
 
 Among the most widely used standards for recording metadata in images and videos are Exif, IPTC and XMP, which can be processed using the [Exiv2](https://exiv2.org/) library and tools. Documents in modern formats, such as Office Open XML, OpenDocument and EPUB, are stored as ordinary ZIP files, which include, among other things, a metadata file (usually written in XML format).
 
-Download the following two images from [website](https://polz.si/dsrf/):
+Download the following two images from [website](https://polaris.fri.uni-lj.si/):
 
 - `lovecnabiralec.jpg`
 - `JFP_5195.NEF`
@@ -539,9 +539,9 @@ In general, based on the captured image, we can determine with which camera it w
 
 ### 2. Metadata in documents
 
-Download the file from [online classroom](https://ucilnica.fri.uni-lj.si/course/view.php?id=178):
+Download the following document from [website](https://polaris.fri.uni-lj.si/):
 
-- [`blinkenlichten.odt`](https://ucilnica.fri.uni-lj.si/mod/resource/view.php?id=28647)
+- `blinkenlichten.odt`
 
 To access metadata, we can use tools for accessing metadata in images.
 
@@ -1196,9 +1196,7 @@ We will write a short program in the [`Python`](https://docs.python.org/3/tutori
     GPS Position                    : 46 deg 4' 27.00" N, 14 deg 28' 40.80" E
     Light Value                     : 6.6
 
-    apt install pip
-    pip install piexif
-    pip install Pillow
+    apt install python3-piexif python3-pillow
 
     nano exifprogram.py
 
