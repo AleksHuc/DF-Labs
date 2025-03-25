@@ -15,15 +15,15 @@
 
 The first widely used version of Windows that was good enough to use was [`Windows 3.x`](https://en.wikipedia.org/wiki/Windows_3.1x), which spread rapidly between users.
 
-Each program has its own settings, which under `Windows 3.x` it had to take care of itself. Settings were usually stored in files with the extension [`.ini`](https://en.wikipedia.org/wiki/INI_file) scattered throughout the file system because the location was determined by the programs themselves.
+Each program has its own settings, which under `Windows 3.x` it had to take care of itself. Settings were usually stored in plain text (or binary data) files with the extension [`.ini`](https://en.wikipedia.org/wiki/INI_file) scattered throughout the file system because the location was determined by the programs themselves.
 
-Then the developers of the Windows operating system decided to improve the situation with settings, namely with text files, which are unified and stored in one place and enable their management through a graphical interface. This is how the [Windows registry (English registry)](https://en.wikipedia.org/wiki/Windows_Registry) was created, which represents a repository where all settings of the operating system and programs are stored, where each setting has its own record.
+Then the developers of the Windows operating system decided to improve the situation with settings, namely with binary files, which are unified and stored in one place and enable their management through a graphical interface. This is how the [Windows registry (English registry)](https://en.wikipedia.org/wiki/Windows_Registry) was created, which represents a repository or a database where all settings of the operating system and programs are stored, where each setting has its own record.
 
 The registry is closed-source, and the standard way of managing the registry is also not described anywhere. It can be managed via the Windows command line or the Windows GUI `regedit`. Over time, people have figured out how the registry is built, for example in the following [article](http://sentinelchicken.com/data/TheWindowsNTRegistryFileFormat.pdf).
 
 When we have multiple users on an operating system, we still have most of our shared settings in a normal shared registry. The specific settings of individual users are stored in a separate register. Also, we have a separate registry for usernames and passwords. Still, all registers are in the same format and displayed within one interface.
 
-Download the archive [`truplo.zip`](http://polz.si/dsrf/truplo.zip) from the website, which contains two virtual disks of the operating system [Windows XP](https://en.wikipedia.org/wiki/Windows_XP) and differ only in one operating system startup. We want to find out how much data is changed when the operating system is started. First, we unpack `truplo.zip`, which contains `truplo1.vmdk` and `truplo2.vmdk`, and add the first one to our virtual machine. Now we start our virtual machine.
+Download the archive [`truplo.zip`](https://polaris.fri.uni-lj.si/truplo.zip) from the website, which contains two virtual disks of the operating system [Windows XP](https://en.wikipedia.org/wiki/Windows_XP) and differ only in one operating system startup. We want to find out how much data is changed when the operating system is started. First, we unpack `truplo.zip`, which contains `truplo1.vmdk` and `truplo2.vmdk`, and add the first one to our virtual machine. Now we start our virtual machine.
 
     lsblk
 
@@ -175,7 +175,7 @@ Log in with the username `dobrota` and the password `sirota`. The graphical inte
 
 ### 2. Analysis of logs
 
-Logs in the operating system allow us to record events, warnings and errors that occur during execution. Instead of having a description of what happened, we have `Event ID` and `Event Type`, which enable pre-defined and structured notifications that also enable localization. The `Event ID` and `Event Type` lists vary from system to system and are specific to each individual system. To understand `Event ID` and `Event Type` correctly, we need a copy of the entire system with all [DLL](https://en.wikipedia.org/wiki/Dynamic-link_library) files. However, if we are on the system that created the events, then we can access them through the `Eventviewer` tool by clicking on the `Start` menu, then `Run` and typing `eventvwr` and pressing `Enter`.
+Logs in the operating system allow us to record events, warnings and errors that occur during execution. Instead of having a description of what happened, we have `Event ID` and `Event Type`, which enable pre-defined and structured notifications that also enable localization. The `Event ID` and `Event Type` lists vary from system to system and are specific to each individual system. To understand `Event ID` and `Event Type` correctly, we need a copy of the entire system with all [DLL (Dynamic-link library)](https://en.wikipedia.org/wiki/Dynamic-link_library) files. However, if we are on the system that created the events, then we can access them through the `Eventviewer` tool by clicking on the `Start` menu, then `Run` and typing `eventvwr` and pressing `Enter`.
 
 ![Graphic interface for log management.](images/lab5-vbox9.png)
 

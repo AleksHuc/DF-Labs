@@ -15,15 +15,15 @@
 
 Prva splošno uporabljana različica operacijskega sistema Windows,ki je bila dovolj dobra za uporabo, je bila [`Windows 3.x`](https://en.wikipedia.org/wiki/Windows_3.1x), ki se je hitro razširila med uporabniki.
 
-Vsak program ima svoje nastavitve, za katere je moral pod `Windows 3.x` poskrbeti sam. Nastavitve so bile običajno shranjene v datotekah s končnico [`.ini`](https://en.wikipedia.org/wiki/INI_file), ki so bile razpršene po celotnem datotečne sistemi, ker so lokacijo določali programi sami.
+Vsak program ima svoje nastavitve, za katere je moral pod `Windows 3.x` poskrbeti sam. Nastavitve so bile običajno shranjene kot golo besedilo (ali binarni podatki) v datotekah s končnico [`.ini`](https://en.wikipedia.org/wiki/INI_file), ki so bile razpršene po celotnem datotečne sistemi, ker so lokacijo določali programi sami.
 
-Nato so se razvijalci Windows operacijskega sistema odločili izboljšati situacijo z nastavitvami, in sicer z tekstovnimi datotekami, ki jih poenotimo in shranimo na eno mesto ter omogoči upravljanje z njimi preko grafičnega vmesnika. Tako je nastal [Windows register (angl. registry)](https://en.wikipedia.org/wiki/Windows_Registry), ki predstavlja repozitorij, kjer so shranjene vse nastavite operacijskega sistema in programov, kjer ima vsaka nastavitev svoj zapis.
+Nato so se razvijalci Windows operacijskega sistema odločili izboljšati situacijo z nastavitvami, in sicer z binarnimi datotekami, ki jih poenotimo in shranimo na eno mesto ter omogoči upravljanje z njimi preko grafičnega vmesnika. Tako je nastal [Windows register (angl. registry)](https://en.wikipedia.org/wiki/Windows_Registry), ki predstavlja repozitorij oz. podatkovno bazo, kjer so shranjene vse nastavite operacijskega sistema in programov, kjer ima vsaka nastavitev svoj zapis.
 
 Register je zaprtokoden ter prav tako ni nikjer opisan standardni način upravljanja z registrom. Z njim lahko upravljamo preko Windows ukazne vrstice ali Windows grafičnega vmesnika `regedit`. S časoma so ljudje ugotovili, kako je register zgrajen, na primer v naslednjem [članku](http://sentinelchicken.com/data/TheWindowsNTRegistryFileFormat.pdf).
 
 Ko imamo več uporabnikov v operacijskem sistemu, imamo še vedno večino skupnih nastavitev v običajnem skupnem registru. Specifične nastavitve posameznih uporabnik pa so shranjene v ločenem registru. Prav tako, imamo ločen register za uporabniška imena in gesla. Še vedno pa so vsi registri v istem formatu in prikazani znotraj enega vmesnika.
 
-S spletne strani prenesemo arhiv [`truplo.zip`](http://polz.si/dsrf/truplo.zip), ki vsebuje dva navidezna diska operacijskega sistema [Windows XP](https://en.wikipedia.org/wiki/Windows_XP) in razlikujeta se le v enem zagon operacijskega sistema. Želimo ugotoviti, koliko podatkov se spremeni pri zagonu operacijskega sistema. Najprej odpakiramo `truplo.zip`, ki vsebuje `truplo1.vmdk` in `truplo2.vmdk` ter prvega dodamo našemu navideznemu računalniku. Sedaj poženemo naš navidezni računalnik.
+S spletne strani prenesemo arhiv [`truplo.zip`](https://polaris.fri.uni-lj.si/truplo.zip), ki vsebuje dva navidezna diska operacijskega sistema [Windows XP](https://en.wikipedia.org/wiki/Windows_XP) in razlikujeta se le v enem zagon operacijskega sistema. Želimo ugotoviti, koliko podatkov se spremeni pri zagonu operacijskega sistema. Najprej odpakiramo `truplo.zip`, ki vsebuje `truplo1.vmdk` in `truplo2.vmdk` ter prvega dodamo našemu navideznemu računalniku. Sedaj poženemo naš navidezni računalnik.
 
     lsblk
 
@@ -175,7 +175,7 @@ Se vpišemo z uporabniški imenom `dobrota` in geslom `sirota`. Do grafičnega v
 
 ### 2. Analiza dnevnikov
 
-Dnevniki v operacijskem sistemu nam omogočajo beleženje dogodkov, opozoril ter napak, ki se izvajajo tekom izvajanja. Namesto, da imamo opisano kaj se je zgodilo imamo podan `Event ID` in `Event Type`, ki omogočata v naprej definirana in strukturirana obvestila, ki tudi omogočajo lokalizacijo. Seznama `Event ID` in `Event Type` se razlikujeta od sistema do sistema in sta specifična vsakemu posameznemu sistemu. Da pravilno razberemo `Event ID` in `Event Type`, potrebujemo kopijo celotnega sistema z vsemi [DLL](https://en.wikipedia.org/wiki/Dynamic-link_library) datotekami. Če pa smo na sistemu, ki je dogodke ustvaril, potem lahko do njih dostopamo preko orodja `Eventviewer`, tako da kliknemo na meni `Start`, nato `Run` in vpišemo `eventvwr` in pritisnemo `Enter`.
+Dnevniki v operacijskem sistemu nam omogočajo beleženje dogodkov, opozoril ter napak, ki se izvajajo tekom izvajanja. Namesto, da imamo opisano kaj se je zgodilo imamo podan `Event ID` in `Event Type`, ki omogočata v naprej definirana in strukturirana obvestila, ki tudi omogočajo lokalizacijo. Seznama `Event ID` in `Event Type` se razlikujeta od sistema do sistema in sta specifična vsakemu posameznemu sistemu. Da pravilno razberemo `Event ID` in `Event Type`, potrebujemo kopijo celotnega sistema z vsemi [DLL (Dynamic-link library)](https://en.wikipedia.org/wiki/Dynamic-link_library) datotekami. Če pa smo na sistemu, ki je dogodke ustvaril, potem lahko do njih dostopamo preko orodja `Eventviewer`, tako da kliknemo na meni `Start`, nato `Run` in vpišemo `eventvwr` in pritisnemo `Enter`.
 
 ![Grafični vmesnik za upravljanje z dnevnikom.](slike/vaja5-vbox9.png)
 
