@@ -81,7 +81,7 @@ Z ukazom [`hivexml`](https://linux.die.net/man/1/hivexml) lahko pretvorimo binar
     hivexml default > default.xml
 
     apt update
-    apt instal libxml2-utils
+    apt install libxml2-utils
 
     cat system.xml | xmllint --format -
     cat sam.xml | xmllint --format -

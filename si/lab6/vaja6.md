@@ -12,7 +12,7 @@
 
 ### 1. Lomljenje gesel v Windows XP
 
-V naš navidezni računalnik z operacijskim sistemom Linux priklopimo navidezni disk `truplo1.vmdk` z ukazom `mount` v mapo `/mnt/truplo1`, če je še nimamo jo ustvarimo z ukazom `mkdir`. Če navideznega diska nimamo, s spletne strani prenesemo arhiv [`truplo.zip`](http://polz.si/dsrf/truplo.zip), ki ga vsebuje.
+V naš navidezni računalnik z operacijskim sistemom Linux priklopimo navidezni disk `truplo1.vmdk` z ukazom `mount` v mapo `/mnt/truplo1`, če je še nimamo jo ustvarimo z ukazom `mkdir`. Če navideznega diska nimamo, s spletne strani prenesemo arhiv [`truplo.zip`](https://polaris.fri.uni-lj.si/truplo.zip), ki ga vsebuje.
 
     lsblk
 
@@ -32,16 +32,48 @@ Operacijski sistemi Windows 7 in starejši gesla skrivajo v datoteki `C:\windows
 
 $$Geslo \rightarrow ZgoščevalnaFunkcija(Geslo) \rightarrow ZgoščenoGeslo$$
 
+Z ukazom `reglookup` lahko poiščemo ime (angl. Name) posameznega uporabnika in njegov vzdevek (angl. Alias). Pod njegovim vzdevkom imamo shranjeno zgoščeno geslo.
+
+    reglookup /mnt/truplo1/WINDOWS/system32/config/SAM | grep dobrota
+
+    /SAM/Domains/Account/Users/Names/dobrota,KEY,,2014-03-25 11:42:34
+    /SAM/Domains/Account/Users/Names/dobrota/,0x000003EC,(null),
+
+    reglookup /mnt/truplo1/WINDOWS/system32/config/SAM | grep 000003EC
+
+    /SAM/Domains/Account/Users/000003EC,KEY,,2014-03-25 12:54:35
+    /SAM/Domains/Account/Users/000003EC/F,BINARY,%02%00%01%00%00%00%00%00%AA%AC%93_)H%CF%01%00%00%00%00%00%00%00%00%C8%BCfY%1FH%CF%01%FF%FF%FF%FF%FF%FF%FF%7F~%D3%F4])H%CF%01%EC%03%00%00%01%02%00%00%10%02%00%00%00%00%00%00%00%00%01%00%01%00%00%00%00%00%FF%FF%BB%01%91|,
+    /SAM/Domains/Account/Users/000003EC/V,BINARY,%00%00%00%00%BC%00%00%00%02%00%01%00%BC%00%00%00%0E%00%00%00%00%00%00%00%CC%00%00%00%0E%00%00%00%00%00%00%00%DC%00%00%00%00%00%00%00%00%00%00%00%DC%00%00%00%00%00%00%00%00%00%00%00%DC%00%00%00%00%00%00%00%00%00%00%00%DC%00%00%00%00%00%00%00%00%00%00%00%DC%00%00%00%00%00%00%00%00%00%00%00%DC%00%00%00%00%00%00%00%00%00%00%00%DC%00%00%00%00%00%00%00%00%00%00%00%DC%00%00%00%00%00%00%00%00%00%00%00%DC%00%00%00%00%00%00%00%00%00%00%00%DC%00%00%00%08%00%00%00%01%00%00%00%E4%00%00%00%14%00%00%00%00%00%00%00%F8%00%00%00%14%00%00%00%00%00%00%00%0C%01%00%00%04%00%00%00%00%00%00%00%10%01%00%00%04%00%00%00%00%00%00%00%01%00%14%80%9C%00%00%00%AC%00%00%00%14%00%00%00D%00%00%00%02%000%00%02%00%00%00%02%C0%14%00D%00%05%01%01%01%00%00%00%00%00%01%00%00%00%00%02%C0%14%00%FF%07%0F%00%01%01%00%00%00%00%00%05%07%00%00%00%02%00X%00%03%00%00%00%00%00$%00D%00%02%00%01%05%00%00%00%00%00%05%15%00%00%00%BE%04>2%FE&%C6H%07%E5;+%EC%03%00%00%00%00%18%00%FF%07%0F%00%01%02%00%00%00%00%00%05 %00%00%00 %02%00%00%00%00%14%00[%03%02%00%01%01%00%00%00%00%00%01%00%00%00%00%01%02%00%00%00%00%00%05 %00%00%00 %02%00%00%01%02%00%00%00%00%00%05 %00%00%00 %02%00%00d%00o%00b%00r%00o%00t%00a%00%00%00d%00o%00b%00r%00o%00t%00a%00%01%00%01%02%00%00%07%00%00%00%01%00%01%00%8E%EA%A4%DF%97%FCo%02y%DB%F4%9C~{<P%01%00%01%00?p%C6%93/%15%F1%DCU%904%E9%11v%90'%01%00%01%00%01%00%01%00,
+    /SAM/Domains/Account/Users/Names/dobrota/,0x000003EC,(null),
+    /SAM/Domains/Builtin/Aliases/Members/S-1-5-21-842925246-1220945662-725345543/000003EC,KEY,,2014-03-25 11:42:35
+    /SAM/Domains/Builtin/Aliases/Members/S-1-5-21-842925246-1220945662-725345543/000003EC/,EXPAND_SZ,!%02%00%00 %02%00%00,
+
 Tak pristop ni varen, saj dve enaki gesli vedno vrneta enako zgoščeno geslo. Od Windows 8 naprej se gesla shranjujejo z dodano javno naključno soljo, ki je rezultat [kriptografske zgoščevalne funkcije](https://en.wikipedia.org/wiki/Cryptographic_hash_function), poleg tega pa je sam postopek zgoščevanja gesel še dodatno upočasnjen: 
 
 $$Geslo + (KritptografskaZgoščevalnaFunkcija \rightarrow Sol) \rightarrow ZgoščevalnaFunkcija(Geslo + Sol) \rightarrow ZgoščenoGesloSol$$
+
+Uporabnike lahko izluščimo z orodjem `samdump2` v formatu `ime_uporabnika:id_uporabnika:key:password_hash:::`.
+
+    apt update
+    apt install samdump2
+
+    cd /mnt/truplo1/WINDOWS/system32/config/
+
+    samdump2 system SAM
+
+    Administrator:500:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+    *disabled* Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+    *disabled* HelpAssistant:1000:5b3d0b9dc228f45d3f13a2fa950e2631:432641671724da41e2f20960a8507b3e:::
+    *disabled* SUPPORT_388945a0:1002:aad3b435b51404eeaad3b435b51404ee:46402f847d7ccacd8900efbe289fbfdc:::
+    user:1003:bb144e649c912bb7aad3b435b51404ee:6dd6b52a708ce96932eca95bd7352dde:::
+    dobrota:1004:fd6d85bd2d15715faad3b435b51404ee:f1436ba5ed97ba211565ebf6693bf117:::
 
 Gesla poiščemo in zlomimo z namenskim orodjem, ki za iskanje gesel uporablja [mavrične tabele](https://en.wikipedia.org/wiki/Rainbow_table). Mavrične tabele vsebujejo v naprej izračunane vrednosti zgoščevalne funkcije za pogosto uporabljena gesla. Zgoščevalna funkcija nam zagotavlja z visoko verjetnostjo, da se dva različna vhoda skoraj nikoli ne preslikata v isto izhodno vrednost. Namestimo orodje z omenjeno funkcionalnostjo [`ophcrack`](https://manpages.org/ophcrack) in [`ophcrack-cli`](https://linuxcommandlibrary.com/man/ophcrack-cli) ter orodje za odpiranje arhivov [`unzip`](https://linux.die.net/man/1/unzip) z upravljalcem paketov na našem operacijskem sistemu.
 
     apt update
     apt install ophcrack ophcrack-cli unzip
 
-Sedaj potrebujemo še mavrične tabele, ki jih dobimo [tukaj](https://ophcrack.sourceforge.io/tables.php). Za naš primer zadostuje, če prenesemo tabele [`XP free small`](http://sourceforge.net/projects/ophcrack/files/tables/XP%20free/tables_xp_free_small.zip/download) in [`XP free fast`](http://sourceforge.net/projects/ophcrack/files/tables/XP%20free/tables_xp_free_fast.zip/download) ter jih odpremo.
+Sedaj potrebujemo še mavrične tabele, ki jih dobimo [tukaj](https://ophcrack.sourceforge.io/tables.php). Za naš primer zadostuje, če prenesemo tabele `XP free small`](https://polaris.fri.uni-lj.si/tables_xp_free_small.zip) in [`XP free fast`](https://polaris.fri.uni-lj.si/tables_xp_free_fast.zip) ter jih odpremo.
 
     cd /home/USER
 
@@ -59,13 +91,13 @@ Pri vsaki posebej kliknemo na gumb `Install` spodaj desno, ter preko čarovnika 
 
 ![Vmesnik za izbiro mavričnih tabel.](slike/vaja6-oph2.png)
 
-Ko smo uspešno izbrali obe tabeli nato še pritisnemo na gumb `OK`.
+Ko smo uspešno izbrali mape obeh tabel nato še pritisnemo na gumb `OK`.
 
 ![Vmesnik za izbiro mavričnih tabel, kjer smo jih že uspešno dodali.](slike/vaja6-oph3.png)
 
 Sedaj kliknemo na gumb `Load`, kjer izberemo `Encrypted SAM`.
 
-![Izberemo datoteko, kjer so shranjena uporabniška imena in gesla.](slike/vaja6-oph4.png)
+![Izberemo mapo, kjer so shranjena uporabniška imena in gesla.](slike/vaja6-oph4.png)
 
 Nato preko čarovnik najdemo mapo v kateri se nahaja `SAM`, in sicer `/mnt/truplo1/WINDOWS/system32/config` ter pritisnemo na gumb `Open`. Izpišejo se nam uporabniška imena, vrednosti gesel [LM zgoščevalne funkcije](https://en.wikipedia.org/wiki/LAN_Manager#Password_hashing_algorithm), ter vrednosti gesel [NT zgoščevalne funkcije](https://en.wikipedia.org/wiki/NTLM). Primerjava obeh metod je predstavljena v naslednjem [članku](https://medium.com/@petergombos/lm-ntlm-net-ntlmv2-oh-my-a9b235c58ed4).
 
@@ -83,8 +115,10 @@ Našli smo torej dva uporabnika, in sicer `user`, z geslom `rednose` in `dobrota
 
     apt update
     apt install chntpw
+
     mount /dev/sdb1 /mnt/truplo1
     cd /mnt/truplo1/WINDOWS/system32/config
+    
     chntpw -i SAM system SECURITY
 
     <>========<> chntpw Main Interactive Menu <>========<>

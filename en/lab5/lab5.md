@@ -81,7 +81,7 @@ The [`hivexml`](https://linux.die.net/man/1/hivexml) command can be used to conv
     hivexml default > default.xml
 
     apt update
-    apt instal libxml2-utils
+    apt install libxml2-utils
 
     cat system.xml | xmllint --format -
     cat sam.xml | xmllint --format -
