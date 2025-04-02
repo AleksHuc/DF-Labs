@@ -52,7 +52,7 @@ Tak pristop ni varen, saj dve enaki gesli vedno vrneta enako zgoščeno geslo. O
 
 $$Geslo + (KritptografskaZgoščevalnaFunkcija \rightarrow Sol) \rightarrow ZgoščevalnaFunkcija(Geslo + Sol) \rightarrow ZgoščenoGesloSol$$
 
-Uporabnike lahko izluščimo z orodjem `samdump2` v formatu `ime_uporabnika:id_uporabnika:key:password_hash:::`.
+Uporabnike lahko izluščimo z orodjem `samdump2` v formatu `ime_uporabnika:id_uporabnika:LM_zgoščeno_geslo:NT_zgoščeno_geslo:::`.
 
     apt update
     apt install samdump2
@@ -73,12 +73,12 @@ Gesla poiščemo in zlomimo z namenskim orodjem, ki za iskanje gesel uporablja [
     apt update
     apt install ophcrack ophcrack-cli unzip
 
-Sedaj potrebujemo še mavrične tabele, ki jih dobimo [tukaj](https://ophcrack.sourceforge.io/tables.php). Za naš primer zadostuje, če prenesemo tabele `XP free small`](https://polaris.fri.uni-lj.si/tables_xp_free_small.zip) in [`XP free fast`](https://polaris.fri.uni-lj.si/tables_xp_free_fast.zip) ter jih odpremo.
+Sedaj potrebujemo še mavrične tabele, ki jih dobimo [tukaj](https://ophcrack.sourceforge.io/tables.php). Za naš primer zadostuje, če prenesemo tabele [`XP free small`](https://polaris.fri.uni-lj.si/tables_xp_free_small.zip) in [`XP free fast`](https://polaris.fri.uni-lj.si/tables_xp_free_fast.zip) ter jih odpremo.
 
     cd /home/USER
 
-    wget http://sourceforge.net/projects/ophcrack/files/tables/XP%20free/tables_xp_free_small.zip
-    wget http://sourceforge.net/projects/ophcrack/files/tables/XP%20free/tables_xp_free_fast.zip
+    wget https://polaris.fri.uni-lj.si/tables_xp_free_small.zip
+    wget https://polaris.fri.uni-lj.si/tables_xp_free_fast.zip
 
     unzip tables_xp_free_fast.zip -d fast
     unzip tables_xp_free_small.zip -d small

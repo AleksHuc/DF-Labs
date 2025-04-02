@@ -52,7 +52,7 @@ This approach is not secure, since two identical passwords always return the sam
 
 $$Password + (CryptographicHashFunction \rightarrow Salt) \rightarrow HashFunction(Password + Salt) \rightarrow HashedPasswordSalt$$
 
-Users can be extracted using the `samdump2` tool in the format `user_name:user_id:key:password_hash:::`.
+Users can be extracted using the `samdump2` tool in the format `user_name:user_id:LM_password_hash:NT_password_hash:::`.
 
     apt update
     apt install samdump2
@@ -77,8 +77,8 @@ Now we need the rainbow tables, which we get [here](https://ophcrack.sourceforge
 
     cd /home/USER
 
-    wget http://sourceforge.net/projects/ophcrack/files/tables/XP%20free/tables_xp_free_small.zip
-    wget http://sourceforge.net/projects/ophcrack/files/tables/XP%20free/tables_xp_free_fast.zip
+    wget https://polaris.fri.uni-lj.si/tables_xp_free_small.zip
+    wget https://polaris.fri.uni-lj.si/tables_xp_free_fast.zip
 
     unzip tables_xp_free_fast.zip -d fast
     unzip tables_xp_free_small.zip -d small
