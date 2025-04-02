@@ -28,7 +28,7 @@ To our virtual computer with the Linux operating system, we attach the `truplo1.
     mkdir /mnt/truplo1
     mount /dev/sdb1 /mnt/truplo1
 
-Windows 7 and older operating systems hide passwords in the file `C:\windows\system32\config\SAM`, you can read more about it [here](http://www.nirsoft.net/articles/saved_password_location.html) and [here](https://learn.microsoft.com/en-us/previous-versions//cc723740(v=technet.10)?redirectedfrom=MSDN). Passwords are not stored in text format, but in values from hash function of given passwords:
+Windows 7 and older operating systems hide passwords in the file `C:\windows\system32\config\SAM`, you can read more about it [here](https://www.ijfcc.org/vol5/455-F005.pdf) and [here](https://learn.microsoft.com/en-us/previous-versions//cc723740(v=technet.10)?redirectedfrom=MSDN). Passwords are not stored in text format, but in values from hash function of given passwords:
 
 $$Password \rightarrow HashFunction(Password) \rightarrow HashedPassword$$
 

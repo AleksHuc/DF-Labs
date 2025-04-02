@@ -28,7 +28,7 @@ V naš navidezni računalnik z operacijskim sistemom Linux priklopimo navidezni 
     mkdir /mnt/truplo1
     mount /dev/sdb1 /mnt/truplo1
 
-Operacijski sistemi Windows 7 in starejši gesla skrivajo v datoteki `C:\windows\system32\config\SAM`, več o tem si lahko preberete [tukaj](http://www.nirsoft.net/articles/saved_password_location.html) in [tukaj](https://learn.microsoft.com/en-us/previous-versions//cc723740(v=technet.10)?redirectedfrom=MSDN). Gesla niso shranjena v tekstovni obliki, vendar so shranjene vrednosti zgoščevalne funkcije za podana gesla:
+Operacijski sistemi Windows 7 in starejši gesla skrivajo v datoteki `C:\windows\system32\config\SAM`, več o tem si lahko preberete [tukaj](https://www.ijfcc.org/vol5/455-F005.pdf) in [tukaj](https://learn.microsoft.com/en-us/previous-versions//cc723740(v=technet.10)?redirectedfrom=MSDN). Gesla niso shranjena v tekstovni obliki, vendar so shranjene vrednosti zgoščevalne funkcije za podana gesla:
 
 $$Geslo \rightarrow ZgoščevalnaFunkcija(Geslo) \rightarrow ZgoščenoGeslo$$
 
