@@ -10,13 +10,9 @@
 
 ### 1. History of browsers
 
-Download the [archive](https://ucilnica.fri.uni-lj.si/mod/resource/view.php?id=28964) of user files from the Windows 10 system. Open the package with the [tar](https://linux.die.net/man/1/tar) command.
-
-    ls /home/aleks/Downloads/
+Download the [archive](https://polaris.fri.uni-lj.si/users.tar.xz) of user files from the Windows 10 system. Open the package with the [tar](https://linux.die.net/man/1/tar) command.
     
-    users.tar.xz
-
-    cd /home/aleks/Downloads/
+    wget https://polaris.fri.uni-lj.si/users.tar.xz
 
     tar -xf users.tar.xz
 
@@ -97,12 +93,40 @@ Newer versions of the Edge browser are based on the Google Chrome browser and st
 Let's look at the older web browser Internet Explorer 5, which stores data in:
 
 - Windows XP: `C:\Documents and Settings\<USERNAME>\Local Settings\History\History.IE5\`
-- Windows 7, 8, 10: `C:\Users\<USERNAME>\AppData\Local\Microsoft\Internet Explorer\Recovery`, `C:\Users\<USERNAME>\AppData\Local\Microsoft\Windows\WebCache` and `C:\Users\<USERNAME>\Favorites`
+- Windows 7, 8, 10: `C:\Users\<USERNAME>\AppData\Local\Microsoft\Internet Explorer\Recovery`, `C:\Users\<USERNAME>\AppData\Local\Microsoft\Windows\WebCache`, `C:\Users\<USERNAME>\AppData\Local\Microsoft\Windows\History` and `C:\Users\<USERNAME>\Favorites`
 
-The history can be read using the [`pasco`](https://www.unix.com/man-page/debian/1/pasco) tool.
+The history can be read using the [`pasco`](https://www.unix.com/man-page/debian/1/pasco) tool. Shut down the virtual machine and add the disk [`truplo1.vmdk`](https://polaris.fri.uni-lj.si/truplo.zip) from the previous exercises to it and restart the virtual machine. Mount the disk to the file system and now we can access the Internet Explorer 5 browser history:
 
     apt update
     apt install pasco
 
+    lsblk
+
+    NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
+    sda      8:0    0   30G  0 disk 
+    ├─sda1   8:1    0   29G  0 part /
+    ├─sda2   8:2    0    1K  0 part 
+    └─sda5   8:5    0  975M  0 part [SWAP]
+    sdb      8:16   0   10G  0 disk 
+    └─sdb1   8:17   0   10G  0 part 
+    sr0     11:0    1 57.4M  0 rom  
+
+    mount /dev/sdb1 /mnt
+
     cd /mnt/Documents\ and\ Settings/user/Local\ Settings/History/History.IE5/
+
     pasco index.dat
+
+    History File: index.dat Version: 5.2
+
+    TYPE	URL	MODIFIED TIME	ACCESS TIME	FILENAME	DIRECTORY	HTTP HEADERS
+    URL	Visited: user@http://www.msn.com/?fb_xd_fragment	05/17/2013 04:28:40	05/17/2013 04:28:40			 
+    URL	Visited: user@http://www.libreoffice.org/DownloadRedirect.php?target=http://download.documentfoundation.org/libreoffice/stable/4.0.3/win/x86/LibreOffice_4.0.3_Win_x86.msi	05/17/2013 04:29:29	05/17/2013 04:29:29		 
+    URL	Visited: user@http://mirror.7he.at/pub/tdf/libreoffice/stable/4.0.3/win/x86/LibreOffice_4.0.3_Win_x86.msi	05/17/2013 04:35:50	05/17/2013 04:35:50			 
+    URL	Visited: user@about:Home	05/17/2013 04:26:55	05/17/2013 04:26:55			 
+    URL	Visited: user@http://home.microsoft.com	05/17/2013 04:28:28	05/17/2013 04:28:28			 
+    URL	Visited: user@http://www.libreoffice.org	05/17/2013 04:28:57	05/17/2013 04:28:57			 
+    URL	Visited: user@res://C:\WINDOWS\system32\xpsp3res.dll/dnserror.htm	03/25/2014 13:55:37	03/25/2014 13:55:37			 
+    URL	Visited: user@http://www.microsoft.com/isapi/redir.dll?prd=ie&pver=6&ar=msnhome	05/17/2013 04:28:29	05/17/2013 04:28:29			 
+    URL	Visited: user@http://www.libreoffice.org/download	05/17/2013 04:28:59	05/17/2013 04:28:59			 
+    URL	Visited: user@http://www.msn.com	05/17/2013 04:28:33	05/17/2013 04:28:33
