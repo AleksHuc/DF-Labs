@@ -16,15 +16,17 @@ The second most common mobile operating system is Apple's [iOS](https://en.wikip
 
 Mobile devices to access the mobile network usually also need a [SIM card (Subscriber Identification Module)](https://en.wikipedia.org/wiki/SIM_card), which is an independent computer of its kind and serves to identify and authenticate the user. Securely stores the [International Mobile Subscriber Identity (IMSI)](https://en.wikipedia.org/wiki/International_mobile_subscriber_identity) and the associated data encryption key. It can also store a limited number of phone numbers and short messages for the purpose of easy transfer between mobile phones, but it is no longer used for this in practice today, as this data is stored on the phone or in the cloud. To read SIM cards we need a dedicated reader and dedicated software, for example [reader](https://www.ladyada.net/make/simreader/) and [pySIM](https://github.com/twhiteman/pySIM) .
 
-First, we'll look at the [N900](https://en.wikipedia.org/wiki/Nokia_N900) mobile phone, which uses the [Maemo 5](https://en.wikipedia.org/wiki/Maemo) operating system, which works like a general Linux operating system and supports the commands and tools we've looked at in the exercises so far. Most user data is stored in the [Berkeley DB](https://en.wikipedia.org/wiki/Berkeley_DB) format and can be accessed using the [db-util](https://www.unix.com/man-page/linux/1/dbutil/). You can get an image of the N900 phone memory [here](https://polz.si/dsrf/georgepicobello.tgz). The image can be downloaded with [`wget`](https://linux.die.net/man/1/wget) and then opened with [`tar`](https://linux.die.net/man/1/tar). Now let's install the `db-util` database inspection tool through our operating system's package manager. Then we list all files ending in `.db` with the [`find`](https://linux.die.net/man/1/find) command. The individual database is then printed with the `db_dump` command.
+First, we'll look at the [N900](https://en.wikipedia.org/wiki/Nokia_N900) mobile phone, which uses the [Maemo 5](https://en.wikipedia.org/wiki/Maemo) operating system, which works like a general Linux operating system and supports the commands and tools we've looked at in the exercises so far. Most user data is stored in the [Berkeley DB](https://en.wikipedia.org/wiki/Berkeley_DB) format and can be accessed using the [db-util](https://www.unix.com/man-page/linux/1/dbutil/). You can get an image of the N900 phone memory [here](https://polaris.fri.uni-lj.si/georgepicobello.tgz). The image can be downloaded with [`wget`](https://linux.die.net/man/1/wget) and then opened with [`tar`](https://linux.die.net/man/1/tar). Now let's install the `db-util` database inspection tool through our operating system's package manager. Then we list all files ending in `.db` with the [`find`](https://linux.die.net/man/1/find) command. The individual database is then printed with the `db_dump` command.
 
 
-    wget https://polz.si/dsrf/georgepicobello.tgz
+    wget https://polaris.fri.uni-lj.si/georgepicobello.tgz
 
     tar -zxvf georgepicobello.tgz
 
     apt update
     apt install db-util
+
+    cd user
 
     find . -type f -name "*.db"
 
@@ -162,9 +164,9 @@ First, we'll look at the [N900](https://en.wikipedia.org/wiki/Nokia_N900) mobile
     BEGIN:VCARD\0d\0aVERSION:3.0\0d\0aREV:2012-04-01T12:42:33Z\0d\0aUID:132\0d\0aFN:Nermine Shafan\0d\0aTEL;TYPE=CELL,VOICE:+201273098664\0d\0aX-SKYPE;X-OSSO-VALID=yes;TYPE=skype:nermine.shafan\0d\0aNICKNAME:Nermine Shafan\0d\0aN:;Nermine Shafan\0d\0aEND:VCARD\00
     DATA=END
 
-The Android mobile operating system has certain data hidden and also uses encryption for the entire disk. If we want to access all the data, we have to become a super user or `root`. Certain companies allow us to do this, but not by default, and for other devices we need to know some security flaw that we exploit to become a super user. [ADB - Android Debug Bridge](https://developer.android.com/tools/adb) is used to work with Android devices. The tool consists of two parts - the first is the service that runs on the phone (`adb`) and the second is the tool that talks to the service on the phone (`adb`) via USB. The `adb shell` can be opened on the phone using the `adb` tool. If `adbd` is running as superuser, you can get full access to the phone with the help of which you can read all the data. One way to achieve this is described in [here](https://wiki.mozilla.org/Mobile/Fennec/Android/Rooting/adb). Once you become a super user on your Android phone, you can download all the files from your phone using the `adb pull` command. You can also get partitions captured on an Android phone [here](polz.si/media/uploads/dsrf/android/samsung_ace.tgz). We can download the image with the `wget` command and then open it with the `tar` command. We now mount the resulting partitions with the `mount` command so that we can access their files.
+The Android mobile operating system has certain data hidden and also uses encryption for the entire disk. If we want to access all the data, we have to become a super user or `root`. Certain companies allow us to do this, but not by default, and for other devices we need to know some security flaw that we exploit to become a super user. [ADB - Android Debug Bridge](https://developer.android.com/tools/adb) is used to work with Android devices. The tool consists of two parts - the first is the service that runs on the phone (`adb`) and the second is the tool that talks to the service on the phone (`adb`) via USB. The `adb shell` can be opened on the phone using the `adb` tool. If `adbd` is running as superuser, you can get full access to the phone with the help of which you can read all the data. One way to achieve this is described in [here](https://wiki.mozilla.org/Mobile/Fennec/Android/Rooting/adb). Once you become a super user on your Android phone, you can download all the files from your phone using the `adb pull` command. You can also get partitions captured on an Android phone [here](https://polaris.fri.uni-lj.si/samsung_ace.tgz). We can download the image with the `wget` command and then open it with the `tar` command. We now mount the resulting partitions with the `mount` command so that we can access their files.
 
-    wget https://polz.si/dsrf/android/samsung_ace.tgz
+    wget https://polaris.fri.uni-lj.si/samsung_ace.tgz
 
     tar -zxvf samsung_ace.tgz
 
@@ -530,6 +532,8 @@ The `stl11` partition contains user and system data. Each application has its ow
 
     sqlite3 com.android.providers.contacts/databases/contacts2.db
 
+    .tables
+
     _sync_state                       settings                        
     _sync_state_metadata              speed_dial                      
     accounts                          status_updates                  
@@ -565,20 +569,20 @@ The `stl11` partition contains user and system data. Each application has its ow
     11|11|||0|0|0|0|1|1|2238i26bdd8020a9bcbad||0|0|0|1|11|com.google|0||0||0||0|
     13|13|||0|0|0|0|0|0|2238i5dfa6b398a24e891||0|0|1|1|13|com.google|0||0||0||0|
 
-    select * from [view_contacts];
+    select * from [view_v1_people];
 
-    1||40|Dusan K.|Dusan K.||0|Dusan K.|Dusan K.|1|1|0i1||0|0|0|0||0|0|1|1|vnd.sec.contact.sim|0||0||0||0|
-    2||40|Info|Info||0|Info|Info|1|1|0i249||0|0|0|0||0|0|1|2|vnd.sec.contact.sim|0||0||0||0|
-    3||40|Sklenite narocnino|Sklenite narocnino||0|Sklenite narocnino|Sklenite narocnino|1|1|0i250||0|0|0|0||0|0|1|3|vnd.sec.contact.sim|0||0||0||0|
-    4||40|Jernej Korosec|Korosec, Jernej||3|Jernej Korosec|Korosec, Jernej|1|1|2238i6e2a07280ebf74c4||0|0|0|0||0|0|1|4|com.google|0||0||0||0|
-    5||40|Forenzicarka 1|Forenzicarka 1||3|Forenzicarka 1|Forenzicarka 1|1|1|2238i2e28b2820b50eb4d||0|0|0|0||0|0|1|5|com.google|0||0||0||0|
-    6||40|polz|polz||3|polz|polz|0|0|2238i153efc500fbd8d8d||0|0|0|0||0|1|1|6|com.google|0||0||0||0|
-    7||10|polz@polz.si|polz@polz.si||0|polz@polz.si|polz@polz.si|1|0|2238i5b427c9c8ac2b926||0|0|1|0||0|1|1|7|com.google|0||0||0||0|
-    8||10|matic.junk@gmail.com|matic.junk@gmail.com||0|matic.junk@gmail.com|matic.junk@gmail.com|0|0|2238i25445b56096a409b||0|0|0|0||0|1|1|8|com.google|0||0||0||0|
-    9||10|polz@fri.uni-lj.si|polz@fri.uni-lj.si||0|polz@fri.uni-lj.si|polz@fri.uni-lj.si|0|0|2238i3cda596d8ec4895c||1463742641757|0|0|2||0|1|1|9|com.google|0||0||0||0|
-    10||10|ozbolt.menegatti@gmail.com|ozbolt.menegatti@gmail.com||0|ozbolt.menegatti@gmail.com|ozbolt.menegatti@gmail.com|0|0|2238i20c130e309806749|45|0|0|0|0||0|1|1|10|com.google|0||0||0||0|
-    11||40|Luka Krsnik|Krsnik, Luka||3|Luka Krsnik|Krsnik, Luka|1|1|2238i26bdd8020a9bcbad||0|0|0|0||0|0|1|11|com.google|0||0||0||0|
-    13||10|jan@k0s.si|jan@k0s.si||0|jan@k0s.si|jan@k0s.si|0|0|2238i5dfa6b398a24e891||0|0|0|0||0|1|1|13|com.google|0||0||0||0|
+    1|Dusan K.|Dusan K.|Dusan K.|||vnd.sec.contact.sim|vnd.sec.contact.sim|0|||0|0|||2|051254503|2||305452150
+    2|Info|Info|Info|||vnd.sec.contact.sim|vnd.sec.contact.sim|0|||0|0|||4|090068068|2||860860090
+    3|Sklenite narocnino|Sklenite narocnino|Sklenite narocnino|||vnd.sec.contact.sim|vnd.sec.contact.sim|0|||0|0|||6|080680680|2||086086080
+    4|Jernej Korosec|Jernej Korosec|Korosec, Jernej|||friforenzik@gmail.com|com.google|0|||0|0|||13|041424007|2||700424140
+    5|Forenzicarka 1|Forenzicarka 1|Forenzicarka 1|||friforenzik@gmail.com|com.google|0|||0|0|||20|031844429|2||924448130
+    6|polz|polz|polz|||friforenzik@gmail.com|com.google|0|||0|0||26|||||
+    7||polz@polz.si|polz@polz.si|||friforenzik@gmail.com|com.google|0|||0|1||32|||||
+    8||matic.junk@gmail.com|matic.junk@gmail.com|||friforenzik@gmail.com|com.google|0|||0|0||38|||||
+    9||polz@fri.uni-lj.si|polz@fri.uni-lj.si|||friforenzik@gmail.com|com.google|2|1463742641757||0|0||44|||||
+    10||ozbolt.menegatti@gmail.com|ozbolt.menegatti@gmail.com|||friforenzik@gmail.com|com.google|0|||0|0||50|||||
+    11|Luka Krsnik|Luka Krsnik|Krsnik, Luka|||friforenzik@gmail.com|com.google|0|||0|0|||57|040914122|2||221419040
+    13||jan@k0s.si|jan@k0s.si|||friforenzik@gmail.com|com.google|0|||0|0||68|||||
 
     select * from [view_v1_phones];
 

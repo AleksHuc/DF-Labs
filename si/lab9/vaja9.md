@@ -16,14 +16,16 @@ Drugi najbolj pogosti mobilni operacijski sistem je [iOS](https://en.wikipedia.o
 
 Mobilne naprave za dostop do mobilnega omrežja ponavadi potrebujejo še [SIM kartico (Subscriber Identification Module)](https://en.wikipedia.org/wiki/SIM_card), ki je svoje vrstni neodvisni računalnik ter služi za identificiranje in avtenticiranje uporabnika. Varno hrani [idenifikacijsko številko uporabnik (International Mobile Subscriber Identity (IMSI))](https://en.wikipedia.org/wiki/International_mobile_subscriber_identity) in pripadajoč ključ za šifriranje podatkov. Hrani lahko tudi omejeno število telefonskih številk in kratkih sporočil z namenom enostavnega prenosa med mobilnimi telefoni, vendar se za to danes v praksi ne uporablja več, saj te podatke hranimo na telefonu ali v oblaku. Za branje SIM kartic potrebujemo namenski bralnik in namensko programsko opremo, na primer [bralec](https://www.ladyada.net/make/simreader/) in [pySIM](https://github.com/twhiteman/pySIM).
 
-Najprej si bomo pogledali mobilni telefon [N900](https://en.wikipedia.org/wiki/Nokia_N900), ki uporablja operacijski sistem [Maemo 5](https://en.wikipedia.org/wiki/Maemo) in deluje kot splošni Linux operacijski sistem ter podpira ukaze in orodja, ki smo si jih pogledali na vajah do sedaj. Večina uporabniških podatkov je shranjenih v obliki [Berkeley DB](https://en.wikipedia.org/wiki/Berkeley_DB), do njih lahko dostopamo z orodjem [`db-util`](https://www.unix.com/man-page/linux/1/dbutil/). Sliko pomnilnika telefona N900 dobite [tukaj](https://polz.si/dsrf/georgepicobello.tgz). Sliko lahko prenesemo z ukazom [`wget`](https://linux.die.net/man/1/wget) in jo nato odpremo z ukazom [`tar`](https://linux.die.net/man/1/tar). Sedaj namestimo orodje za pregledovanje podatkovnih baz `db-util`, preko upravljalca paketov našega operacijskega sistema. Nato izpišemo vse datoteke, ki se končajo z `.db` z ukazom [`find`](https://linux.die.net/man/1/find). Posamezno podatkovno bazo nato izpišemo z ukazom `db_dump`.
+Najprej si bomo pogledali mobilni telefon [N900](https://en.wikipedia.org/wiki/Nokia_N900), ki uporablja operacijski sistem [Maemo 5](https://en.wikipedia.org/wiki/Maemo) in deluje kot splošni Linux operacijski sistem ter podpira ukaze in orodja, ki smo si jih pogledali na vajah do sedaj. Večina uporabniških podatkov je shranjenih v obliki [Berkeley DB](https://en.wikipedia.org/wiki/Berkeley_DB), do njih lahko dostopamo z orodjem [`db-util`](https://www.unix.com/man-page/linux/1/dbutil/). Sliko pomnilnika telefona N900 dobite [tukaj](https://polaris.fri.uni-lj.si/georgepicobello.tgz). Sliko lahko prenesemo z ukazom [`wget`](https://linux.die.net/man/1/wget) in jo nato odpremo z ukazom [`tar`](https://linux.die.net/man/1/tar). Sedaj namestimo orodje za pregledovanje podatkovnih baz `db-util`, preko upravljalca paketov našega operacijskega sistema. Nato izpišemo vse datoteke, ki se končajo z `.db` z ukazom [`find`](https://linux.die.net/man/1/find). Posamezno podatkovno bazo nato izpišemo z ukazom `db_dump`.
 
-    wget https://polz.si/dsrf/georgepicobello.tgz
+    wget https://polaris.fri.uni-lj.si/georgepicobello.tgz
 
     tar -zxvf georgepicobello.tgz
 
     apt update
     apt install db-util
+
+    cd user
 
     find . -type f -name "*.db"
 
@@ -161,9 +163,9 @@ Najprej si bomo pogledali mobilni telefon [N900](https://en.wikipedia.org/wiki/N
     BEGIN:VCARD\0d\0aVERSION:3.0\0d\0aREV:2012-04-01T12:42:33Z\0d\0aUID:132\0d\0aFN:Nermine Shafan\0d\0aTEL;TYPE=CELL,VOICE:+201273098664\0d\0aX-SKYPE;X-OSSO-VALID=yes;TYPE=skype:nermine.shafan\0d\0aNICKNAME:Nermine Shafan\0d\0aN:;Nermine Shafan\0d\0aEND:VCARD\00
     DATA=END
 
-Mobilni operacijski sistem Android imajo določene podatke zakrite in prav tako uporablja šifriranje za celotni disk. Če želimo dostopati do vseh podatkov, moramo postati super uporabnik oz. `root`. Določena podjetja nam to omogočajo, vendar ne privzeto, za druge naprave pa moramo poznati kakšno varnostno pomanjkljivost, ki jo izkoristimo, da postanemo super uporabnik. Za delo z Android napravami se uporablja [ADB - Android Debug Bridge](https://developer.android.com/tools/adb). Orodje je sestavljeno iz dveh delov - prvi je storitev, ki teče na telefonu (`adbd`), drugi pa orodje, ki se prek USB pogovarja s storitvijo na telefonu (`adb`). Preko orodje `adb` lahko na telefonu odpremo lupino `adb shell`. Če `adbd` teče kot super uporabnik, lahko na telefonu dobite polni dostop, s pomočjo katerega lahko preberete vse podatke. En od načinov, kako to doseči, je opisan [tule](https://wiki.mozilla.org/Mobile/Fennec/Android/Rooting/adb). Ko na Android telefonu postanete super uporabnik, lahko prenesete vse datoteke z telefona z ukazom `adb pull`. Razdelke, zajete na Android telefonu, prav tako dobite [tukaj](polz.si/media/uploads/dsrf/android/samsung_ace.tgz). Sliko lahko prenesemo z ukazom `wget` in jo nato odpremo z ukazom `tar`. Dobljene razdeleke sedaj priklopimo z ukazom `mount`, da lahko dostopamo do njihovih datotek. 
+Mobilni operacijski sistem Android imajo določene podatke zakrite in prav tako uporablja šifriranje za celotni disk. Če želimo dostopati do vseh podatkov, moramo postati super uporabnik oz. `root`. Določena podjetja nam to omogočajo, vendar ne privzeto, za druge naprave pa moramo poznati kakšno varnostno pomanjkljivost, ki jo izkoristimo, da postanemo super uporabnik. Za delo z Android napravami se uporablja [ADB - Android Debug Bridge](https://developer.android.com/tools/adb). Orodje je sestavljeno iz dveh delov - prvi je storitev, ki teče na telefonu (`adbd`), drugi pa orodje, ki se prek USB pogovarja s storitvijo na telefonu (`adb`). Preko orodje `adb` lahko na telefonu odpremo lupino `adb shell`. Če `adbd` teče kot super uporabnik, lahko na telefonu dobite polni dostop, s pomočjo katerega lahko preberete vse podatke. En od načinov, kako to doseči, je opisan [tule](https://wiki.mozilla.org/Mobile/Fennec/Android/Rooting/adb). Ko na Android telefonu postanete super uporabnik, lahko prenesete vse datoteke z telefona z ukazom `adb pull`. Razdelke, zajete na Android telefonu, prav tako dobite [tukaj](https://polaris.fri.uni-lj.si/samsung_ace.tgz). Sliko lahko prenesemo z ukazom `wget` in jo nato odpremo z ukazom `tar`. Dobljene razdeleke sedaj priklopimo z ukazom `mount`, da lahko dostopamo do njihovih datotek. 
 
-    wget https://polz.si/dsrf/android/samsung_ace.tgz
+    wget https://polaris.fri.uni-lj.si/samsung_ace.tgz
 
     tar -zxvf samsung_ace.tgz
 
@@ -529,6 +531,8 @@ Razdelek `stl11` vsebuje uporabniške in sistemske podatke. Vsaka aplikacija ima
 
     sqlite3 com.android.providers.contacts/databases/contacts2.db
 
+    .tables
+
     _sync_state                       settings                        
     _sync_state_metadata              speed_dial                      
     accounts                          status_updates                  
@@ -564,20 +568,20 @@ Razdelek `stl11` vsebuje uporabniške in sistemske podatke. Vsaka aplikacija ima
     11|11|||0|0|0|0|1|1|2238i26bdd8020a9bcbad||0|0|0|1|11|com.google|0||0||0||0|
     13|13|||0|0|0|0|0|0|2238i5dfa6b398a24e891||0|0|1|1|13|com.google|0||0||0||0|
 
-    select * from [view_contacts];
+    select * from [view_v1_people];
 
-    1||40|Dusan K.|Dusan K.||0|Dusan K.|Dusan K.|1|1|0i1||0|0|0|0||0|0|1|1|vnd.sec.contact.sim|0||0||0||0|
-    2||40|Info|Info||0|Info|Info|1|1|0i249||0|0|0|0||0|0|1|2|vnd.sec.contact.sim|0||0||0||0|
-    3||40|Sklenite narocnino|Sklenite narocnino||0|Sklenite narocnino|Sklenite narocnino|1|1|0i250||0|0|0|0||0|0|1|3|vnd.sec.contact.sim|0||0||0||0|
-    4||40|Jernej Korosec|Korosec, Jernej||3|Jernej Korosec|Korosec, Jernej|1|1|2238i6e2a07280ebf74c4||0|0|0|0||0|0|1|4|com.google|0||0||0||0|
-    5||40|Forenzicarka 1|Forenzicarka 1||3|Forenzicarka 1|Forenzicarka 1|1|1|2238i2e28b2820b50eb4d||0|0|0|0||0|0|1|5|com.google|0||0||0||0|
-    6||40|polz|polz||3|polz|polz|0|0|2238i153efc500fbd8d8d||0|0|0|0||0|1|1|6|com.google|0||0||0||0|
-    7||10|polz@polz.si|polz@polz.si||0|polz@polz.si|polz@polz.si|1|0|2238i5b427c9c8ac2b926||0|0|1|0||0|1|1|7|com.google|0||0||0||0|
-    8||10|matic.junk@gmail.com|matic.junk@gmail.com||0|matic.junk@gmail.com|matic.junk@gmail.com|0|0|2238i25445b56096a409b||0|0|0|0||0|1|1|8|com.google|0||0||0||0|
-    9||10|polz@fri.uni-lj.si|polz@fri.uni-lj.si||0|polz@fri.uni-lj.si|polz@fri.uni-lj.si|0|0|2238i3cda596d8ec4895c||1463742641757|0|0|2||0|1|1|9|com.google|0||0||0||0|
-    10||10|ozbolt.menegatti@gmail.com|ozbolt.menegatti@gmail.com||0|ozbolt.menegatti@gmail.com|ozbolt.menegatti@gmail.com|0|0|2238i20c130e309806749|45|0|0|0|0||0|1|1|10|com.google|0||0||0||0|
-    11||40|Luka Krsnik|Krsnik, Luka||3|Luka Krsnik|Krsnik, Luka|1|1|2238i26bdd8020a9bcbad||0|0|0|0||0|0|1|11|com.google|0||0||0||0|
-    13||10|jan@k0s.si|jan@k0s.si||0|jan@k0s.si|jan@k0s.si|0|0|2238i5dfa6b398a24e891||0|0|0|0||0|1|1|13|com.google|0||0||0||0|
+    1|Dusan K.|Dusan K.|Dusan K.|||vnd.sec.contact.sim|vnd.sec.contact.sim|0|||0|0|||2|051254503|2||305452150
+    2|Info|Info|Info|||vnd.sec.contact.sim|vnd.sec.contact.sim|0|||0|0|||4|090068068|2||860860090
+    3|Sklenite narocnino|Sklenite narocnino|Sklenite narocnino|||vnd.sec.contact.sim|vnd.sec.contact.sim|0|||0|0|||6|080680680|2||086086080
+    4|Jernej Korosec|Jernej Korosec|Korosec, Jernej|||friforenzik@gmail.com|com.google|0|||0|0|||13|041424007|2||700424140
+    5|Forenzicarka 1|Forenzicarka 1|Forenzicarka 1|||friforenzik@gmail.com|com.google|0|||0|0|||20|031844429|2||924448130
+    6|polz|polz|polz|||friforenzik@gmail.com|com.google|0|||0|0||26|||||
+    7||polz@polz.si|polz@polz.si|||friforenzik@gmail.com|com.google|0|||0|1||32|||||
+    8||matic.junk@gmail.com|matic.junk@gmail.com|||friforenzik@gmail.com|com.google|0|||0|0||38|||||
+    9||polz@fri.uni-lj.si|polz@fri.uni-lj.si|||friforenzik@gmail.com|com.google|2|1463742641757||0|0||44|||||
+    10||ozbolt.menegatti@gmail.com|ozbolt.menegatti@gmail.com|||friforenzik@gmail.com|com.google|0|||0|0||50|||||
+    11|Luka Krsnik|Luka Krsnik|Krsnik, Luka|||friforenzik@gmail.com|com.google|0|||0|0|||57|040914122|2||221419040
+    13||jan@k0s.si|jan@k0s.si|||friforenzik@gmail.com|com.google|0|||0|0||68|||||
 
     select * from [view_v1_phones];
 
