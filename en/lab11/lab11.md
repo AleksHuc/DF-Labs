@@ -12,7 +12,7 @@
 
 In the previous exercises, we wrote a program that overruns the stack of another program or the return address of the function and runs the `Python` command line. We can see that the program that exploits the vulnerability and the program that runs are independent of each other. Therefore, we can use a program that already knows how to exploit this vulnerability and we only give it the program we want to run. Also, such a program itself can search for and exploit known vulnerabilities. One such program is [Metasploit](https://en.wikipedia.org/wiki/Metasploit), which can be obtained [here](https://github.com/rapid7/metasploit-framework).
 
-Our goal will be to break into a virtual computer with the Windows XP operating system located on the `muha.vmdk` virtual disk that you get [here](https://polz.si/dsrf/muha.vmdk).
+Our goal will be to break into a virtual computer with the Windows XP operating system located on the `muha.vmdk` virtual disk that you get [here](https://polaris.fri.uni-lj.si/muha.vmdk).
 
 With `VirtualBox` we create a new virtual computer with the virtual disk `muha.vmdk` by pressing the `New` button. In the `Name and Operating System` tab, enter any name of the virtual computer in the `Name:` field, for example `WindowsXP`.
 

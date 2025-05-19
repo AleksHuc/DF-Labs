@@ -12,7 +12,7 @@
 
 Na prejšnjih vajah smo sami napisali program, ki povozi sklad drugemu programu oz. vrnitveni naslov funkcije in požene `Python` ukazno vrstico. Vidimo, da sta program, ki izkorišča ranljivost in program, ki se požene, med seboj neodvisna. Zato lahko uporabimo program, ki že zna izkoristiti to ranljivost in mu mi podamo samo program, ki ga želimo pognati. Prav tako, lahko zna tak program sam poiskati in izkoristiti znane ranljivosti. Eden izmed takih program je [Metasploit](https://en.wikipedia.org/wiki/Metasploit), ki ga lahko dobimo [tukaj](https://github.com/rapid7/metasploit-framework).
 
-Naš cilj bo vdreti v navidezni računalnik z operacijskim sistemom Windows XP, ki se nahaja na navideznem disk `muha.vmdk`, ki ga dobite [tukaj](https://polz.si/dsrf/muha.vmdk).
+Naš cilj bo vdreti v navidezni računalnik z operacijskim sistemom Windows XP, ki se nahaja na navideznem disk `muha.vmdk`, ki ga dobite [tukaj](https://polaris.fri.uni-lj.si/muha.vmdk).
 
 Z `VrtualBox` ustvarimo nov navidezni računalnik z navideznim diskom `muha.vmdk`, tako da pritisnemo na gumb `New`. V zavihku `Name and Operating System` vpišemo poljubno ime navideznega računalnika v polje `Name:`, na primer `WindowsXP`.
 
